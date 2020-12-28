@@ -56,9 +56,10 @@ for img_fl in tqdm(img_files):
     resized_img = cv2.resize(img,(256 ,256), interpolation = cv2.INTER_CUBIC)
 
     X.append(resized_img)
-    im_name = str(str(img_fl.split('.')[0]).split('/')[1]).split('_')[1]
 
-    mask_name = 'ISIC-2017_Training_Data/ISIC_'+im_name+'_superpixels.png'
+    im_name = str(str(img_fl.split('.')[2]).split('/')[2]).split('_')[1]
+
+    mask_name = '../ISIC-2017_Training_Data/ISIC_'+im_name+'_superpixels.png'
 
     msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
     resized_msk = cv2.resize(msk,(256 ,256), interpolation = cv2.INTER_CUBIC)
@@ -280,5 +281,5 @@ fp = open('models/best_attn_r2unet_isic2017.txt','w')
 fp.write('-1.0')
 fp.close()
 
-trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
+trainStep(model, X_train, Y_train, X_test, Y_test, epochs=1, batchSize=2)
 
