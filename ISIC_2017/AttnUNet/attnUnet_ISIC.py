@@ -56,9 +56,10 @@ for img_fl in tqdm(img_files):
     resized_img = cv2.resize(img,(256 ,256), interpolation = cv2.INTER_CUBIC)
 
     X.append(resized_img)
-    im_name = str(str(img_fl.split('.')[0]).split('/')[1]).split('_')[1]
 
-    mask_name = 'ISIC-2017_Training_Data/ISIC_'+im_name+'_superpixels.png'
+    im_name = str(str(img_fl.split('.')[2]).split('/')[2]).split('_')[1]
+
+    mask_name = '../ISIC-2017_Training_Data/ISIC_'+im_name+'_superpixels.png'
 
     msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
     resized_msk = cv2.resize(msk,(256 ,256), interpolation = cv2.INTER_CUBIC)

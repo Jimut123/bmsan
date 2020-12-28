@@ -46,24 +46,19 @@ X = []
 Y = []
 
 for img_fl in tqdm(img_files):
-  #print(img_fl)
-  #break
-  img = cv2.imread('{}'.format(img_fl), cv2.IMREAD_COLOR)
-  # 340 x 255
-  resized_img = cv2.resize(img,(256 ,256), interpolation = cv2.INTER_CUBIC)
-  #plt.imshow(resized_img)
-  X.append(resized_img)
-  im_name = str(str(img_fl.split('.')[0]).split('/')[1]).split('_')[1]
-  #print(im_name)
-  mask_name = 'ISIC-2017_Training_Data/ISIC_'+im_name+'_superpixels.png'
-  #print(mask_name)
-  #print("mn = ",mask_name)
-  #break
-  msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
-  resized_msk = cv2.resize(msk,(256 ,256), interpolation = cv2.INTER_CUBIC)
+    img = cv2.imread('{}'.format(img_fl), cv2.IMREAD_COLOR)
+    resized_img = cv2.resize(img,(256 ,256), interpolation = cv2.INTER_CUBIC)
 
-  Y.append(resized_msk)
-  #break
+    X.append(resized_img)
+
+    im_name = str(str(img_fl.split('.')[2]).split('/')[2]).split('_')[1]
+
+    mask_name = '../ISIC-2017_Training_Data/ISIC_'+im_name+'_superpixels.png'
+
+    msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
+    resized_msk = cv2.resize(msk,(256 ,256), interpolation = cv2.INTER_CUBIC)
+
+    Y.append(resized_msk)
 
 print(len(X))
 print(len(Y))
