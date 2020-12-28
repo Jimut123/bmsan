@@ -39,8 +39,8 @@ from models import att_unet
 
 
 
-img_files = glob.glob('original_img/*.tif')
-msk_files = glob.glob('ground_truth/*.tif')
+img_files = glob.glob('../original_img/*.tif')
+msk_files = glob.glob('../ground_truth/*.tif')
 
 img_files.sort()
 msk_files.sort()
