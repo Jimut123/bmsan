@@ -1,4 +1,33 @@
 
+# https://stackoverflow.com/questions/55809286/how-to-create-a-custom-keras-layer-min-pooling-but-ignore-zeros
+# Minpool2D implementation
+
+def MinPooling2D(x, pool_size, strides):
+
+    max_val = K.max(x) + 1 # we gonna replace all zeros with that value
+    # replace all 0s with very high numbers
+    is_zero = max_val * K.cast(K.equal(x,0), dtype=K.floatx())
+    x = is_zero + x
+
+    # execute pooling with 0s being replaced by a high number
+    min_x = -K.pool2d(-x, pool_size=(2, 2), strides=(2, 2))
+
+    # depending on the value we either substract the zero replacement or not
+    is_result_zero = max_val * K.cast(K.equal(min_x, max_val), dtype=K.floatx()) 
+    min_x = min_x - is_result_zero
+
+    return min_x # concatenate on channel
+
+
+
+
+
+
+
+
+
+
+
 ##=================================================
 from tensorflow.keras import layers
 import tensorflow as tf
@@ -387,11 +416,11 @@ def DRRMSAN_multiscale_attention(height, width, n_channels):
     side7 = UpSampling2D(size=(4, 4))(conv_7_up)
     side8 = UpSampling2D(size=(2, 2))(conv_8_up)
 
-    out6 = Conv2D(1, (1, 1), activation='sigmoid', name='side_6')(side6) # conv2d_bn(side6, 1, 1, 1, activation='none') #
-    out7 = Conv2D(1, (1, 1), activation='sigmoid', name='side_7')(side7) # conv2d_bn(side7, 1, 1, 1, activation='none') #
-    out8 = Conv2D(1, (1, 1), activation='sigmoid', name='side_8')(side8) # conv2d_bn(side8, 1, 1, 1, activation='none') #
+    out6 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_6')(side6) # conv2d_bn(side6, 1, 1, 1, activation='none') #
+    out7 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_7')(side7) # conv2d_bn(side7, 1, 1, 1, activation='none') #
+    out8 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_8')(side8) # conv2d_bn(side8, 1, 1, 1, activation='none') #
 
-    out9 = conv2d_bn(mresblock9, 1, 1, 1, activation='sigmoid')
+    out9 = conv2d_bn(mresblock9, 1, 3, 3, activation='sigmoid', padding='same')
 
     out10 = average([out6, out7, out8, out9])
 
