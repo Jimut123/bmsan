@@ -273,7 +273,7 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
 
     return model
 # img_w, img_h, n_label, data_format='channels_first'
-model = r2_unet(img_h=192, img_w=256, n_label=3)
+model = r2_unet(img_h=256, img_w=192, n_label=3)
 
 model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
 

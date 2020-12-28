@@ -1,13 +1,13 @@
 import glob
 import json
-
+"""
 all_img_files = glob.glob('trainx/*.bmp')
 all_mask_files = glob.glob('trainy/*.bmp')
 print(len(all_img_files))
 print(len(all_mask_files))
 print(all_img_files[:10])
 print(all_mask_files[:10])
-
+"""
 import os
 import cv2
 import glob
@@ -282,5 +282,5 @@ fp = open('models/best_attnUNET_skinlesion.txt','w')
 fp.write('-1.0')
 fp.close()
 
-trainStep(model, X_train, Y_train, X_test, Y_test, epochs=1, batchSize=2)
+trainStep(model, X_train, Y_train, X_test, Y_test, epochs=10, batchSize=2)
 
