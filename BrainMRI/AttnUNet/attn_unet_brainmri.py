@@ -215,6 +215,8 @@ def evaluateModel(model, X_test, Y_test, batchSize):
 
     print('Jacard Index : '+str(jacard))
     print('Dice Coefficient : '+str(dice))
+    with open("Output.txt", "w") as text_file:
+        text_file.write("Jacard : {} Dice Coef : {} ".format(str(jacard), str(dice)))
 
     jaccard_index_list.append(jacard)
     dice_coeff_list.append(dice)
