@@ -47,8 +47,6 @@ print(len(img_files))
 print(len(msk_files))
 
 
-
-
 X = []
 Y = []
 

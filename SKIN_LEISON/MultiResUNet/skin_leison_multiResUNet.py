@@ -15,20 +15,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from tensorflow.keras.metrics import Recall, Precision 
 import glob
-all_img_files = glob.glob('trainx/*.bmp')
-all_mask_files = glob.glob('trainy/*.bmp')
-print(len(all_img_files))
-print(len(all_mask_files))
-print(all_img_files[:10])
-print(all_mask_files[:10])
 
-img = cv2.imread('trainx/X_img_144.bmp', cv2.IMREAD_COLOR)
-img.shape
 
-plt.imshow(img[:,:,::-1])
 
-img_files = glob.glob('trainx/*.bmp')
-msk_files = glob.glob('trainy/*bmp.')
+import sys
+sys.path.insert(0, '../../')
+from models import MultiResUnet
+
+img_files = glob.glob('../trainx/*.bmp')
+msk_files = glob.glob('../trainy/*.bmp')
 
 img_files.sort()
 msk_files.sort()
@@ -43,22 +38,14 @@ X = []
 Y = []
 
 
-for img_fl in tqdm(img_files):    
+for img_fl in tqdm(img_files):
     if(img_fl.split('.')[-1]=='bmp'):
         img = cv2.imread('{}'.format(img_fl), cv2.IMREAD_COLOR)
-        #resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
-        #print(img.shape)
-        #plt.imshow(img)
-        #plt.show()
         X.append(img) #resized_img)
-        img_msk = "trainy/Y_img_"+str(img_fl.split('.')[0]).split('_')[-1]+".bmp"
+        img_msk = "../trainy/Y_img_"+str(img_fl.split('.')[2]).split('_')[-1]+".bmp"
         msk = cv2.imread('{}'.format(img_msk), cv2.IMREAD_GRAYSCALE)
-        #resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
-        #msk_1 = np.stack((msk,)*3, axis=-1)
-        #print(msk_1.shape)
-        #plt.imshow(msk_1)
-        #break
         Y.append(msk)#resized_msk)
+
 
 print(len(X))
 print(len(Y))

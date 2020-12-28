@@ -36,8 +36,12 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras import backend as K
 
-img_files = glob.glob('trainx/*.bmp')
-msk_files = glob.glob('trainy/*.bmp')
+import sys
+sys.path.insert(0, '../../')
+from models import DRRMSAN_multiscale_attention
+
+img_files = glob.glob('../trainx/*.bmp')
+msk_files = glob.glob('../trainy/*.bmp')
 
 img_files.sort()
 msk_files.sort()
@@ -47,26 +51,15 @@ print(len(img_files))
 print(len(msk_files))
 
 
-
-
 X = []
 Y = []
 
 for img_fl in tqdm(img_files):
     if(img_fl.split('.')[-1]=='bmp'):
         img = cv2.imread('{}'.format(img_fl), cv2.IMREAD_COLOR)
-        #resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
-        #print(img.shape)
-        #plt.imshow(img)
-        #plt.show()
         X.append(img) #resized_img)
-        img_msk = "trainy/Y_img_"+str(img_fl.split('.')[0]).split('_')[-1]+".bmp"
+        img_msk = "../trainy/Y_img_"+str(img_fl.split('.')[2]).split('_')[-1]+".bmp"
         msk = cv2.imread('{}'.format(img_msk), cv2.IMREAD_GRAYSCALE)
-        #resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
-        #msk_1 = np.stack((msk,)*3, axis=-1)
-        #print(msk_1.shape)
-        #plt.imshow(msk_1)
-        #break
         Y.append(msk)#resized_msk)
 
 
