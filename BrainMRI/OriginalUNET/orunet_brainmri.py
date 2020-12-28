@@ -294,7 +294,7 @@ fp = open('models/best_orunet_brainmri.txt','w')
 fp.write('-1.0')
 fp.close()
 
-trainStep(model, X_train, Y_train, X_test, Y_test, epochs=1, batchSize=2)
+trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
         
     
 

@@ -224,7 +224,7 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
 
 model = MultiResUnet(height=192, width=256, n_channels=3)
 
-model.compile(optimizer=Adam(lr=10e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
+model.compile(optimizer=Adam(lr=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
 
 saveModel(model)
 
@@ -234,6 +234,6 @@ fp = open('models/best_multi_res_unet_skinlesion.txt','w')
 fp.write('-1.0')
 fp.close()
 
-trainStep(model, X_train, Y_train, X_test, Y_test, epochs=1, batchSize=4)
+trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=4)
 
 
