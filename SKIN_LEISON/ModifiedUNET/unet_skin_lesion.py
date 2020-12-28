@@ -33,7 +33,7 @@ from tensorflow.keras import backend as K
 
 import sys
 sys.path.insert(0, '../../')
-from models import ModifiedUnet
+from models import ModifiedUNet
 
 img_files = glob.glob('../trainx/*.bmp')
 msk_files = glob.glob('../trainy/*.bmp')
