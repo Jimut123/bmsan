@@ -16,6 +16,11 @@ from sklearn.metrics import classification_report
 from tensorflow.keras.metrics import Recall, Precision 
 import glob
 
+
+import sys
+sys.path.insert(0, '../../')
+from models import MultiResUnet
+
 img_files = sorted(glob.glob('../ISIC-2017_Training_Data/ISIC_*.jpg'))
 msk_files = sorted(glob.glob('../ISIC-2017_Training_Data/*_superpixels.png'))
 

@@ -2,11 +2,6 @@ import glob
 import cv2
 import json
 
-all_img_files = glob.glob('ISIC-2017_Training_Data/ISIC_*.jpg')
-all_mask_files = glob.glob('ISIC-2017_Training_Data/*_superpixels.png')
-all_img_files.sort()
-all_mask_files.sort()
-
 import os
 import cv2
 import glob
@@ -46,6 +41,10 @@ msk_files.sort()
 
 print("B==>",len(img_files))
 print(len(msk_files))
+
+import sys
+sys.path.insert(0, '../../')
+from models import att_unet
 
 
 X = []

@@ -32,6 +32,11 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras import backend as K
 
+
+import sys
+sys.path.insert(0, '../../')
+from models import  unet
+
 img_files = sorted(glob.glob('../ISIC-2017_Training_Data/ISIC_*.jpg'))
 msk_files = sorted(glob.glob('../ISIC-2017_Training_Data/*_superpixels.png'))
 

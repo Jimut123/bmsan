@@ -34,6 +34,10 @@ from tensorflow.keras import backend as K
 from tensorflow.keras.metrics import Recall, Precision 
 
 
+import sys
+sys.path.insert(0, '../../')
+from models import r2_unet
+
 img_files = sorted(glob.glob('../ISIC-2017_Training_Data/ISIC_*.jpg'))
 msk_files = sorted(glob.glob('../ISIC-2017_Training_Data/*_superpixels.png'))
 
