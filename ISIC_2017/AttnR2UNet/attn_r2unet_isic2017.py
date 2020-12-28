@@ -51,7 +51,6 @@ X = []
 Y = []
 
 for img_fl in tqdm(img_files):
-    
     img = cv2.imread('{}'.format(img_fl), cv2.IMREAD_COLOR)
     resized_img = cv2.resize(img,(256 ,256), interpolation = cv2.INTER_CUBIC)
 
@@ -217,8 +216,7 @@ def evaluateModel(model, X_test, Y_test, batchSize):
     jaccard_index_list.append(jacard)
     dice_coeff_list.append(dice)
     fp = open('models/log_attn_r2unet_isic2017.txt','a')
-    fp.write("Jacard = "+str(jacard)+'\n')
-    fp.write("Dice = "+str(dice)+'\n')
+    fp.write(str(jacard)+'\n')
     fp.close()
 
     fp = open('models/best_attn_r2unet_isic2017.txt','r')
