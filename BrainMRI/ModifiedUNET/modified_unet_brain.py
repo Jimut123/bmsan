@@ -35,10 +35,12 @@ from tensorflow.keras import backend as K
 
 from tqdm import tqdm
 
-from models import ModifiedUNet
-
 import sys
 sys.path.insert(0, '../../')
+
+from models import ModifiedUNet
+
+
 
 img_files = glob.glob('../original_img/*.tif')
 msk_files = glob.glob('../ground_truth/*.tif')

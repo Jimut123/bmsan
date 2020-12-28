@@ -30,11 +30,13 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras import backend as K
 
+import sys
+sys.path.insert(0, '../../')
+
 from tqdm import tqdm
 from models import att_unet
 
-import sys
-sys.path.insert(0, '../../')
+
 
 
 img_files = glob.glob('original_img/*.tif')
