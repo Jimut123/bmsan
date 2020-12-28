@@ -1,10 +1,5 @@
 import glob
-all_img_files = glob.glob('trainx/*.bmp')
-all_mask_files = glob.glob('trainy/*.bmp')
-print(len(all_img_files))
-print(len(all_mask_files))
-print(all_img_files[:10])
-print(all_mask_files[:10])
+
 
 import os
 import cv2
@@ -266,7 +261,7 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
 
     return model
 
-model = ModifiedUNet(height=192, width=256, n_channels=3)
+model = ModifiedUnet(height=192, width=256, n_channels=3)
 
 model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
 
