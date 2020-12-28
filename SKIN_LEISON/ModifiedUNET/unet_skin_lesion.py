@@ -261,7 +261,7 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
 
     return model
 
-model = ModifiedUnet(height=192, width=256, n_channels=3)
+model = ModifiedUNet(height=192, width=256, n_channels=3)
 
 model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
 
