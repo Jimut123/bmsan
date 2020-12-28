@@ -18,13 +18,14 @@ import glob
 
 
 
-from models import MultiResUnet
 
 import sys
 sys.path.insert(0, '../../')
 
-img_files = next(os.walk('2d_images/'))[2]
-msk_files = next(os.walk('2d_masks/'))[2]
+from models import MultiResUnet
+
+img_files = next(os.walk('../2d_images/'))[2]
+msk_files = next(os.walk('../2d_masks/'))[2]
 
 img_files.sort()
 msk_files.sort()
@@ -42,12 +43,12 @@ for img_fl in tqdm(img_files):
     if(img_fl.split('.')[-1]=='tif'):
 
 
-        img = cv2.imread('2d_images/{}'.format(img_fl), cv2.IMREAD_COLOR)
+        img = cv2.imread('../2d_images/{}'.format(img_fl), cv2.IMREAD_COLOR)
         resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
 
         X.append(resized_img)
 
-        msk = cv2.imread('2d_masks/{}'.format(img_fl), cv2.IMREAD_GRAYSCALE)
+        msk = cv2.imread('../2d_masks/{}'.format(img_fl), cv2.IMREAD_GRAYSCALE)
         resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
 
         Y.append(resized_msk)
