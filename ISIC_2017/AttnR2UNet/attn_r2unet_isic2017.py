@@ -217,7 +217,8 @@ def evaluateModel(model, X_test, Y_test, batchSize):
     jaccard_index_list.append(jacard)
     dice_coeff_list.append(dice)
     fp = open('models/log_attn_r2unet_isic2017.txt','a')
-    fp.write(str(jacard)+'\n')
+    fp.write("Jacard = "+str(jacard)+'\n')
+    fp.write("Dice = "+str(dice)+'\n')
     fp.close()
 
     fp = open('models/best_attn_r2unet_isic2017.txt','r')
