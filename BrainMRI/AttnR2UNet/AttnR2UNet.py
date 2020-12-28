@@ -32,10 +32,9 @@ from tensorflow.keras import backend as K
 
 from tqdm import tqdm
 
-from models import att_r2_unet
-
 import sys
 sys.path.insert(0, '../../')
+from models import att_r2_unet
 
 
 img_files = glob.glob('../original_img/*.tif')
@@ -46,8 +45,6 @@ msk_files.sort()
 
 print(len(img_files))
 print(len(msk_files))
-
-
 
 
 X = []
