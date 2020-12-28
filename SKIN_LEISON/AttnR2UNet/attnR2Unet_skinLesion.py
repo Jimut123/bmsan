@@ -1,5 +1,12 @@
 import glob
 import json
+all_img_files = glob.glob('trainx/*.bmp')
+all_mask_files = glob.glob('trainy/*.bmp')
+print(len(all_img_files))
+print(len(all_mask_files))
+print(all_img_files[:10])
+print(all_mask_files[:10])
+
 
 import os
 import cv2
@@ -14,7 +21,7 @@ from keras.optimizers import Adam
 from tensorflow.keras.applications import MobileNetV2
 from keras.layers.advanced_activations import ELU, LeakyReLU
 from keras.utils.vis_utils import plot_model
-from keras import backend as K 
+from keras import backend as K
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 
@@ -27,46 +34,43 @@ from tensorflow.keras.layers import UpSampling2D, Input, Concatenate
 from tensorflow.keras.models import Model , load_model
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from tensorflow.keras.metrics import Recall, Precision 
+from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras import backend as K
 
-from tqdm import tqdm
 
-import sys
-sys.path.insert(0, '../../')
-from models import att_r2_unet
-
-
-img_files = glob.glob('../original_img/*.tif')
-msk_files = glob.glob('../ground_truth/*.tif')
+img_files = glob.glob('trainx/*.bmp')
+msk_files = glob.glob('trainy/*.bmp')
 
 img_files.sort()
 msk_files.sort()
-
+print(img_files[:10])
+print(msk_files[:10])
 print(len(img_files))
 print(len(msk_files))
+
+
 
 
 X = []
 Y = []
 
 for img_fl in tqdm(img_files):
-  #print(img_fl)
-  name = str(img_fl.split('.')[2]).split('/')[2]
-  original_name = "../original_img/"+name+".tif"
-  #print(name)
-  mask_name = "../ground_truth/"+name+"_mask.tif"
-  #break
-  if(img_fl.split('.')[-1]=='tif'):
-    img = cv2.imread('{}'.format(original_name), cv2.IMREAD_COLOR)
-    #resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
-    
-    X.append(img) #resized_img)
-    
-    msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
-    #resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
-    
-    Y.append(msk)#resized_msk)
+    if(img_fl.split('.')[-1]=='bmp'):
+        img = cv2.imread('{}'.format(img_fl), cv2.IMREAD_COLOR)
+        #resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
+        #print(img.shape)
+        #plt.imshow(img)
+        #plt.show()
+        X.append(img) #resized_img)
+        img_msk = "trainy/Y_img_"+str(img_fl.split('.')[0]).split('_')[-1]+".bmp"
+        msk = cv2.imread('{}'.format(img_msk), cv2.IMREAD_GRAYSCALE)
+        #resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
+        #msk_1 = np.stack((msk,)*3, axis=-1)
+        #print(msk_1.shape)
+        #plt.imshow(msk_1)
+        #break
+        Y.append(msk)#resized_msk)
+
 
 print(len(X))
 print(len(Y))
@@ -75,9 +79,13 @@ X = np.array(X)
 Y = np.array(Y)
 
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=3)
+print(Y_train.shape)
 
 Y_train = Y_train.reshape((Y_train.shape[0],Y_train.shape[1],Y_train.shape[2],1))
+
+
 Y_test = Y_test.reshape((Y_test.shape[0],Y_test.shape[1],Y_test.shape[2],1))
+
 
 X_train = X_train / 255
 X_test = X_test / 255
@@ -123,14 +131,6 @@ print(Y_test.shape)
 
 
 
-
-
-
-
-    
-    
-    
-    
 def dice_coef(y_true, y_pred):
     smooth = 0.0
     y_true_f = K.flatten(y_true)
@@ -156,9 +156,9 @@ def saveModel(model):
     except:
         pass
 
-    fp = open('models/modelP_attnR2Unet_brainMRI.json','w')
+    fp = open('models/modelP_attnR2Unet_skinLesion.json','w')
     fp.write(model_json)
-    model.save_weights('models/modelW_attnR2Unet_brainMRI.h5')
+    model.save_weights('models/modelW_attnR2Unet_skinLesion.h5')
 
 
 jaccard_index_list = []
@@ -225,11 +225,11 @@ def evaluateModel(model, X_test, Y_test, batchSize):
 
     jaccard_index_list.append(jacard)
     dice_coeff_list.append(dice)
-    fp = open('models/log_attnR2Unet_brainMRI.txt','a')
+    fp = open('models/log_attnR2Unet_skinLesion.txt','a')
     fp.write(str(jacard)+'\n')
     fp.close()
 
-    fp = open('models/best_attnR2Unet_brainMRI.txt','r')
+    fp = open('models/best_attnR2Unet_skinLesion.txt','r')
     best = fp.read()
     fp.close()
 
@@ -237,15 +237,14 @@ def evaluateModel(model, X_test, Y_test, batchSize):
         print('***********************************************')
         print('Jacard Index improved from '+str(best)+' to '+str(jacard))
         print('***********************************************')
-        fp = open('models/best.txt','w')
+        fp = open('models/best_attnR2Unet_skinLesion.txt','w')
         fp.write(str(jacard))
         fp.close()
 
         saveModel(model)
-        
-        
+
 def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
-    
+
     history = model.fit(x=X_train, y=Y_train, batch_size=batchSize, epochs=epochs, verbose=1)
 
     # convert the history.history dict to a pandas DataFrame:
@@ -254,7 +253,7 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
 
 
     # save to json:
-    hist_json_file = 'history_attnR2Unet_brainMRI.json'
+    hist_json_file = 'history_attnR2Unet_skinLesion.json'
     # with open(hist_json_file, 'a') as out:
     #     out.write(hist_df.to_json())
     #     out.write(",")
@@ -264,7 +263,7 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
        hist_df.to_json(f)
 
     # or save to csv:
-    hist_csv_file = 'history_attnR2Unet_brainMRI.csv'
+    hist_csv_file = 'history_attnR2Unet_skinLesion.csv'
     # with open(hist_csv_file, 'a') as out:
     #     out.write(str(hist_df.to_csv()))
     #     out.write(",")
@@ -278,19 +277,18 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
 
     return model
 # img_w, img_h, n_label, data_format='channels_first'
-model = att_r2_unet(img_h=256, img_w=256, n_label=3)
+model = att_r2_unet(img_h=256, img_w=192, n_label=3)
 
 #model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
 model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
 
 saveModel(model)
 
-fp = open('models/log_attnR2Unet_brainMRI.txt','w')
+fp = open('models/log_attnR2Unet_skinLesion.txt','w')
 fp.close()
-fp = open('models/best_attnR2Unet_brainMRI.txt','w')
+fp = open('models/best_attnR2Unet_skinLesion.txt','w')
 fp.write('-1.0')
 fp.close()
 
-trainStep(model, X_train, Y_train, X_test, Y_test, epochs=1, batchSize=2)
-        
-    
+trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
+

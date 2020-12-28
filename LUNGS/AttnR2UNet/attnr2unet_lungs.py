@@ -1,6 +1,6 @@
 import glob
-import json
 
+import json
 import os
 import cv2
 import glob
@@ -14,7 +14,7 @@ from keras.optimizers import Adam
 from tensorflow.keras.applications import MobileNetV2
 from keras.layers.advanced_activations import ELU, LeakyReLU
 from keras.utils.vis_utils import plot_model
-from keras import backend as K 
+from keras import backend as K
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 
@@ -27,18 +27,15 @@ from tensorflow.keras.layers import UpSampling2D, Input, Concatenate
 from tensorflow.keras.models import Model , load_model
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from tensorflow.keras.metrics import Recall, Precision 
+from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras import backend as K
-
-from tqdm import tqdm
 
 import sys
 sys.path.insert(0, '../../')
 from models import att_r2_unet
 
-
-img_files = glob.glob('../original_img/*.tif')
-msk_files = glob.glob('../ground_truth/*.tif')
+img_files = next(os.walk('2d_images/'))[2]
+msk_files = next(os.walk('2d_masks/'))[2]
 
 img_files.sort()
 msk_files.sort()
@@ -47,26 +44,26 @@ print(len(img_files))
 print(len(msk_files))
 
 
+
+
 X = []
 Y = []
 
 for img_fl in tqdm(img_files):
-  #print(img_fl)
-  name = str(img_fl.split('.')[2]).split('/')[2]
-  original_name = "../original_img/"+name+".tif"
-  #print(name)
-  mask_name = "../ground_truth/"+name+"_mask.tif"
-  #break
-  if(img_fl.split('.')[-1]=='tif'):
-    img = cv2.imread('{}'.format(original_name), cv2.IMREAD_COLOR)
-    #resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
-    
-    X.append(img) #resized_img)
-    
-    msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
-    #resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
-    
-    Y.append(msk)#resized_msk)
+    if(img_fl.split('.')[-1]=='tif'):
+
+
+        img = cv2.imread('2d_images/{}'.format(img_fl), cv2.IMREAD_COLOR)
+        resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
+
+        X.append(resized_img)
+
+        msk = cv2.imread('2d_masks/{}'.format(img_fl), cv2.IMREAD_GRAYSCALE)
+        resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
+
+        Y.append(resized_msk)
+
+
 
 print(len(X))
 print(len(Y))
@@ -84,14 +81,13 @@ X_test = X_test / 255
 Y_train = Y_train / 255
 Y_test = Y_test / 255
 
-Y_train = np.round(Y_train,0)	
-Y_test = np.round(Y_test,0)	
+Y_train = np.round(Y_train,0)
+Y_test = np.round(Y_test,0)
 
 print(X_train.shape)
 print(Y_train.shape)
 print(X_test.shape)
 print(Y_test.shape)
-
 
 import numpy as np
 """
@@ -123,14 +119,6 @@ print(Y_test.shape)
 
 
 
-
-
-
-
-    
-    
-    
-    
 def dice_coef(y_true, y_pred):
     smooth = 0.0
     y_true_f = K.flatten(y_true)
@@ -156,9 +144,9 @@ def saveModel(model):
     except:
         pass
 
-    fp = open('models/modelP_attnR2Unet_brainMRI.json','w')
+    fp = open('models/modelP_attnr2unet_lungs.json','w')
     fp.write(model_json)
-    model.save_weights('models/modelW_attnR2Unet_brainMRI.h5')
+    model.save_weights('models/modelW_attnr2unet_lungs.h5')
 
 
 jaccard_index_list = []
@@ -225,11 +213,11 @@ def evaluateModel(model, X_test, Y_test, batchSize):
 
     jaccard_index_list.append(jacard)
     dice_coeff_list.append(dice)
-    fp = open('models/log_attnR2Unet_brainMRI.txt','a')
+    fp = open('models/log_attnr2unet_lungs.txt','a')
     fp.write(str(jacard)+'\n')
     fp.close()
 
-    fp = open('models/best_attnR2Unet_brainMRI.txt','r')
+    fp = open('models/best_attnr2unet_lungs.txt','r')
     best = fp.read()
     fp.close()
 
@@ -242,10 +230,9 @@ def evaluateModel(model, X_test, Y_test, batchSize):
         fp.close()
 
         saveModel(model)
-        
-        
+
 def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
-    
+
     history = model.fit(x=X_train, y=Y_train, batch_size=batchSize, epochs=epochs, verbose=1)
 
     # convert the history.history dict to a pandas DataFrame:
@@ -254,7 +241,7 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
 
 
     # save to json:
-    hist_json_file = 'history_attnR2Unet_brainMRI.json'
+    hist_json_file = 'history_attnr2unet_lungs.json'
     # with open(hist_json_file, 'a') as out:
     #     out.write(hist_df.to_json())
     #     out.write(",")
@@ -264,7 +251,7 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
        hist_df.to_json(f)
 
     # or save to csv:
-    hist_csv_file = 'history_attnR2Unet_brainMRI.csv'
+    hist_csv_file = 'history_attnr2unet_lungs.csv'
     # with open(hist_csv_file, 'a') as out:
     #     out.write(str(hist_df.to_csv()))
     #     out.write(",")
@@ -277,6 +264,7 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
     evaluateModel(model,X_test, Y_test,batchSize)
 
     return model
+
 # img_w, img_h, n_label, data_format='channels_first'
 model = att_r2_unet(img_h=256, img_w=256, n_label=3)
 
@@ -285,12 +273,11 @@ model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metr
 
 saveModel(model)
 
-fp = open('models/log_attnR2Unet_brainMRI.txt','w')
+fp = open('models/log_attnr2unet_lungs.txt','w')
 fp.close()
-fp = open('models/best_attnR2Unet_brainMRI.txt','w')
+fp = open('models/best_attnr2unet_lungs.txt','w')
 fp.write('-1.0')
 fp.close()
 
-trainStep(model, X_train, Y_train, X_test, Y_test, epochs=1, batchSize=2)
-        
-    
+trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
+
