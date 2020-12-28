@@ -38,7 +38,7 @@ from tqdm import tqdm
 import sys
 sys.path.insert(0, '../../')
 
-from models import ModifiedUNet
+from models import ModifiedUnet
 
 
 
