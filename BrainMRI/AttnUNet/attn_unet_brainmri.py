@@ -30,15 +30,17 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras import backend as K
 
-from tqdm import tqdm
-from models import att_unet
-
 import sys
 sys.path.insert(0, '../../')
 
+from tqdm import tqdm
+from models import att_unet
 
-img_files = glob.glob('original_img/*.tif')
-msk_files = glob.glob('ground_truth/*.tif')
+
+
+
+img_files = glob.glob('../original_img/*.tif')
+msk_files = glob.glob('../ground_truth/*.tif')
 
 img_files.sort()
 msk_files.sort()
@@ -281,7 +283,7 @@ fp = open('models/best_attn_unet_brainMRI.txt','w')
 fp.write('-1.0')
 fp.close()
 
-trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
+trainStep(model, X_train, Y_train, X_test, Y_test, epochs=1, batchSize=2)
 
 
 

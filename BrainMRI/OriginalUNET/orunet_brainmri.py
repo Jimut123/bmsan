@@ -31,11 +31,14 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.metrics import Recall, Precision 
 from tensorflow.keras import backend as K
 
+
+sys.path.insert(0, '../../')
+from models import  unet
+
 from tqdm import tqdm
 import sys
 
-from models import  unet
-sys.path.insert(0, '../../')
+
 
 img_files = glob.glob('../original_img/*.tif')
 msk_files = glob.glob('../ground_truth/*.tif')

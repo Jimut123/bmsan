@@ -32,10 +32,11 @@ from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras import backend as K
 
 
-from models import r2_unet
+
 
 import sys
 sys.path.insert(0, '../../')
+from models import r2_unet
 
 img_files = glob.glob('../original_img/*.tif')
 msk_files = glob.glob('../ground_truth/*.tif')
