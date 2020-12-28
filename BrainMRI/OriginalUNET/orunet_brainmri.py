@@ -1,6 +1,7 @@
 import glob
 import json
 
+
 import os
 import cv2
 import glob
@@ -31,11 +32,10 @@ from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras import backend as K
 
 from tqdm import tqdm
-
 import sys
-sys.path.insert(0, '../../')
-from models import att_r2_unet
 
+from models import  unet
+sys.path.insert(0, '../../')
 
 img_files = glob.glob('../original_img/*.tif')
 msk_files = glob.glob('../ground_truth/*.tif')
@@ -45,6 +45,8 @@ msk_files.sort()
 
 print(len(img_files))
 print(len(msk_files))
+
+
 
 
 X = []
@@ -122,11 +124,7 @@ print(Y_test.shape)
 
 
 
-
-
-
-
-
+    
     
     
     
@@ -156,9 +154,9 @@ def saveModel(model):
     except:
         pass
 
-    fp = open('models/modelP_attnR2Unet_brainMRI.json','w')
+    fp = open('models/modelP_orunet_brainmri.json','w')
     fp.write(model_json)
-    model.save_weights('models/modelW_attnR2Unet_brainMRI.h5')
+    model.save_weights('models/modelW_orunet_brainmri.h5')
 
 
 jaccard_index_list = []
@@ -225,11 +223,11 @@ def evaluateModel(model, X_test, Y_test, batchSize):
 
     jaccard_index_list.append(jacard)
     dice_coeff_list.append(dice)
-    fp = open('models/log_attnR2Unet_brainMRI.txt','a')
+    fp = open('models/log_orunet_brainmri.txt','a')
     fp.write(str(jacard)+'\n')
     fp.close()
 
-    fp = open('models/best_attnR2Unet_brainMRI.txt','r')
+    fp = open('models/best_orunet_brainmri.txt','r')
     best = fp.read()
     fp.close()
 
@@ -237,7 +235,7 @@ def evaluateModel(model, X_test, Y_test, batchSize):
         print('***********************************************')
         print('Jacard Index improved from '+str(best)+' to '+str(jacard))
         print('***********************************************')
-        fp = open('models/best.txt','w')
+        fp = open('models/best_orunet_brainmri.txt','w')
         fp.write(str(jacard))
         fp.close()
 
@@ -254,7 +252,7 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
 
 
     # save to json:
-    hist_json_file = 'history_attnR2Unet_brainMRI.json'
+    hist_json_file = 'history_orunet_brainmri.json'
     # with open(hist_json_file, 'a') as out:
     #     out.write(hist_df.to_json())
     #     out.write(",")
@@ -264,7 +262,7 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
        hist_df.to_json(f)
 
     # or save to csv:
-    hist_csv_file = 'history_attnR2Unet_brainMRI.csv'
+    hist_csv_file = 'history_orunet_brainmri.csv'
     # with open(hist_csv_file, 'a') as out:
     #     out.write(str(hist_df.to_csv()))
     #     out.write(",")
@@ -278,19 +276,20 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
 
     return model
 # img_w, img_h, n_label, data_format='channels_first'
-model = att_r2_unet(img_h=256, img_w=256, n_label=3)
+model = unet(img_h=256, img_w=256, n_label=3)
 
 #model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
 model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
 
 saveModel(model)
 
-fp = open('models/log_attnR2Unet_brainMRI.txt','w')
+fp = open('models/log_orunet_brainmri.txt','w')
 fp.close()
-fp = open('models/best_attnR2Unet_brainMRI.txt','w')
+fp = open('models/best_orunet_brainmri.txt','w')
 fp.write('-1.0')
 fp.close()
 
 trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
         
     
+

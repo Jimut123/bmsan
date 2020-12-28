@@ -17,13 +17,18 @@ from sklearn.metrics import classification_report
 from tensorflow.keras.metrics import Recall, Precision 
 from tqdm import tqdm
 
-import sys
-sys.path.insert(0, '../../')
+
 
 from models import MultiResUnet
 
+
+
+import sys
+sys.path.insert(0, '../../')
+
 img_files = glob.glob('../original_img/*.tif')
 msk_files = glob.glob('../ground_truth/*.tif')
+
 
 img_files.sort()
 msk_files.sort()
@@ -160,8 +165,14 @@ def evaluateModel(model, X_test, Y_test, batchSize):
         union = yp_2 + y2 - intersection
 
         jacard += (np.sum(intersection)/np.sum(union))
-
         dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
+
+        
+        y_true_f = K.flatten(y2)
+        y_pred_f = K.flatten(yp_2)
+        intersection = K.sum(y_true_f * y_pred_f)
+        iou += (intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) - intersection + smooth)
+
 
 
     jacard /= len(Y_test)

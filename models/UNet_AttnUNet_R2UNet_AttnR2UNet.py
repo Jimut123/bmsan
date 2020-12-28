@@ -10,7 +10,6 @@ import keras.backend as K
 
 
 
-
 def up_and_concate(down_layer, layer, data_format='channels_first'):
     if data_format == 'channels_first':
         in_channel = down_layer.get_shape().as_list()[1]
