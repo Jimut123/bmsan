@@ -18,13 +18,10 @@ from tensorflow.keras.metrics import Recall, Precision
 from tqdm import tqdm
 
 
-
-from models import MultiResUnet
-
-
-
 import sys
 sys.path.insert(0, '../../')
+
+from models import MultiResUnet
 
 img_files = glob.glob('../original_img/*.tif')
 msk_files = glob.glob('../ground_truth/*.tif')
@@ -168,10 +165,10 @@ def evaluateModel(model, X_test, Y_test, batchSize):
         dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
 
         
-        y_true_f = K.flatten(y2)
-        y_pred_f = K.flatten(yp_2)
-        intersection = K.sum(y_true_f * y_pred_f)
-        iou += (intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) - intersection + smooth)
+        #y_true_f = K.flatten(y2)
+        #y_pred_f = K.flatten(yp_2)
+        #intersection = K.sum(y_true_f * y_pred_f)
+        #iou += (intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) - intersection + smooth)
 
 
 
@@ -242,7 +239,7 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
 
 model = MultiResUnet(height=256, width=256, n_channels=3)
 
-model.compile(optimizer=Adam(learning_rate=1e-4),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
+model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
 
 saveModel(model)
 
