@@ -34,7 +34,6 @@ from tqdm import tqdm
 
 import sys
 sys.path.insert(0, '../../')
-
 from models import ModifiedUnet
 
 img_files = sorted(glob.glob('../ISIC-2017_Training_Data/ISIC_*.jpg'))
