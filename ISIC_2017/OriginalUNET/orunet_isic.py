@@ -1,10 +1,7 @@
 import glob
 import cv2
 import json
-all_img_files = glob.glob('ISIC-2017_Training_Data/ISIC_*.jpg')
-all_mask_files = glob.glob('ISIC-2017_Training_Data/*_superpixels.png')
-all_img_files.sort()
-all_mask_files.sort()
+
 
 import os
 import cv2
@@ -35,8 +32,8 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras import backend as K
 
-img_files = sorted(glob.glob('ISIC-2017_Training_Data/ISIC_*.jpg'))
-msk_files = sorted(glob.glob('ISIC-2017_Training_Data/*_superpixels.png'))
+img_files = sorted(glob.glob('../ISIC-2017_Training_Data/ISIC_*.jpg'))
+msk_files = sorted(glob.glob('../ISIC-2017_Training_Data/*_superpixels.png'))
 
 img_files.sort()
 msk_files.sort()
