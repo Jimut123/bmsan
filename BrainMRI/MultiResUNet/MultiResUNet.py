@@ -37,10 +37,10 @@ Y = []
 
 for img_fl in tqdm(img_files):
   #print(img_fl)
-  name = str(img_fl.split('.')[0]).split('/')[1]
-  original_name = "original_img/"+name+".tif"
+  name = str(img_fl.split('.')[2]).split('/')[2]
+  original_name = "../original_img/"+name+".tif"
   #print(name)
-  mask_name = "ground_truth/"+name+"_mask.tif"
+  mask_name = "../ground_truth/"+name+"_mask.tif"
   #break
   if(img_fl.split('.')[-1]=='tif'):
     img = cv2.imread('{}'.format(original_name), cv2.IMREAD_COLOR)
