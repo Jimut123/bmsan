@@ -1,8 +1,9 @@
 import glob
-import json
+
 
 
 import os
+import json
 import cv2
 import glob
 import numpy as np
@@ -15,7 +16,7 @@ from keras.optimizers import Adam
 from tensorflow.keras.applications import MobileNetV2
 from keras.layers.advanced_activations import ELU, LeakyReLU
 from keras.utils.vis_utils import plot_model
-from keras import backend as K 
+from keras import backend as K
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 
@@ -28,17 +29,20 @@ from tensorflow.keras.layers import UpSampling2D, Input, Concatenate
 from tensorflow.keras.models import Model , load_model
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from tensorflow.keras.metrics import Recall, Precision 
+from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras import backend as K
 
-from tqdm import tqdm
-import sys
 
-from models import  unet
+from tqdm import tqdm
+
+from models import ModifiedUNet
+
+import sys
 sys.path.insert(0, '../../')
 
 img_files = glob.glob('../original_img/*.tif')
 msk_files = glob.glob('../ground_truth/*.tif')
+
 
 img_files.sort()
 msk_files.sort()
@@ -62,12 +66,12 @@ for img_fl in tqdm(img_files):
   if(img_fl.split('.')[-1]=='tif'):
     img = cv2.imread('{}'.format(original_name), cv2.IMREAD_COLOR)
     #resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
-    
+
     X.append(img) #resized_img)
-    
+
     msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
     #resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
-    
+
     Y.append(msk)#resized_msk)
 
 print(len(X))
@@ -86,8 +90,8 @@ X_test = X_test / 255
 Y_train = Y_train / 255
 Y_test = Y_test / 255
 
-Y_train = np.round(Y_train,0)	
-Y_test = np.round(Y_test,0)	
+Y_train = np.round(Y_train,0)
+Y_test = np.round(Y_test,0)
 
 print(X_train.shape)
 print(Y_train.shape)
@@ -95,40 +99,8 @@ print(X_test.shape)
 print(Y_test.shape)
 
 
-import numpy as np
-"""
->>> x = np.zeros((100, 12, 12, 3))
->>> x.shape
-(100, 12, 12, 3)
->>> y = np.transpose(x)
->>> y.shape
-(3, 12, 12, 100)
->>> z = np.moveaxis(y,-1,0)
->>> z.shape
-(100, 3, 12, 12)
-
-"""
-X_train = np.moveaxis(X_train,-1,1)
-print(X_train.shape)
-
-Y_train = np.moveaxis(Y_train,-1,1)
-Y_train = np.repeat(Y_train,repeats=3,axis=1)
-print(Y_train.shape)
-
-X_test = np.moveaxis(X_test,-1,1)
-print(X_test.shape)
-
-Y_test = np.moveaxis(Y_test,-1,1)
-Y_test = np.repeat(Y_test,repeats=3,axis=1)
-print(Y_test.shape)
 
 
-
-    
-    
-    
-    
-    
 def dice_coef(y_true, y_pred):
     smooth = 0.0
     y_true_f = K.flatten(y_true)
@@ -154,9 +126,9 @@ def saveModel(model):
     except:
         pass
 
-    fp = open('models/modelP_orunet_brainmri.json','w')
+    fp = open('models/modelP_UNet_brainmri.json','w')
     fp.write(model_json)
-    model.save_weights('models/modelW_orunet_brainmri.h5')
+    model.save_weights('models/modelW_UNet_brainmri.h5')
 
 
 jaccard_index_list = []
@@ -178,13 +150,13 @@ def evaluateModel(model, X_test, Y_test, batchSize):
 
         plt.figure(figsize=(20,10))
         plt.subplot(1,3,1)
-        plt.imshow(np.moveaxis(X_test[i],0,-1))
+        plt.imshow(X_test[i])
         plt.title('Input')
         plt.subplot(1,3,2)
-        plt.imshow(np.moveaxis(Y_test[i],0,-1))
+        plt.imshow(Y_test[i].reshape(Y_test[i].shape[0],Y_test[i].shape[1]))
         plt.title('Ground Truth')
         plt.subplot(1,3,3)
-        plt.imshow(np.moveaxis(yp[i],0,-1))
+        plt.imshow(yp[i].reshape(yp[i].shape[0],yp[i].shape[1]))
         plt.title('Prediction')
 
         intersection = yp[i].ravel() * Y_test[i].ravel()
@@ -223,11 +195,11 @@ def evaluateModel(model, X_test, Y_test, batchSize):
 
     jaccard_index_list.append(jacard)
     dice_coeff_list.append(dice)
-    fp = open('models/log_orunet_brainmri.txt','a')
+    fp = open('models/log_UNet_brainmri.txt','a')
     fp.write(str(jacard)+'\n')
     fp.close()
 
-    fp = open('models/best_orunet_brainmri.txt','r')
+    fp = open('models/best_UNet_brainmri.txt','r')
     best = fp.read()
     fp.close()
 
@@ -235,15 +207,14 @@ def evaluateModel(model, X_test, Y_test, batchSize):
         print('***********************************************')
         print('Jacard Index improved from '+str(best)+' to '+str(jacard))
         print('***********************************************')
-        fp = open('models/best_orunet_brainmri.txt','w')
+        fp = open('models/best_UNet_brainmri.txt','w')
         fp.write(str(jacard))
         fp.close()
 
         saveModel(model)
-        
-        
+
 def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
-    
+
     history = model.fit(x=X_train, y=Y_train, batch_size=batchSize, epochs=epochs, verbose=1)
 
     # convert the history.history dict to a pandas DataFrame:
@@ -252,7 +223,7 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
 
 
     # save to json:
-    hist_json_file = 'history_orunet_brainmri.json'
+    hist_json_file = 'history_UNet_brainmri.json'
     # with open(hist_json_file, 'a') as out:
     #     out.write(hist_df.to_json())
     #     out.write(",")
@@ -262,7 +233,7 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
        hist_df.to_json(f)
 
     # or save to csv:
-    hist_csv_file = 'history_orunet_brainmri.csv'
+    hist_csv_file = 'history_UNet_brainmri.csv'
     # with open(hist_csv_file, 'a') as out:
     #     out.write(str(hist_df.to_csv()))
     #     out.write(",")
@@ -275,21 +246,18 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
     evaluateModel(model,X_test, Y_test,batchSize)
 
     return model
-# img_w, img_h, n_label, data_format='channels_first'
-model = unet(img_h=256, img_w=256, n_label=3)
 
-#model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
+model = ModifiedUNet(height=256, width=256, n_channels=3)
+
 model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
 
 saveModel(model)
 
-fp = open('models/log_orunet_brainmri.txt','w')
+fp = open('models/log_UNet_brainmri.txt','w')
 fp.close()
-fp = open('models/best_orunet_brainmri.txt','w')
+fp = open('models/best_UNet_brainmri.txt','w')
 fp.write('-1.0')
 fp.close()
 
 trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
-        
-    
 
