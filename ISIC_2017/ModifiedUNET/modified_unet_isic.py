@@ -40,11 +40,11 @@ from models import ModifiedUnet
 img_files = sorted(glob.glob('../ISIC-2017_Training_Data/ISIC_*.jpg'))
 msk_files = sorted(glob.glob('../ISIC-2017_Training_Data/*_superpixels.png'))
 
-all_img_files.sort()
-all_mask_files.sort()
+img_files.sort()
+msk_files.sort()
 
-print(len(all_img_files))
-print(len(all_mask_files))
+print(len(img_files))
+print(len(msk_files))
 
 
 
@@ -256,6 +256,6 @@ fp = open('models/best_ModifiedUNet_isic.txt','w')
 fp.write('-1.0')
 fp.close()
 
-trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
+trainStep(model, X_train, Y_train, X_test, Y_test, epochs=1, batchSize=2)
 
 
