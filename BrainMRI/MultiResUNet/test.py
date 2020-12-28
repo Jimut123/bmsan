@@ -37,11 +37,16 @@ Y = []
 
 for img_fl in tqdm(img_files):
   #print(img_fl)
-  name = str(img_fl.split('.')[0]).split('/')[1]
-  original_name = "original_img/"+name+".tif"
+  #name = str(img_fl.split('.')[2]).split('/')[2]
+  original_name = "../original_img/"+name+".tif"
   #print(name)
-  mask_name = "ground_truth/"+name+"_mask.tif"
+  mask_name = "../ground_truth/"+name+"_mask.tif"
+  #print(name)
+  #print(original_name)
+  #print(img_fl)
+  #print(msk_files)
   #break
+  """
   if(img_fl.split('.')[-1]=='tif'):
     img = cv2.imread('{}'.format(original_name), cv2.IMREAD_COLOR)
     #resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
@@ -240,3 +245,4 @@ fp.write('-1.0')
 fp.close()
 
 trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
+"""
