@@ -123,14 +123,6 @@ print(Y_test.shape)
 
 
 
-
-
-
-
-    
-    
-    
-    
 def dice_coef(y_true, y_pred):
     smooth = 0.0
     y_true_f = K.flatten(y_true)
@@ -209,7 +201,7 @@ def evaluateModel(model, X_test, Y_test, batchSize):
 
         intersection = yp_2 * y2
         union = yp_2 + y2 - intersection
-        if intersection == 0 or dice == 0:
+        if intersection.all() == 0 or dice.all() == 0:
             nm += 1
             continue
         else:
