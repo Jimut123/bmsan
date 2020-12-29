@@ -123,14 +123,6 @@ print(Y_test.shape)
 
 
 
-
-
-
-
-    
-    
-    
-    
 def dice_coef(y_true, y_pred):
     smooth = 0.0
     y_true_f = K.flatten(y_true)
@@ -201,22 +193,26 @@ def evaluateModel(model, X_test, Y_test, batchSize):
 
     jacard = 0
     dice = 0
-
-
+    # no. of corrupted / no mask samples 
+    nm = 0
+    print("Len of Y_test = ", len(Y_test))
     for i in range(len(Y_test)):
         yp_2 = yp[i].ravel()
         y2 = Y_test[i].ravel()
 
         intersection = yp_2 * y2
         union = yp_2 + y2 - intersection
+        if union.all() == 0:
+            nm += 1
+            continue
+        else:
+            # calculate jacard and dice
+            jacard += (np.sum(intersection)/np.sum(union))
+            dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
+    print("Length of nm = ", nm)
 
-        jacard += (np.sum(intersection)/np.sum(union))
-
-        dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
-
-
-    jacard /= len(Y_test)
-    dice /= len(Y_test)
+    jacard /= float(len(Y_test))
+    dice /= float(len(Y_test))
 
 
 
