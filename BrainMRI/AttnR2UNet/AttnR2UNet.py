@@ -211,8 +211,8 @@ def evaluateModel(model, X_test, Y_test, batchSize):
             dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
     print("Length of nm = ", nm)
 
-    jacard /= int(len(Y_test) - nm)
-    dice /= int(len(Y_test) - nm)
+    jacard /= float(len(Y_test))
+    dice /= float(len(Y_test))
 
 
 
@@ -289,6 +289,6 @@ fp = open('models/best_attnR2Unet_brainMRI.txt','w')
 fp.write('-1.0')
 fp.close()
 
-trainStep(model, X_train, Y_train, X_test, Y_test, epochs=1, batchSize=2)
+trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
         
     
