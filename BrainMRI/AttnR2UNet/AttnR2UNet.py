@@ -201,22 +201,25 @@ def evaluateModel(model, X_test, Y_test, batchSize):
 
     jacard = 0
     dice = 0
-
-
+    # no. of corrupted / no mask samples 
+    nm = 0
     for i in range(len(Y_test)):
         yp_2 = yp[i].ravel()
         y2 = Y_test[i].ravel()
 
         intersection = yp_2 * y2
         union = yp_2 + y2 - intersection
+        if intersection == 0 or dice == 0:
+            nm += 1
+            continue
+        else:
+            # calculate jacard and dice
+            jacard += (np.sum(intersection)/np.sum(union))
+            dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
 
-        jacard += (np.sum(intersection)/np.sum(union))
 
-        dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
-
-
-    jacard /= len(Y_test)
-    dice /= len(Y_test)
+    jacard /= int(len(Y_test) - nm)
+    dice /= int(len(Y_test) - nm)
 
 
 
