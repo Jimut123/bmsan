@@ -37,8 +37,8 @@ sys.path.insert(0, '../../')
 from models import att_r2_unet
 
 
-img_files = glob.glob('../original_img/*.tif')
-msk_files = glob.glob('../ground_truth/*.tif')
+img_files = glob.glob('../Kvasir-SEG/images/*')
+msk_files = glob.glob('../Kvasir-SEG/masks/*')
 
 img_files.sort()
 msk_files.sort()
@@ -53,18 +53,18 @@ Y = []
 for img_fl in tqdm(img_files):
   #print(img_fl)
   name = str(img_fl.split('.')[2]).split('/')[2]
-  original_name = "../original_img/"+name+".tif"
+  original_name = "../Kvasir-SEG/images/"+name+".jpg"
   #print(name)
-  mask_name = "../ground_truth/"+name+"_mask.tif"
+  mask_name = "../Kvasir-SEG/masks/"+name+".jpg"
   #break
-  if(img_fl.split('.')[-1]=='tif'):
+  if(img_fl.split('.')[-1]=='jpg'):
     img = cv2.imread('{}'.format(original_name), cv2.IMREAD_COLOR)
-    #resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
+    resized_img = cv2.resize(img,(256, 218), interpolation = cv2.INTER_CUBIC)
     
     X.append(img) #resized_img)
     
     msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
-    #resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
+    resized_msk = cv2.resize(msk,(256, 218), interpolation = cv2.INTER_CUBIC)
     
     Y.append(msk)#resized_msk)
 
@@ -272,7 +272,7 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
 
     return model
 # img_w, img_h, n_label, data_format='channels_first'
-model = att_r2_unet(img_h=256, img_w=256, n_label=3)
+model = att_r2_unet(img_h=256, img_w=218, n_label=3)
 
 #model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
 model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
@@ -285,6 +285,6 @@ fp = open('models/best_attnR2Unet_kvasir.txt','w')
 fp.write('-1.0')
 fp.close()
 
-trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
+trainStep(model, X_train, Y_train, X_test, Y_test, epochs=10, batchSize=2)
         
     
