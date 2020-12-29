@@ -23,8 +23,8 @@ sys.path.insert(0, '../../')
 
 from models import MultiResUnet
 
-img_files = glob.glob('../original_img/*.tif')
-msk_files = glob.glob('../ground_truth/*.tif')
+img_files = glob.glob('../Kvasir-SEG/images/*')
+msk_files = glob.glob('../Kvasir-SEG/masks/*')
 
 
 img_files.sort()
@@ -37,23 +37,20 @@ print(len(msk_files))
 X = []
 Y = []
 
+
 for img_fl in tqdm(img_files):
-  #print(img_fl)
-  name = str(img_fl.split('.')[2]).split('/')[2]
-  original_name = "../original_img/"+name+".tif"
-  #print(name)
-  mask_name = "../ground_truth/"+name+"_mask.tif"
-  #break
-  if(img_fl.split('.')[-1]=='tif'):
+  name = str(img_fl.split('.')[2]).split('/')[3]
+  original_name = "../Kvasir-SEG/images/"+name+".jpg"
+  mask_name = "../Kvasir-SEG/masks/"+name+".jpg"
+  if(img_fl.split('.')[-1]=='jpg'):
     img = cv2.imread('{}'.format(original_name), cv2.IMREAD_COLOR)
-    #resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
-    
-    X.append(img) #resized_img)
-    
+    resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
+    X.append(resized_img) #resized_img)
     msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
-    #resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
-    
-    Y.append(msk)#resized_msk)
+    resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
+    resized_mask = np.expand_dims(resized_msk, axis=2)
+    Y.append(resized_mask)#resized_msk)
+
 
 
 print(len(X))

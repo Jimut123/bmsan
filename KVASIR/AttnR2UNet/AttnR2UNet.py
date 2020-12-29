@@ -51,26 +51,16 @@ X = []
 Y = []
 
 for img_fl in tqdm(img_files):
-  #print(img_fl)
-  #print(img_fl)
-  #print("***", img_fl.split('.')[2])
   name = str(img_fl.split('.')[2]).split('/')[3]
-  #print(name)
-  #break
   original_name = "../Kvasir-SEG/images/"+name+".jpg"
-  #print(name)
   mask_name = "../Kvasir-SEG/masks/"+name+".jpg"
-  #break
   if(img_fl.split('.')[-1]=='jpg'):
     img = cv2.imread('{}'.format(original_name), cv2.IMREAD_COLOR)
     resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
     X.append(resized_img) #resized_img)
-    
     msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
     resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
     resized_mask = np.expand_dims(resized_msk, axis=2)
-    #print("....",resized_mask.shape)
-    #break
     Y.append(resized_mask)#resized_msk)
 
 print(len(X))
@@ -291,6 +281,6 @@ fp = open('models/best_attnR2Unet_kvasir.txt','w')
 fp.write('-1.0')
 fp.close()
 
-trainStep(model, X_train, Y_train, X_test, Y_test, epochs=10, batchSize=2)
+trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
         
     
