@@ -195,20 +195,21 @@ def evaluateModel(model, X_test, Y_test, batchSize):
     dice = 0
     # no. of corrupted / no mask samples 
     nm = 0
+    print("Len of Y_test = ", len(Y_test))
     for i in range(len(Y_test)):
         yp_2 = yp[i].ravel()
         y2 = Y_test[i].ravel()
 
         intersection = yp_2 * y2
         union = yp_2 + y2 - intersection
-        if intersection.all() == 0 or dice.all() == 0:
+        if union.all() == 0:
             nm += 1
             continue
         else:
             # calculate jacard and dice
             jacard += (np.sum(intersection)/np.sum(union))
             dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
-
+    print("Length of nm = ", nm)
 
     jacard /= int(len(Y_test) - nm)
     dice /= int(len(Y_test) - nm)
@@ -288,6 +289,6 @@ fp = open('models/best_attnR2Unet_brainMRI.txt','w')
 fp.write('-1.0')
 fp.close()
 
-trainStep(model, X_train, Y_train, X_test, Y_test, epochs=5, batchSize=2)
+trainStep(model, X_train, Y_train, X_test, Y_test, epochs=1, batchSize=2)
         
     
