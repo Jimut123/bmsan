@@ -3,6 +3,12 @@ DRRMSAN: Deep Residual Regularized Multi-Scale Attention Networks for segmentati
 
 ```
 conda install -c anaconda cudatoolkit=10.1.243 cudnn=7.6.5 tensorflow-gpu
+
+#!/usr/bin/env python3
+# encoding: utf-8
+# @Time    : 2019/5/9 15:56
+# @Author  : Eric Ching
+
 ```
 #### Acknowledgements
 
