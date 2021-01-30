@@ -283,6 +283,7 @@ def DRRMSAN_multiscale_attention(height, width, n_channels):
     # use average pool, maxpool and minpool to create different volumes of
     # multiscaling, minpool is used here as a sort of regularizer noise in the feature
     # space.  1/2 th the original scale first.
+
     inp_1_2I = AveragePooling2D(pool_size=(2, 2))(inputs)
     inp_1_2I_mxpool = MaxPooling2D(pool_size=(2, 2))(inputs)
     inp_1_2I_minpool = MinPooling2D(inputs, pool_size=(2,2), strides=(1,1))
@@ -317,7 +318,7 @@ def DRRMSAN_multiscale_attention(height, width, n_channels):
     # for adding to multi res block 2, 32 filters
     # use 50 - 50 
     # Conv2D(filters, (3, 3), strides=(1,1), padding='same'
-
+    
     # using different ratios for the volumes, can be improved by using
     # Bayesian Optimization
 
