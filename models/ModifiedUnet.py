@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+# encoding: utf-8
+# @Time    : 01/12/2020 15:56
+# @Author  : Jimut Bahan Pal
+# Taken from Term Project 2020 for evaluation and
+# comparison
+
+
 import os
 import json
 import cv2

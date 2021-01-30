@@ -1,3 +1,12 @@
+
+#!/usr/bin/env python3
+# encoding: utf-8
+# @Time    : 01/12/2020 15:56
+# @Author  : Jimut Bahan Pal
+# This file is taken from unofficial implementation in Keras and TF
+# https://github.com/lixiaolei1982/Keras-Implementation-of-U-Net-R2U-Net-Attention-U-Net-Attention-R2U-Net.-/blob/master/network.py
+
+
 from keras.layers import Conv2D, MaxPooling2D, UpSampling2D, BatchNormalization, Reshape, Permute, Activation, Input, \
     add, multiply
 from keras.layers import concatenate, core, Dropout

@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+# encoding: utf-8
+# @Time    : 01/12/2020 15:56
+# @Author  : Jimut Bahan Pal
+
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from keras.layers import Input, Conv2D, MaxPooling2D, Conv2DTranspose, concatenate, BatchNormalization, Activation, add
@@ -261,7 +266,7 @@ def ResPath(filters, length, inp):
 
 def DRRMSAN_multiscale_attention(height, width, n_channels):
     '''
-    MultiResUNet
+    DRRMSAN Multiscale Attention Model
 
     Arguments:
         height {int} -- height of image
@@ -275,19 +280,9 @@ def DRRMSAN_multiscale_attention(height, width, n_channels):
 
     inputs = Input((height, width, n_channels))
 
-    # =====================================================================
-    # ----------------Proposed Changes ------------------------------------
-    # Rescaling of the inputs first
-    # rescale the image to 3/4 rth
-    # rescale the image to 1/2 rth
-    # rescale the image to 1/4 rth
-    # pass the images through a basic conv-layered-attention module
-    # code the attention module
-    # join the previous layers, i.e., concatenate with the attention module
-    # =====================================================================
-
-
-
+    # use average pool, maxpool and minpool to create different volumes of
+    # multiscaling, minpool is used here as a sort of regularizer noise in the feature
+    # space.  1/2 th the original scale first.
     inp_1_2I = AveragePooling2D(pool_size=(2, 2))(inputs)
     inp_1_2I_mxpool = MaxPooling2D(pool_size=(2, 2))(inputs)
     inp_1_2I_minpool = MinPooling2D(inputs, pool_size=(2,2), strides=(1,1))
@@ -297,6 +292,7 @@ def DRRMSAN_multiscale_attention(height, width, n_channels):
               antialias=False, name=None
               )
     """
+    # 1/4 rth the original scale
     inp_1_4I = AveragePooling2D(pool_size=(2, 2))(inp_1_2I)
     inp_1_4I_mxpool = MaxPooling2D(pool_size=(2, 2))(inp_1_2I_mxpool)
     inp_1_4I_minpool = MinPooling2D(inp_1_2I_minpool, pool_size=(2,2), strides=(1,1))
@@ -307,6 +303,7 @@ def DRRMSAN_multiscale_attention(height, width, n_channels):
               antialias=False, name=None
               )
     """
+    # 1/8 th the original scale
     inp_1_8I = AveragePooling2D(pool_size=(2, 2))(inp_1_4I)
     inp_1_8I_mxpool = MaxPooling2D(pool_size=(2, 2))(inp_1_4I_mxpool)
     inp_1_8I_minpool = MinPooling2D(inp_1_4I_minpool, pool_size=(2,2), strides=(1,1))
@@ -320,6 +317,9 @@ def DRRMSAN_multiscale_attention(height, width, n_channels):
     # for adding to multi res block 2, 32 filters
     # use 50 - 50 
     # Conv2D(filters, (3, 3), strides=(1,1), padding='same'
+
+    # using different ratios for the volumes, can be improved by using
+    # Bayesian Optimization
 
     total_1_2I = 51
     per_mx_pool_1_2I = int(0.40 * total_1_2I)
@@ -428,11 +428,15 @@ def DRRMSAN_multiscale_attention(height, width, n_channels):
     side7 = UpSampling2D(size=(4, 4))(conv_7_up)
     side8 = UpSampling2D(size=(2, 2))(conv_8_up)
 
+    # the conv blocks on the right sides
+
     out6 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_6')(side6) # conv2d_bn(side6, 1, 1, 1, activation='none') #
     out7 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_7')(side7) # conv2d_bn(side7, 1, 1, 1, activation='none') #
     out8 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_8')(side8) # conv2d_bn(side8, 1, 1, 1, activation='none') #
 
     out9 = conv2d_bn(mresblock9, 1, 3, 3, activation='sigmoid', padding='same')
+
+    # averaging all the output masks obtained at different scales
 
     out10 = average([out6, out7, out8, out9])
 

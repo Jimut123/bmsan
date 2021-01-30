@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+# encoding: utf-8
+# @Time    : 01/12/2020 15:56
+# @Author  : Jimut Bahan Pal
+# This file is taken from https://github.com/nibtehaz/MultiResUNet/blob/master/MultiResUNet.py
+# The original implementation of the paper of MultiResUNet in Keras and TF
 
 import os
 import glob

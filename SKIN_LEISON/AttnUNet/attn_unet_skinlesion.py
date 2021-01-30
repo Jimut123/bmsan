@@ -1,13 +1,10 @@
+#!/usr/bin/env python3
+# encoding: utf-8
+# @Time    : 01/12/2020 15:56
+# @Author  : Jimut Bahan Pal
+
 import glob
 import json
-"""
-all_img_files = glob.glob('trainx/*.bmp')
-all_mask_files = glob.glob('trainy/*.bmp')
-print(len(all_img_files))
-print(len(all_mask_files))
-print(all_img_files[:10])
-print(all_mask_files[:10])
-"""
 import os
 import cv2
 import glob
