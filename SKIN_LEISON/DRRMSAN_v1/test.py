@@ -36,7 +36,7 @@ from tensorflow.keras import backend as K
 
 import sys
 sys.path.insert(0, '../../')
-from models import DRRMSAN_multiscale_attention
+from models import DRRMSAN_multiscale_attention_1
 
 img_files = glob.glob('../trainx/*.bmp')
 msk_files = glob.glob('../trainy/*.bmp')
