@@ -38,6 +38,14 @@ def MinPooling2D(x, pool_size, strides):
 
 
 
+
+
+
+
+
+
+
+
 ##=================================================
 from tensorflow.keras import layers
 import tensorflow as tf
@@ -427,39 +435,30 @@ def DRRMSAN_multiscale_attention(height, width, n_channels):
     
     #concatenate([Conv2DTranspose(32*8, (2, 2), strides=(2, 2), padding='same')(mresblock5), mresblock4], axis=3)
     mresblock6 = MultiResBlock(32*8, up6)
-    conv_6_up_bef = Conv2D(212, (3, 3), padding='same', activation='relu', name='conv_6_up_bef')(mresblock6)
-    conv_6_up = concatenate([conv_6_up_bef, mresblock4])
-    conv_6_up = SpatialDropout2D(0.5)(Conv2D(212, (3, 3), padding='same', activation='relu', name='conv_6_up')(conv_6_up))
-
+    conv_6_up = Conv2D(212, (3, 3), padding='same', activation='relu', name='conv_6_up')(mresblock6)
 
     up7_add = add([Conv2DTranspose(32*4, (2, 2), strides=(2, 2), padding='same')(mresblock6), mresblock3])
     up7_dra = attention_up_and_concate(Conv2DTranspose(32*4, (2, 2), strides=(2, 2), padding='same', name='up7_dra')(mresblock6), mresblock3, filters = 32*4)
     up7 = attention_block_2d(Conv2DTranspose(32*4, (2, 2), strides=(2, 2), padding='same', name='up7')(mresblock6), mresblock3, filters = 32*4)
-    up7 = concatenate([up7, up7_add, up7_dra])#,
+    up7 = add([up7, up7_add, up7_dra])#,
     mresblock7 = MultiResBlock(32*4, up7)
-    conv_7_up_bef = Conv2D(105, (3, 3), padding='same', activation='relu', name='conv_7_up_bef')(mresblock7)
-    conv_7_up = concatenate([conv_7_up_bef, mresblock3])
-    conv_7_up = SpatialDropout2D(0.5)(Conv2D(105, (3, 3), padding='same', activation='relu', name='conv_7_up')(conv_7_up))
+    conv_7_up = Conv2D(105, (3, 3), padding='same', activation='relu', name='conv_7_up')(mresblock7)
 
     up8_add = add([Conv2DTranspose(32*2, (2, 2), strides=(2, 2), padding='same')(mresblock7), mresblock2])
     up8_dra = attention_up_and_concate(Conv2DTranspose(32*2, (2, 2), strides=(2, 2), padding='same', name='up8_dra')(mresblock7), mresblock2, filters = 32*2)
     up8 = attention_block_2d(Conv2DTranspose(32*2, (2, 2), strides=(2, 2), padding='same', name='up8')(mresblock7), mresblock2, filters = 32*2)
-    up8 = concatenate([up8, up8_add, up8_dra])#,
+    up8 = add([up8, up8_add, up8_dra])#,
     mresblock8 = MultiResBlock(32*2, up8)
-    conv_8_up_bef = Conv2D(51, (3, 3), padding='same', activation='relu', name='conv_8_up_bef')(mresblock8)
-    conv_8_up = concatenate([conv_8_up_bef, mresblock2])
-    conv_8_up = SpatialDropout2D(0.5)(Conv2D(51, (3, 3), padding='same', activation='relu', name='conv_8_up')(conv_8_up))
+    conv_8_up = Conv2D(51, (3, 3), padding='same', activation='relu', name='conv_8_up')(mresblock8)
 
     up9_add = add([Conv2DTranspose(32, (2, 2), strides=(2, 2), padding='same')(mresblock8), mresblock1])
     up9_dra = attention_up_and_concate(Conv2DTranspose(32, (2, 2), strides=(2, 2), padding='same', name='up9_dra')(mresblock8), mresblock1, filters = 32)
     up9 = attention_block_2d(Conv2DTranspose(32, (2, 2), strides=(2, 2), padding='same', name='up9')(mresblock8), mresblock1, filters = 32)
-    up9 = concatenate([up9, up9_add, up9_dra])#
+    up9 = add([up9, up9_add, up9_dra])#
     mresblock9 = MultiResBlock(32, up9)
-    conv_9_up_bef = Conv2D(32, (3, 3), padding='same', activation='relu', name='conv_8_up_bef')(mresblock9)
-    conv_9_up = concatenate([conv_9_up_bef, mresblock1])
-    conv_9_up = SpatialDropout2D(0.5)(Conv2D(32, (3, 3), padding='same', activation='relu', name='conv_9_up')(conv_9_up))
+    conv_9_up = Conv2D(32, (3, 3), padding='same', activation='relu', name='conv_8_up')(mresblock9)
 
-    
+
     side6 = UpSampling2D(size=(8, 8))(conv_6_up)
     side7 = UpSampling2D(size=(4, 4))(conv_7_up)
     side8 = UpSampling2D(size=(2, 2))(conv_8_up)
