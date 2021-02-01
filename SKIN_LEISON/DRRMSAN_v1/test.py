@@ -249,7 +249,7 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
     return model
 
 
-model = DRRMSAN_multiscale_attention(height=192, width=256, n_channels=3)
+model = DRRMSAN_multiscale_attention_1(height=192, width=256, n_channels=3)
 
 #model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
 from tensorflow.keras.metrics import Recall, Precision
@@ -266,6 +266,6 @@ fp = open('models/best.txt','w')
 fp.write('-1.0')
 fp.close()
 
-trainStep(model, X_train, Y_train, X_test, Y_test, epochs=10, batchSize=2)
+trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
 
 
