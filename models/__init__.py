@@ -6,6 +6,7 @@
 from .MultiResUNet import MultiResUnet
 from .DRRMSAN import DRRMSAN_multiscale_attention
 from .DRRMSAN1 import DRRMSAN_multiscale_attention_1
+from .DRRMSAN3 import DRRMSAN_multiscale_attention_r2b
 from .UNet_AttnUNet_R2UNet_AttnR2UNet import unet, att_unet, r2_unet, att_r2_unet
 from .ModifiedUnet import ModifiedUNet
 
