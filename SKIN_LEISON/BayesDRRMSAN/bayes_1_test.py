@@ -13,6 +13,8 @@ from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.metrics import Recall, Precision 
 from tensorflow.keras import backend as K
+import sys
+sys.path.insert(0, '../../')
 from models import DRRMSAN_multiscale_attention_r2b
 
 np.random.seed(42)
@@ -21,11 +23,11 @@ tf.random.set_seed(42)
 ## Hyperparameters
 
 #IMG_SIZE = 256
-EPOCHS = 150
+EPOCHS = 10
 BATCH = 2
 LR = 1e-5
 
-
+PATH = ""
 def load_data(path, split=0.2):
   """
   from glob import glob
@@ -36,11 +38,10 @@ def load_data(path, split=0.2):
   import sys
   import glob
   from tqdm import tqdm
-  #insert :: sys.path.insert(0, '../../')
   
   ############################## insert:: add ../ before two
-  img_files = glob.glob('trainx/*.bmp')
-  msk_files = glob.glob('trainy/*.bmp')
+  img_files = glob.glob('../trainx/*.bmp')
+  msk_files = glob.glob('../trainy/*.bmp')
 
   images_list = []
   masks_list = []
@@ -49,8 +50,8 @@ def load_data(path, split=0.2):
   for img_fl in tqdm(img_files):
     if(img_fl.split('.')[-1]=='bmp'):
       images_list.append(img_fl)
-      # insert :: img_msk = "../trainy/Y_img_"+str(img_fl.split('.')[2]).split('_')[-1]+".bmp"
-      img_msk = "trainy/Y_img_"+str(img_fl.split('.')[0]).split('_')[-1]+".bmp"
+      img_msk = "../trainy/Y_img_"+str(img_fl.split('.')[2]).split('_')[-1]+".bmp"
+      #img_msk = "trainy/Y_img_"+str(img_fl.split('.')[0]).split('_')[-1]+".bmp"
       #print("----",img_msk)
       #break
       masks_list.append(img_msk)
