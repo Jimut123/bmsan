@@ -25,6 +25,7 @@ tf.random.set_seed(42)
 EPOCHS = 150
 BATCH = 2
 LR = 1e-5
+PATH = ""
 
 def load_data(path, split=0.2):
   """
