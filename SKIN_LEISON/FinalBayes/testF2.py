@@ -29,6 +29,12 @@ EPOCHS = 10
 BATCH = 2
 LR = 1e-5
 
+alpha_1 = 0.1
+alpha_2 = 0.1
+alpha_3 = 0.1
+alpha_4 = 0.7
+
+
 def load_data(path, split=0.2):
     """
     from glob import glob
@@ -175,8 +181,8 @@ if len(x_val) % BATCH != 0:
     valid_steps += 1
 
 
-print(x_train.shape)
-print(y_train.shape)
+#print(x_train.shape)
+#print(y_train.shape)
 
 
 history = model.fit(
