@@ -49,12 +49,12 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
 
         for img_fl in tqdm(img_files):
             if(img_fl.split('.')[-1]=='bmp'):
-            images_list.append(img_fl)
-            # insert :: img_msk = "../trainy/Y_img_"+str(img_fl.split('.')[2]).split('_')[-1]+".bmp"
-            img_msk = "trainy/Y_img_"+str(img_fl.split('.')[0]).split('_')[-1]+".bmp"
-            #print("----",img_msk)
-            #break
-            masks_list.append(img_msk)
+                images_list.append(img_fl)
+                # insert :: img_msk = "../trainy/Y_img_"+str(img_fl.split('.')[2]).split('_')[-1]+".bmp"
+                img_msk = "trainy/Y_img_"+str(img_fl.split('.')[0]).split('_')[-1]+".bmp"
+                #print("----",img_msk)
+                #break
+                masks_list.append(img_msk)
         
         
         tot_size = len(images_list)
