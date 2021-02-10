@@ -1,33 +1,34 @@
-import os
-import numpy as np
-import cv2
-from glob import glob
-import tensorflow as tf
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
 
-from tensorflow.keras.layers import Conv2D, Activation, BatchNormalization
-from tensorflow.keras.layers import UpSampling2D, Input, Concatenate
-from tensorflow.keras.models import Model , load_model
-from tensorflow.keras.applications import MobileNetV2
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from tensorflow.keras.metrics import Recall, Precision 
-from tensorflow.keras import backend as K
-import sys
-sys.path.insert(0, '../../')
-from models import DRRMSAN_multiscale_attention_bayes
-
-from tensorflow.compat.v1 import ConfigProto
-from tensorflow.compat.v1 import InteractiveSession
-
-config = ConfigProto()
-config.gpu_options.allow_growth = True
-session = InteractiveSession(config=config)
-
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
 def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
+    import os
+    import numpy as np
+    import cv2
+    from glob import glob
+    import tensorflow as tf
+    import matplotlib.pyplot as plt
+    from sklearn.model_selection import train_test_split
+
+    from tensorflow.keras.layers import Conv2D, Activation, BatchNormalization
+    from tensorflow.keras.layers import UpSampling2D, Input, Concatenate
+    from tensorflow.keras.models import Model , load_model
+    from tensorflow.keras.applications import MobileNetV2
+    from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+    from tensorflow.keras.metrics import Recall, Precision 
+    from tensorflow.keras import backend as K
+    import sys
+    sys.path.insert(0, '../../')
+    from models import DRRMSAN_multiscale_attention_bayes
+
+    from tensorflow.compat.v1 import ConfigProto
+    from tensorflow.compat.v1 import InteractiveSession
+
+    config = ConfigProto()
+    config.gpu_options.allow_growth = True
+    session = InteractiveSession(config=config)
+
+    import warnings
+    warnings.filterwarnings("ignore", category=DeprecationWarning) 
     PATH = ""
     np.random.seed(42)
     tf.random.set_seed(42)
