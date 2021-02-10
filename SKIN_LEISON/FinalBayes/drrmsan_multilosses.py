@@ -1,6 +1,16 @@
 
 
-def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
+def get_dice_from_alphas(x):
+    alpha_1 = x[:, 0][0]
+    alpha_2 = x[:, 1][0]
+    alpha_3 = x[:, 2][0]
+    alpha_4 = x[:, 3][0]
+    alpha_1 = float(alpha_1[0])
+    alpha_2 = float(alpha_2[0])
+    alpha_3 = float(alpha_3[0]) 
+    alpha_4 = float(alpha_4[0])
+    print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
+    
     import os
     import numpy as np
     import cv2
@@ -380,6 +390,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
         if 'val' in item and 'dice' in item and 'add' in item: # and 'activation' in item:#
             val = array[item]['19']
             print("Dice Value got = ",val)
-    return float(val)
+    # return the -ve of dice value
+    return -float(val)
 
 
