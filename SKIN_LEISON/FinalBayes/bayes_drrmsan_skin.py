@@ -1,3 +1,4 @@
+
 #Import Modules
 
 #GPyOpt - Cases are important, for some reason
@@ -30,32 +31,6 @@ import pickle
 import drrmsan_multilosses
 
 
-<<<<<<< HEAD
-def f(x):
-    """
-    x is a 4D vector.
-    Function which will send alpha_1, alpha_2, alpha_3 and alpha_4
-    to the actual model and will get the dice coefficient in return.
-    """
-    alpha_1 = x[:, 0]
-    alpha_2 = x[:, 1]
-    alpha_3 = x[:, 2]
-    alpha_4 = x[:, 3]
-    print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
-    print(float(alpha_1[0])+ float(alpha_2[0])+ float(alpha_3[0])+ float(alpha_4[0]))
-    # Here we will send the alphas to the actual model and in return
-    # we will recieve the dice coefficient to optimise, since this is
-    # a maximization problem, we return the -ve of objective function
-    # to be maximized
-    dice_coef = drrmsan_multilosses.get_dice_from_alphas(float(alpha_1[0]), float(alpha_2[0]), float(alpha_3[0]), float(alpha_4[0]))
-    #out10 = add([alpha_1 * out6, alpha_2 * out7, alpha_3 * out8, alpha_4 * out9])
-    return -dice_coef
-
-domain = [{'name': 'alpha_1', 'type': 'continuous', 'domain': (0,1)},
-          {'name': 'alpha_2', 'type': 'continuous', 'domain': (0,1)},
-          {'name': 'alpha_3', 'type': 'continuous', 'domain': (0,1)},
-          {'name': 'alpha_4', 'type': 'continuous', 'domain': (0,1)}]
-=======
 # def f(x):
 #     """
 #     x is a 4D vector.
@@ -79,7 +54,6 @@ domain = [{'name': 'alpha_1', 'type': 'continuous', 'domain': (0,1), 'dimensiona
           {'name': 'alpha_2', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1},
           {'name': 'alpha_3', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1},
           {'name': 'alpha_4', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1}]
->>>>>>> b005472a73983ed9f340dd1c23c692c9d57d0363
 
 constraints = [{'name': 'constr_1', 'constraint': '0.9999 - x[:,0] - x[:,1] - x[:,2] - x[:,3]'},
                {'name': 'constr_1', 'constraint': '-1.00001 + x[:,0] + x[:,1] + x[:,2] + x[:,3]'}]
@@ -104,9 +78,6 @@ constraints = [{'name': 'constr_1', 'constraint': '0.9999 - x[:,0] - x[:,1] - x[
 
 maxiter = 20
 
-<<<<<<< HEAD
-myBopt_4d = GPyOpt.methods.BayesianOptimization(f, domain=domain, constraints=constraints)
-=======
 kernel = GPy.kern.Matern52(input_dim=4, ARD=True, variance=1, lengthscale=[1,1,1,1]);
 
 myBopt_4d = GPyOpt.methods.BayesianOptimization(drrmsan_multilosses.get_dice_from_alphas, domain=domain, constraints = constraints,kernel=kernel,
@@ -114,11 +85,10 @@ myBopt_4d = GPyOpt.methods.BayesianOptimization(drrmsan_multilosses.get_dice_fro
                                                 acquisition_optimizer_type='lbfgs', cost_withGradients=None,
                                                 exact_feval=True)
 
->>>>>>> b005472a73983ed9f340dd1c23c692c9d57d0363
 myBopt_4d.run_optimization(max_iter = maxiter, verbosity=True)
 print("="*20)
-print("Value of (x,y) that minimises the objective:"+str(myBopt_4d.x_opt))    
-print("Minimum value of the objective: "+str(myBopt_4d.fx_opt))     
+print("Value of (x,y) that minimises the objective:"+str(myBopt_4d.x_opt))
+print("Minimum value of the objective: "+str(myBopt_4d.fx_opt))
 print("="*20)
 
 #myBopt_4d.plot_acquisition()
@@ -132,5 +102,7 @@ print("="*20)
 # print("Minimum value of the objective: "+str(myBopt_4d.fx_opt))
 # print("="*20)
 # #myBopt_4d.plot_acquisition()
+
+
 
 
