@@ -32,7 +32,7 @@ import drrmsan_multilosses
 
 def f(x):
     """
-    x is a 4D vector.http://localhost:8889/notebooks/BayesianOpt/data_in_out_dice.ipynb#
+    x is a 4D vector.
     Function which will send alpha_1, alpha_2, alpha_3 and alpha_4
     to the actual model and will get the dice coefficient in return.
     """
