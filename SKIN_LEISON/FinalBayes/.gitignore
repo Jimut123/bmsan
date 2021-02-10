@@ -1,0 +1,5 @@
+model_checkpoint
+models
+*.h5
+logs
+

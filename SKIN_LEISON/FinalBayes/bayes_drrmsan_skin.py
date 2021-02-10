@@ -31,7 +31,6 @@ import drrmsan_multilosses
 
 
 def f(x):
-
     """
     x is a 4D vector.http://localhost:8889/notebooks/BayesianOpt/data_in_out_dice.ipynb#
     Function which will send alpha_1, alpha_2, alpha_3 and alpha_4
@@ -46,7 +45,7 @@ def f(x):
     # we will recieve the dice coefficient to optimise, since this is
     # a maximization problem, we return the -ve of objective function
     # to be maximized
-    dice_coef = drrmsan_multilosses.get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4)
+    dice_coef = drrmsan_multilosses.get_dice_from_alphas(float(alpha_1[0]), float(alpha_2[0]), float(alpha_3[0]), float(alpha_4[0]))
     return -dice_coef
 
 domain = [{'name': 'alpha_1', 'type': 'continuous', 'domain': (0,1)},
@@ -76,7 +75,7 @@ alpha_4_np = np.array(alpha_4_list)
 alpha_1, alpha_2, alpha_3, alpha_4 = np.meshgrid(alpha_1_np, alpha_2_np, alpha_3_np, alpha_4_np)
 
 
-maxiter = 50
+maxiter = 20
 
 myBopt_4d = GPyOpt.methods.BayesianOptimization(f, domain=domain)
 myBopt_4d.run_optimization(max_iter = maxiter, verbosity=True)
