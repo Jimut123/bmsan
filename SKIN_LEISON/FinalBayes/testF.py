@@ -46,7 +46,7 @@ def f(x):
     # we will recieve the dice coefficient to optimise, since this is
     # a maximization problem, we return the -ve of objective function
     # to be maximized
-    dice_coef = - alpha_1 - alpha_2 - alpha_3 - alpha_4
+    dice_coef = alpha_1 + alpha_2 + alpha_3 + alpha_4
     return -dice_coef
 
 domain = [{'name': 'alpha_1', 'type': 'continuous', 'domain': (0,1)},

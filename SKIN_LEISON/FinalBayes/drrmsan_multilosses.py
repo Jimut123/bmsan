@@ -175,8 +175,8 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
         valid_steps += 1
 
     
-    print(x_train.shape)
-    print(y_train.shape)
+    print(len(x_train))
+    print(len(y_train))
 
 
     history = model.fit(
@@ -186,6 +186,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
         steps_per_epoch=train_steps,
         validation_steps=valid_steps,
         callbacks=callbacks
+        #verbose=2
     )
 
     import pandas as pd
