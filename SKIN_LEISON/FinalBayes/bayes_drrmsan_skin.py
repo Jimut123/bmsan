@@ -57,22 +57,22 @@ constraints = [{'name': 'constr_1', 'constraint': '0.9999 - x[:,0] - x[:,1] - x[
                {'name': 'constr_1', 'constraint': '-1.00001 + x[:,0] + x[:,1] + x[:,2] + x[:,3]'}]
 
 
-alpha_1_list = []
-alpha_2_list = []
-alpha_3_list = []
-alpha_4_list = []
-for i in range(20):
-    alphas = np.random.dirichlet(np.ones(4),size=1)
-    #print("case = ", i+1, " ", alphas[0][0], alphas[0][1], alphas[0][2], alphas[0][3])
-    alpha_1_list.append(float("%0.2f" % (alphas[0][0])))
-    alpha_2_list.append(float("%0.2f" % (alphas[0][1])))
-    alpha_3_list.append(float("%0.2f" % (alphas[0][2])))
-    alpha_4_list.append(float("%0.2f" % (alphas[0][3])))
-alpha_1_np = np.array(alpha_1_list)
-alpha_2_np = np.array(alpha_2_list)
-alpha_3_np = np.array(alpha_3_list)
-alpha_4_np = np.array(alpha_4_list)
-alpha_1, alpha_2, alpha_3, alpha_4 = np.meshgrid(alpha_1_np, alpha_2_np, alpha_3_np, alpha_4_np)
+# alpha_1_list = []
+# alpha_2_list = []
+# alpha_3_list = []
+# alpha_4_list = []
+# for i in range(20):
+#     alphas = np.random.dirichlet(np.ones(4),size=1)
+#     #print("case = ", i+1, " ", alphas[0][0], alphas[0][1], alphas[0][2], alphas[0][3])
+#     alpha_1_list.append(float("%0.2f" % (alphas[0][0])))
+#     alpha_2_list.append(float("%0.2f" % (alphas[0][1])))
+#     alpha_3_list.append(float("%0.2f" % (alphas[0][2])))
+#     alpha_4_list.append(float("%0.2f" % (alphas[0][3])))
+# alpha_1_np = np.array(alpha_1_list)
+# alpha_2_np = np.array(alpha_2_list)
+# alpha_3_np = np.array(alpha_3_list)
+# alpha_4_np = np.array(alpha_4_list)
+# alpha_1, alpha_2, alpha_3, alpha_4 = np.meshgrid(alpha_1_np, alpha_2_np, alpha_3_np, alpha_4_np)
 
 
 maxiter = 20
