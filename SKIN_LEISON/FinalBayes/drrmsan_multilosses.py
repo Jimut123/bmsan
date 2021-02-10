@@ -13,6 +13,7 @@ from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.metrics import Recall, Precision 
 from tensorflow.keras import backend as K
+sys.path.insert(0, '../../')
 from models import DRRMSAN_multiscale_attention_bayes
 
 def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
