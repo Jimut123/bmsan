@@ -16,7 +16,6 @@ from tensorflow.keras import backend as K
 from models import DRRMSAN_multiscale_attention_bayes
 
 def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
-
     PATH = ""
     np.random.seed(42)
     tf.random.set_seed(42)

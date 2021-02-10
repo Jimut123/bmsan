@@ -20,13 +20,18 @@ from numpy.random import multivariate_normal
 
 # --- Load GPyOpt
 from GPyOpt.methods import BayesianOptimization
-%pylab inline
+#%pylab inline
 import GPyOpt
 import GPy
 import numpy as np
 import pickle
 
+
+import drrmsan_multilosses
+
+
 def f(x):
+
     """
     x is a 4D vector.http://localhost:8889/notebooks/BayesianOpt/data_in_out_dice.ipynb#
     Function which will send alpha_1, alpha_2, alpha_3 and alpha_4
@@ -41,7 +46,7 @@ def f(x):
     # we will recieve the dice coefficient to optimise, since this is
     # a maximization problem, we return the -ve of objective function
     # to be maximized
-    dice_coef = get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4)
+    dice_coef = drrmsan_multilosses.get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4)
     return -dice_coef
 
 domain = [{'name': 'alpha_1', 'type': 'continuous', 'domain': (0,1)},
