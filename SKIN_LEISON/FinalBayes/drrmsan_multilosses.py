@@ -28,46 +28,46 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     LR = 1e-5
 
     def load_data(path, split=0.2):
-    """
-    from glob import glob
-    images_list = sorted(glob(os.path.join(path, "trainx/*.bmp")))
-    masks_list = sorted(glob(os.path.join(path, "trainy/*.bmp")))
-    """
+        """
+        from glob import glob
+        images_list = sorted(glob(os.path.join(path, "trainx/*.bmp")))
+        masks_list = sorted(glob(os.path.join(path, "trainy/*.bmp")))
+        """
 
-    import sys
-    import glob
-    from tqdm import tqdm
-    #insert :: sys.path.insert(0, '../../')
-    
-    ############################## insert:: add ../ before two
-    img_files = glob.glob('trainx/*.bmp')
-    msk_files = glob.glob('trainy/*.bmp')
+        import sys
+        import glob
+        from tqdm import tqdm
+        #insert :: sys.path.insert(0, '../../')
+        
+        ############################## insert:: add ../ before two
+        img_files = glob.glob('trainx/*.bmp')
+        msk_files = glob.glob('trainy/*.bmp')
 
-    images_list = []
-    masks_list = []
+        images_list = []
+        masks_list = []
 
 
-    for img_fl in tqdm(img_files):
-        if(img_fl.split('.')[-1]=='bmp'):
-        images_list.append(img_fl)
-        # insert :: img_msk = "../trainy/Y_img_"+str(img_fl.split('.')[2]).split('_')[-1]+".bmp"
-        img_msk = "trainy/Y_img_"+str(img_fl.split('.')[0]).split('_')[-1]+".bmp"
-        #print("----",img_msk)
-        #break
-        masks_list.append(img_msk)
-    
-    
-    tot_size = len(images_list)
-    test_size = int(split * tot_size)
-    val_size = int(split * (tot_size - test_size))
+        for img_fl in tqdm(img_files):
+            if(img_fl.split('.')[-1]=='bmp'):
+            images_list.append(img_fl)
+            # insert :: img_msk = "../trainy/Y_img_"+str(img_fl.split('.')[2]).split('_')[-1]+".bmp"
+            img_msk = "trainy/Y_img_"+str(img_fl.split('.')[0]).split('_')[-1]+".bmp"
+            #print("----",img_msk)
+            #break
+            masks_list.append(img_msk)
+        
+        
+        tot_size = len(images_list)
+        test_size = int(split * tot_size)
+        val_size = int(split * (tot_size - test_size))
 
-    x_train, x_val = train_test_split(images_list, test_size=val_size, random_state=42)
-    y_train, y_val = train_test_split(masks_list, test_size=val_size, random_state=42)
+        x_train, x_val = train_test_split(images_list, test_size=val_size, random_state=42)
+        y_train, y_val = train_test_split(masks_list, test_size=val_size, random_state=42)
 
-    x_train, x_test = train_test_split(x_train, test_size=test_size, random_state=42)
-    y_train, y_test = train_test_split(y_train, test_size=test_size, random_state=42)
+        x_train, x_test = train_test_split(x_train, test_size=test_size, random_state=42)
+        y_train, y_test = train_test_split(y_train, test_size=test_size, random_state=42)
 
-    return (x_train, y_train), (x_val, y_val), (x_test, y_test)
+        return (x_train, y_train), (x_val, y_val), (x_test, y_test)
 
 
     def read_img(path):
