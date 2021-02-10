@@ -41,11 +41,13 @@ def f(x):
     alpha_3 = x[:, 2]
     alpha_4 = x[:, 3]
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
+    print(float(alpha_1[0])+ float(alpha_2[0])+ float(alpha_3[0])+ float(alpha_4[0]))
     # Here we will send the alphas to the actual model and in return
     # we will recieve the dice coefficient to optimise, since this is
     # a maximization problem, we return the -ve of objective function
     # to be maximized
     dice_coef = drrmsan_multilosses.get_dice_from_alphas(float(alpha_1[0]), float(alpha_2[0]), float(alpha_3[0]), float(alpha_4[0]))
+    #out10 = add([alpha_1 * out6, alpha_2 * out7, alpha_3 * out8, alpha_4 * out9])
     return -dice_coef
 
 domain = [{'name': 'alpha_1', 'type': 'continuous', 'domain': (0,1)},
@@ -77,7 +79,7 @@ constraints = [{'name': 'constr_1', 'constraint': '0.9999 - x[:,0] - x[:,1] - x[
 
 maxiter = 20
 
-myBopt_4d = GPyOpt.methods.BayesianOptimization(f, domain=domain)
+myBopt_4d = GPyOpt.methods.BayesianOptimization(f, domain=domain, constraints=constraints)
 myBopt_4d.run_optimization(max_iter = maxiter, verbosity=True)
 print("="*20)
 print("Value of (x,y) that minimises the objective:"+str(myBopt_4d.x_opt))

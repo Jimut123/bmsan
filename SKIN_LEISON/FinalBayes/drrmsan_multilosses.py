@@ -378,7 +378,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
 
     for item in array:
         if 'val' in item and 'dice' in item and 'add' in item: # and 'activation' in item:#
-            val = array[item]['19']
+            val = array[item]['9']
             print("Dice Value got = ",val)
     return float(val)
 
