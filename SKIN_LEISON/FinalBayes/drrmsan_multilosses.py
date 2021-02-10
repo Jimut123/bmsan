@@ -17,6 +17,16 @@ import sys
 sys.path.insert(0, '../../')
 from models import DRRMSAN_multiscale_attention_bayes
 
+from tensorflow.compat.v1 import ConfigProto
+from tensorflow.compat.v1 import InteractiveSession
+
+config = ConfigProto()
+config.gpu_options.allow_growth = True
+session = InteractiveSession(config=config)
+
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
+
 def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     PATH = ""
     np.random.seed(42)
@@ -120,7 +130,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
 
 
     model = DRRMSAN_multiscale_attention_bayes(height=192, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
-    model.summary()
+    #model.summary()
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
 
 
