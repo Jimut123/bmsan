@@ -430,22 +430,22 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
         return out
 
 
-    # Recurrent Residual Convolutional Neural Network based on U-Net (R2U-Net)
-    def rec_res_block(input_layer, filters, batch_normalization=False, kernel_size=[3, 3], stride=[1, 1],
-                    padding='same'):
+   def rec_res_block(input_layer, filters, batch_normalization=False, kernel_size=[3, 3], stride=[1, 1],
+                  padding='same'):
+
         skip_layer = input_layer
         layer = skip_layer
         for j in range(2):
             for i in range(2):
-            if i == 0:
-                layer1 = Conv2D(filters, kernel_size, strides=stride, padding=padding)(layer)
+                if i == 0:
+                    layer1 = Conv2D(filters, kernel_size, strides=stride, padding=padding)(layer)
+                    if batch_normalization:
+                        layer1 = BatchNormalization()(layer1)
+                    layer1 = Activation('relu')(layer1)
+                layer1 = Conv2D(filters, kernel_size, strides=stride, padding=padding)(add([layer1, layer]))
                 if batch_normalization:
-                layer1 = BatchNormalization()(layer1)
+                    layer1 = BatchNormalization()(layer1)
                 layer1 = Activation('relu')(layer1)
-            layer1 = Conv2D(filters, kernel_size, strides=stride, padding=padding)(add([layer1, layer]))
-            if batch_normalization:
-                layer1 = BatchNormalization()(layer1)
-            layer1 = Activation('relu')(layer1)
             layer = layer1
         out_layer = add([layer, skip_layer])
         return out_layer
