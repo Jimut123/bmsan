@@ -121,6 +121,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
 
     model = DRRMSAN_multiscale_attention_bayes(height=192, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
     model.summary()
+    print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
 
 
     smooth = 1e-15
@@ -172,6 +173,10 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
         train_steps += 1
     if len(x_val) % BATCH != 0:
         valid_steps += 1
+
+    
+    print(x_train.shape)
+    print(y_train.shape)
 
 
     history = model.fit(
