@@ -516,6 +516,7 @@ def DRRMSAN_multiscale_attention_bayes(height, width, n_channels, alpha_1, alpha
 
     out10 = add([alpha_1 * out6, alpha_2 * out7, alpha_3 * out8, alpha_4 * out9])
 
+    #out10 = add([out6, out7, out8, out9])
     #conv10 = conv2d_bn(out10, 1, 1, 1, activation='sigmoid')
 
     model = Model(inputs=[inputs], outputs=[out6, out7, out8, out9, out10])
