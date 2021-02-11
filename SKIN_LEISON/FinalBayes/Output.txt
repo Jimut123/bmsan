@@ -1,1 +1,1 @@
-Jacard : 0.7482381480380536 Dice Coef : 0.8434224721551642 
+Jacard : 0.0 Dice Coef : 0.0 

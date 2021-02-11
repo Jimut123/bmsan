@@ -76,7 +76,7 @@ constraints = [{'name': 'constr_1', 'constraint': '0.9999 - x[:,0] - x[:,1] - x[
 # alpha_4_np = np.array(alpha_4_list)
 # alpha_1, alpha_2, alpha_3, alpha_4 = np.meshgrid(alpha_1_np, alpha_2_np, alpha_3_np, alpha_4_np)
 
-maxiter = 20
+maxiter = 5
 
 kernel = GPy.kern.Matern52(input_dim=4, ARD=True, variance=1, lengthscale=[1,1,1,1]);
 
