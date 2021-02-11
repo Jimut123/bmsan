@@ -1,6 +1,14 @@
 
 
 def get_dice_from_alphas(x):
+    from numba import cuda
+    cuda.select_device(0)
+    cuda.close()
+    print("="*40, "cuda closed, flushed")
+    import tensorflow as tf
+    gpus = tf.config.experimental.list_physical_devices('GPU')
+    for gpu in gpus:
+        tf.config.experimental.set_memory_growth(gpu, True)
     alpha_1 = x[:, 0][0]
     alpha_2 = x[:, 1][0]
     alpha_3 = x[:, 2][0]
@@ -9,6 +17,7 @@ def get_dice_from_alphas(x):
     alpha_2 = float(alpha_2)
     alpha_3 = float(alpha_3) 
     alpha_4 = float(alpha_4)
+    val = 0
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
     
     import os
@@ -42,7 +51,6 @@ def get_dice_from_alphas(x):
     PATH = ""
     np.random.seed(42)
     tf.random.set_seed(42)
-
     ## Hyperparameters
 
     #IMG_SIZE = 256
@@ -311,6 +319,7 @@ def get_dice_from_alphas(x):
 
         print('Jacard Index : '+str(jacard))
         print('Dice Coefficient : '+str(dice))
+        val = dice
         with open("Output.txt", "w") as text_file:
             text_file.write("Jacard : {} Dice Coef : {} ".format(str(jacard), str(dice)))
 
@@ -386,11 +395,13 @@ def get_dice_from_alphas(x):
     #print (array)
     #print(json.dumps(array, indent=4, sort_keys=True))
 
-    for item in array:
-        if 'val' in item and 'dice' in item and 'add' in item: # and 'activation' in item:#
-            val = array[item]['19']
-            print("Dice Value got = ",val)
+    #for item in array:
+    #    if 'val' in item and 'dice' in item and 'add' in item: # and 'activation' in item:#
+    #        val = array[item]['9']
+    #        print("Dice Value got = ",val)
     # return the -ve of dice value
+    print("00"*50)
+    print("Dice Value Used = ", val)
     return -float(val)
 
 

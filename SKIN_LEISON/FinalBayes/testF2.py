@@ -17,6 +17,13 @@ import sys
 sys.path.insert(0, '../../')
 from models import DRRMSAN_multiscale_attention_bayes
 
+
+from numba import cuda
+cuda.select_device(0)
+cuda.close()
+print('CUDA memory released: GPU0')
+
+
 #def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
 PATH = ""
 np.random.seed(42)
