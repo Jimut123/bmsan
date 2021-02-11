@@ -1,6 +1,7 @@
 
 
 def get_dice_from_alphas(x):
+    """
     from numba import cuda
     cuda.select_device(0)
     cuda.close()
@@ -9,6 +10,7 @@ def get_dice_from_alphas(x):
     gpus = tf.config.experimental.list_physical_devices('GPU')
     for gpu in gpus:
         tf.config.experimental.set_memory_growth(gpu, True)
+    """
     alpha_1 = x[:, 0][0]
     alpha_2 = x[:, 1][0]
     alpha_3 = x[:, 2][0]
@@ -38,23 +40,27 @@ def get_dice_from_alphas(x):
     import sys
     sys.path.insert(0, '../../')
     from models import DRRMSAN_multiscale_attention_bayes
-
+    
     from tensorflow.compat.v1 import ConfigProto
     from tensorflow.compat.v1 import InteractiveSession
-
     config = ConfigProto()
     config.gpu_options.allow_growth = True
-    session = InteractiveSession(config=config)
+    #session = InteractiveSession(config=config)
+    #session_config = tf.ConfigProto()
+    #session_config.gpu_options.per_process_gpu_memory_fraction = 0.3
+    #config = tf.estimator.RunConfig(model_dir=FLAGS.model_dir, session_config=session_config)
+
 
     import warnings
     warnings.filterwarnings("ignore", category=DeprecationWarning) 
+    
     PATH = ""
     np.random.seed(42)
     tf.random.set_seed(42)
     ## Hyperparameters
 
     #IMG_SIZE = 256
-    EPOCHS = 10
+    EPOCHS = 2
     BATCH = 2
     LR = 1e-5
 
