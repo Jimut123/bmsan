@@ -92,7 +92,6 @@ print("Minimum value of the objective: "+str(myBopt_4d.fx_opt))
 print("="*20)
 
 #myBopt_4d.plot_acquisition()
-
 # maxiter = 20
 
 # myBopt_4d = GPyOpt.methods.BayesianOptimization(drrmsan_multilosses.get_dice_from_alphas, domain=domain)
