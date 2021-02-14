@@ -62,7 +62,7 @@ constraints = [{'name': 'constr_1', 'constraint': '0.9999 - x[:,0] - x[:,1] - x[
 
 
 
-maxiter = 20
+maxiter = 50
 
 kernel = GPy.kern.Matern52(input_dim=4, ARD=True, variance=1, lengthscale=[1,1,1,1]);
 

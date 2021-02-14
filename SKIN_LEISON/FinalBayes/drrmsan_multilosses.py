@@ -1,6 +1,8 @@
 
 
-def get_dice_from_alphas(x):
+#def get_dice_from_alphas(x):
+dice = 0
+def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     """
     from numba import cuda
     cuda.select_device(0)
@@ -10,17 +12,19 @@ def get_dice_from_alphas(x):
     gpus = tf.config.experimental.list_physical_devices('GPU')
     for gpu in gpus:
         tf.config.experimental.set_memory_growth(gpu, True)
+    
+    alpha_1 = x[:, 0]
+    alpha_2 = x[:, 1]
+    alpha_3 = x[:, 2]
+    alpha_4 = x[:, 3]
     """
-    alpha_1 = x[:, 0][0]
-    alpha_2 = x[:, 1][0]
-    alpha_3 = x[:, 2][0]
-    alpha_4 = x[:, 3][0]
     alpha_1 = float(alpha_1)
     alpha_2 = float(alpha_2)
     alpha_3 = float(alpha_3) 
     alpha_4 = float(alpha_4)
-    val = 0
+    #global dice_val = 0
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
+    print("Total => ",alpha_1+alpha_2+alpha_3+alpha_4)
     
     import os
     import numpy as np
@@ -60,7 +64,7 @@ def get_dice_from_alphas(x):
     ## Hyperparameters
 
     #IMG_SIZE = 256
-    EPOCHS = 2
+    EPOCHS = 150
     BATCH = 2
     LR = 1e-5
 
@@ -219,8 +223,8 @@ def get_dice_from_alphas(x):
         epochs=EPOCHS,
         steps_per_epoch=train_steps,
         validation_steps=valid_steps,
-        callbacks=callbacks
-        #verbose=2
+        callbacks=callbacks,
+        verbose=2
     )
 
     import pandas as pd
@@ -256,13 +260,13 @@ def get_dice_from_alphas(x):
 
     # Run this module only while loading the pre-trained model.
     model = load_model('skin_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jacard':jacard})
-    model.summary()
+    #model.summary()
 
 
 
     jaccard_index_list = []
     dice_coeff_list = []
-
+    
     def evaluateModel(model, X_test, Y_test, batchSize):  
         
         try:
@@ -303,9 +307,8 @@ def get_dice_from_alphas(x):
 
 
         jacard = 0
+        global dice 
         dice = 0
-
-
         for i in range(len(Y_test)):
             yp_2 = yp[i].ravel()
             y2 = Y_test[i].ravel()
@@ -319,13 +322,14 @@ def get_dice_from_alphas(x):
 
 
         jacard /= len(Y_test)
+        
         dice /= len(Y_test)
 
 
 
         print('Jacard Index : '+str(jacard))
         print('Dice Coefficient : '+str(dice))
-        val = dice
+
         with open("Output.txt", "w") as text_file:
             text_file.write("Jacard : {} Dice Coef : {} ".format(str(jacard), str(dice)))
 
@@ -348,6 +352,15 @@ def get_dice_from_alphas(x):
             fp.close()
 
             #saveModel(model)
+
+        print("00"*50)
+        f = open("./bayesian_opt.txt", "a+")
+        dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice)
+        f.write(dump_str)
+        f.close()
+        print("Dice Value Used = ", -float(dice))
+        del model
+        print("Model deleted and dice value returned!!")
 
 
     from tqdm import tqdm
@@ -391,13 +404,15 @@ def get_dice_from_alphas(x):
     fp.close()
 
     evaluateModel(model, X_test, Y_test, BATCH)
+    del model, history, X_test, train_data, valid_data, Y_test
 
+    print("Model deleted!!")
 
-    import json
-    import matplotlib.pyplot as plt
+    #import json
+    #import matplotlib.pyplot as plt
 
-    with open('history_skin_drrmsan.json', 'r') as f:
-        array = json.load(f)
+    #with open('history_skin_drrmsan.json', 'r') as f:
+    #    array = json.load(f)
     #print (array)
     #print(json.dumps(array, indent=4, sort_keys=True))
 
@@ -406,9 +421,8 @@ def get_dice_from_alphas(x):
     #        val = array[item]['9']
     #        print("Dice Value got = ",val)
     # return the -ve of dice value
-    print("00"*50)
-    print("Dice Value Used = ", val)
-    return -float(val)
+    global dice
+    return -float(dice)
 
 
 
