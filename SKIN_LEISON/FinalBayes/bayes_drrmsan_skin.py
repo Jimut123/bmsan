@@ -80,6 +80,13 @@ print("Value of (x,y) that minimises the objective:"+str(myBopt_4d.x_opt))
 print("Minimum value of the objective: "+str(myBopt_4d.fx_opt))
 print("="*20)
 
+f = open("./bayesian_opt.txt", "a+")
+dump_str = "Value of (x,y) that minimises the objective:"+str(myBopt_4d.x_opt)+"\n"
+f.write(dump_str)
+dump_str = "Minimum value of the objective: "+str(myBopt_4d.fx_opt)+"\n"
+f.write(dump_str)
+f.close()
+
 
 
 
