@@ -78,7 +78,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
 
         import sys
         import glob
-        sys.path.insert(0, '../../')
+        #sys.path.insert(0, '../../')
 
 
         img_files = glob.glob('../Kvasir-SEG/images/*')
