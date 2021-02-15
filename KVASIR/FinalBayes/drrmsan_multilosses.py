@@ -42,6 +42,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     from tensorflow.keras.metrics import Recall, Precision 
     from tensorflow.keras import backend as K
     import sys
+    from tqdm import tqdm
     sys.path.insert(0, '../../')
     from models import DRRMSAN_multiscale_attention_bayes
     
@@ -92,7 +93,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
 
 
         images_list = []
-        msk_files = []
+        masks_list = []
 
 
         for img_fl in tqdm(img_files):
@@ -108,7 +109,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
                 msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
                 resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
                 resized_mask = np.expand_dims(resized_msk, axis=2)
-                msk_files.append(resized_mask)#resized_msk)
+                masks_list.append(resized_mask)#resized_msk)
         
         tot_size = len(images_list)
         test_size = int(split * tot_size)
@@ -119,7 +120,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
 
         x_train, x_test = train_test_split(x_train, test_size=test_size, random_state=42)
         y_train, y_test = train_test_split(y_train, test_size=test_size, random_state=42)
-
+        print(x_train[0],"--", y_train[0])
         return (x_train, y_train), (x_val, y_val), (x_test, y_test)
 
 
