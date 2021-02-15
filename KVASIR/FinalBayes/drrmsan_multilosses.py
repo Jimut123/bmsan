@@ -76,6 +76,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
         """
 
         import sys
+        import glob
         sys.path.insert(0, '../../')
 
 
@@ -100,7 +101,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
             original_name = "../Kvasir-SEG/images/"+name+".jpg"
             mask_name = "../Kvasir-SEG/masks/"+name+".jpg"
             if(img_fl.split('.')[-1]=='jpg'):
-                
+
                 img = cv2.imread('{}'.format(original_name), cv2.IMREAD_COLOR)
                 resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
                 images_list.append(resized_img) #resized_img)
