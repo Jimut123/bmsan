@@ -357,7 +357,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
 
         print("00"*50)
         f = open("./bayesian_opt.txt", "a+")
-        dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice)
+        dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " \n"
         f.write(dump_str)
         f.close()
         print("Dice Value Used = ", -float(dice))
