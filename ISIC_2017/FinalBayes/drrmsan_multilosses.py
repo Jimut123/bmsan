@@ -78,7 +78,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
 
         import sys
         import glob
-        sys.path.insert(0, '../../')
+        #sys.path.insert(0, '../../')
 
         img_files = sorted(glob.glob('../ISIC-2017_Training_Data/ISIC_*.jpg'))
         msk_files = sorted(glob.glob('../ISIC-2017_Training_Data/*_superpixels.png'))
@@ -236,7 +236,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
 
 
     # save to json:
-    hist_json_file = 'history_kvasir_drrmsan.json'
+    hist_json_file = 'history_isic_2017_drrmsan.json'
     # with open(hist_json_file, 'a') as out:
     #     out.write(hist_df.to_json())
     #     out.write(",")
@@ -246,7 +246,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
         hist_df.to_json(f)
 
     # or save to csv:
-    hist_csv_file = 'history_kvasir_drrmsan.csv'
+    hist_csv_file = 'history_isic_2017_drrmsan.csv'
     # with open(hist_csv_file, 'a') as out:
     #     out.write(str(hist_df.to_csv()))
     #     out.write(",")
@@ -257,11 +257,11 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
         hist_df.to_csv(f)
 
 
-    model.save_weights("kvasir_drrmsan_150e.h5")
-    model.save("kvasir_drrmsan_with_weight_150e.h5")
+    model.save_weights("isic_2017_drrmsan_150e.h5")
+    model.save("isic_2017_drrmsan_with_weight_150e.h5")
 
     # Run this module only while loading the pre-trained model.
-    model = load_model('kvasir_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jacard':jacard})
+    model = load_model('isic_2017_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jacard':jacard})
     #model.summary()
 
 
@@ -337,11 +337,11 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
 
         jaccard_index_list.append(jacard)
         dice_coeff_list.append(dice)
-        fp = open('models/log_drrmsan_kvasir.txt','a')
+        fp = open('models/log_drrmsan_isic_2017.txt','a')
         fp.write(str(jacard)+'\n')
         fp.close()
 
-        fp = open('models/best_drrmsan_kvasir.txt','r')
+        fp = open('models/best_drrmsan_isic_2017.txt','r')
         best = fp.read()
         fp.close()
 
@@ -349,14 +349,14 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
             print('***********************************************')
             print('Jacard Index improved from '+str(best)+' to '+str(jacard))
             print('***********************************************')
-            fp = open('models/best_UNet_kvasir.txt','w')
+            fp = open('models/best_UNet_isic_2017.txt','w')
             fp.write(str(jacard))
             fp.close()
 
             #saveModel(model)
 
         print("00"*50)
-        f = open("./bayesian_opt.txt", "a+")
+        f = open("./bayesian_opt_isic_2017.txt", "a+")
         dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " \n"
         f.write(dump_str)
         f.close()
@@ -399,9 +399,9 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     except:
         pass
 
-    fp = open('models/log_drrmsan_kvasir.txt','w')
+    fp = open('models/log_drrmsan_isic_2017.txt','w')
     fp.close()
-    fp = open('models/best_drrmsan_kvasir.txt','w')
+    fp = open('models/best_drrmsan_isic_2017.txt','w')
     fp.write('-1.0')
     fp.close()
 
