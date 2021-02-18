@@ -3,7 +3,7 @@ import drrmsan_multilosses
 
 # Generating Cases
 
-for i in range(3):
+for i in range(20):
     alphas = np.random.dirichlet(np.ones(4),size=1)
     alpha_1 = float("%0.2f" % (alphas[0][0]))
     alpha_2 = float("%0.2f" % (alphas[0][1]))
