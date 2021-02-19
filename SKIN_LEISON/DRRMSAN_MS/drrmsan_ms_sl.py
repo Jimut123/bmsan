@@ -256,7 +256,7 @@ alpha_2 = 0.25
 alpha_3 = 0.25
 alpha_4 = 0.25
 
-model = DRRMSAN_multiscale_attention_bayes(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
+model = DRRMSAN_multiscale_attention_bayes(height=192, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
 
 
 #model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
