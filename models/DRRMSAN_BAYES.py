@@ -330,6 +330,7 @@ def DRRMSAN_multiscale_attention_bayes(height, width, n_channels, alpha_1, alpha
     Returns:
         [keras model] -- MultiResUNet model
     '''
+    print("DRRMSAN Bayes")
 
 
     inputs = Input((height, width, n_channels))
@@ -512,7 +513,8 @@ def DRRMSAN_multiscale_attention_bayes(height, width, n_channels, alpha_1, alpha
     # weighted averaging all the output masks obtained at different scales
     # alpha_1 = least scale, alpha_4 = same scale as I
 
-    out10 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', kernel_initializer = 'he_normal', kernel_regularizer=l2(1e-4), name='out_10')(add([alpha_1 * out6, alpha_2 * out7, alpha_3 * out8, alpha_4 * out9]))
+    #out10 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', kernel_initializer = 'he_normal', kernel_regularizer=l2(1e-4), name='out_10')(add([alpha_1 * out6, alpha_2 * out7, alpha_3 * out8, alpha_4 * out9]))
+    out10 = add([alpha_1 * out6, alpha_2 * out7, alpha_3 * out8, alpha_4 * out9])
 
     #conv10 = conv2d_bn(out10, 1, 1, 1, activation='sigmoid')
 
