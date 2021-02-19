@@ -149,6 +149,7 @@ def evaluateModel(model, X_test, Y_test, batchSize):
     yp = model.predict(x=X_test, batch_size=batchSize, verbose=1)
 
     yp = np.round(yp,0)
+    yp = yp[4]
 
     for i in range(10):
 
@@ -262,7 +263,7 @@ alpha_2 = 0.25
 alpha_3 = 0.25
 alpha_4 = 0.25
 
-model = DRRMSAN_multiscale_attention_bayes(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4))
+model = DRRMSAN_multiscale_attention_bayes(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
 
 #model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
 from tensorflow.keras.metrics import Recall, Precision
