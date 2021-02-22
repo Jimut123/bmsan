@@ -28,6 +28,8 @@ import pickle
 import numpy
 
 
+import drrmsan_multilosses
+
 def f(x):
     # x is a 4D vector.
     # Function which will send alpha_1, alpha_2, alpha_3 and alpha_4
