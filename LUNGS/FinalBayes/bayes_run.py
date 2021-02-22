@@ -20,12 +20,12 @@ from numpy.random import multivariate_normal
 
 # --- Load GPyOpt
 from GPyOpt.methods import BayesianOptimization
-%pylab inline
+#%pylab inline
 import GPyOpt
 import GPy
 import numpy as np
 import pickle
-
+import numpy
 
 
 def f(x):
