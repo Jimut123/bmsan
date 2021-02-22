@@ -26,7 +26,7 @@ import GPy
 import numpy as np
 import pickle
 
-
+import drrmsan_multilosses
 
 def f(x):
     # x is a 4D vector.
