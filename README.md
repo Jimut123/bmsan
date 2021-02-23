@@ -2,6 +2,11 @@
 
 DRRMSAN: Deep Residual Regularized Multi-Scale Attention Networks for segmentation of medical images.
 
+## Abstract
+
+Medical sectors are generally presented with challenge of segmenting images with high accuracy. A novel Deep learning architecture is proposed which can segment images at multiple scales, leading to high dice coefficient in majority of challenging datasets, where regions of interest are of different shapes and sizes. Use of attention module within the architecture partly increases the capability of the model to focus on relevant regions. Calculating loss at different scales also helps in incremental reconstruction of segmentation mask. A comparison with other state of the art model shows this model performs better than most with a significantly low computation overhead. This demonstrates the efficiency and reliability of our approach to generate segmentation masks.
+
+
 ## Our proposed model
 <center><img src="assets/DRRMSAN_Model.png"></center>
 
