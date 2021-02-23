@@ -2,7 +2,7 @@
 
 DRRMSAN: Deep Residual Regularized Multi-Scale Attention Networks for segmentation of medical images.
 
-[Slides](https://www.youtube.com/watch?v=My7L-ggFbKI)
+[[Slides](https://www.youtube.com/watch?v=My7L-ggFbKI)]
 
 ## Abstract
 
