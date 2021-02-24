@@ -24,6 +24,14 @@ Medical sectors are generally presented with challenge of segmenting images with
 ## Comparison with other models
 <center><img src="assets/comparisons.png"></center>
 
+## Download the datasets from here:
+
+* [ISIC 2017](https://drive.google.com/u/3/uc?id=1-PAttyqJLImKMdz0gTLM3soiWWvi8PAD)
+* [BRAIN MRI](https://drive.google.com/u/3/uc?id=1-YLWaVt4d1MA51Ljid4mznaDg5e1xafc)
+* [SKIN LESION](https://drive.google.com/u/0/uc?id=1-OdmzC3JvmUsZUMrNAKPnu8ZM7EeSK04)
+* [LUNGS](https://drive.google.com/u/3/uc?id=1wkephfRzoFhrcRbz_7a97_muu8ecSJ9d)
+* [KVASIR-SEG](https://drive.google.com/u/3/uc?id=1VzOUEvIyhmOGQUBGzfI7M8GMW2NjIFeH)
+
 ## Dependencies for GPU
 ```
 conda install -c anaconda cudatoolkit=10.1.243 cudnn=7.6.5 tensorflow-gpu
