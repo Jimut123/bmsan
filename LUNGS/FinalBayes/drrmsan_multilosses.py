@@ -64,7 +64,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     ## Hyperparameters
 
     #IMG_SIZE = 256
-    EPOCHS = 5
+    EPOCHS = 150
     BATCH = 2
     LR = 1e-5
 
@@ -354,7 +354,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
             #saveModel(model)
 
         print("00"*50)
-        f = open("./store_alphas_dice.txt", "a+")
+        f = open("./store_alphas_dice_bckup1.txt", "a+")
         dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " \n"
         f.write(dump_str)
         f.close()
