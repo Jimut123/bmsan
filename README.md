@@ -64,4 +64,16 @@ It is ritual that scholars express their gratitude to their supervisors.  This a
 The Authors would also like to thank [lixiaolei1982](https://github.com/lixiaolei1982/Keras-Implementation-of-U-Net-R2U-Net-Attention-U-Net-Attention-R2U-Net.-) and [nibtehaz](https://github.com/nibtehaz/MultiResUNet) for open sourcing their implementations. 
 
 
+# BibTeX and citations
+
+```
+@misc{pal_2021_drrmsan,
+  author = {Jimut Bahan Pal and Dripta Mj},
+  title = {DRRMSAN: Deep Residual Regularized Multi-Scale Attention Networks for segmentation of medical images.},
+  year = {2019},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/Jimut123/drrmsan/}},
+}
+```
 ***
