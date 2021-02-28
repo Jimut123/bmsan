@@ -248,8 +248,11 @@ def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
 
     return model
 
-
-model = DRRMSAN_multiscale_attention_bayes_001(height=192, width=256, n_channels=3)
+alpha_1 = 0.25
+alpha_2 = 0.25
+alpha_3 = 0.25
+alpha_4 = 0.25
+model = DRRMSAN_multiscale_attention_bayes_001(height=192, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
 
 #model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
 from tensorflow.keras.metrics import Recall, Precision
