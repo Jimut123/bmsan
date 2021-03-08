@@ -1,0 +1,6 @@
+skin_drrmsan_150e.h5
+skin_drrmsan_with_weight_150e.h5
+logs/
+model_checkpoint/
+models
+__pycache__/
