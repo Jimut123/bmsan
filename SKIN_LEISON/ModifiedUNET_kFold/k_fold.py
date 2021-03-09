@@ -286,7 +286,7 @@ for train_index, test_index in kf.split(X):
 
         return model
     # img_w, img_h, n_label, data_format='channels_first'
-    model = ModifiedUNet(height=192, width=256, n_channels=3)
+    model = ModifiedUNet(height=256, width=192, n_channels=3)
 
     #model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
     model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
