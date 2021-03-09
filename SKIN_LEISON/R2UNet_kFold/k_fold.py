@@ -116,19 +116,19 @@ for train_index, test_index in kf.split(X):
     (100, 3, 12, 12)
 
     """
-    # X_train = np.moveaxis(X_train,-1,1)
-    # print(X_train.shape)
+    X_train = np.moveaxis(X_train,-1,1)
+    print(X_train.shape)
 
-    # Y_train = np.moveaxis(Y_train,-1,1)
-    # Y_train = np.repeat(Y_train,repeats=3,axis=1)
-    # print(Y_train.shape)
+    Y_train = np.moveaxis(Y_train,-1,1)
+    Y_train = np.repeat(Y_train,repeats=3,axis=1)
+    print(Y_train.shape)
 
-    # X_test = np.moveaxis(X_test,-1,1)
-    # print(X_test.shape)
+    X_test = np.moveaxis(X_test,-1,1)
+    print(X_test.shape)
 
-    # Y_test = np.moveaxis(Y_test,-1,1)
-    # Y_test = np.repeat(Y_test,repeats=3,axis=1)
-    # print(Y_test.shape)
+    Y_test = np.moveaxis(Y_test,-1,1)
+    Y_test = np.repeat(Y_test,repeats=3,axis=1)
+    print(Y_test.shape)
 
 
 
@@ -158,9 +158,9 @@ for train_index, test_index in kf.split(X):
         except:
             pass
 
-        fp = open('models/modelP_UNet_skinLesion.json','w')
+        fp = open('models/modelP_r2unet_skinLesion.json','w')
         fp.write(model_json)
-        model.save_weights('models/modelW_UNet_skinLesion.h5')
+        model.save_weights('models/modelW_r2unet_skinLesion.h5')
 
 
     jaccard_index_list = []
@@ -232,11 +232,11 @@ for train_index, test_index in kf.split(X):
 
         jaccard_index_list.append(jacard)
         dice_coeff_list.append(dice)
-        fp = open('models/log_Unet_skinLesion.txt','a')
+        fp = open('models/log_r2unet_skinLesion.txt','a')
         fp.write(str(jacard)+'\n')
         fp.close()
 
-        fp = open('models/best_Unet_skinLesion.txt','r')
+        fp = open('models/best_r2unet_skinLesion.txt','r')
         best = fp.read()
         fp.close()
 
@@ -244,7 +244,7 @@ for train_index, test_index in kf.split(X):
             print('***********************************************')
             print('Jacard Index improved from '+str(best)+' to '+str(jacard))
             print('***********************************************')
-            fp = open('models/best_Unet_skinLesion.txt','w')
+            fp = open('models/best_r2unet_skinLesion.txt','w')
             fp.write(str(jacard))
             fp.close()
 
@@ -260,7 +260,7 @@ for train_index, test_index in kf.split(X):
 
 
         # save to json:
-        hist_json_file = 'history_Unet_skinLesion_fold_{}.json'.format(fold_no)
+        hist_json_file = 'history_r2unet_skinLesion_fold_{}.json'.format(fold_no)
         # with open(hist_json_file, 'a') as out:
         #     out.write(hist_df.to_json())
         #     out.write(",")
@@ -270,7 +270,7 @@ for train_index, test_index in kf.split(X):
             hist_df.to_json(f)
 
         # or save to csv:
-        hist_csv_file = 'history_Unet_skinLesion_fold_{}.csv'.format(fold_no)
+        hist_csv_file = 'history_r2unet_skinLesion_fold_{}.csv'.format(fold_no)
         # with open(hist_csv_file, 'a') as out:
         #     out.write(str(hist_df.to_csv()))
         #     out.write(",")
@@ -284,7 +284,7 @@ for train_index, test_index in kf.split(X):
 
         return model
     # img_w, img_h, n_label, data_format='channels_first'
-    model = MultiResUnet(height=192, width=256, n_channels=3)
+    model = ModifiedUNet(height=256, width=192, n_channels=3)
 
     #model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
     model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
