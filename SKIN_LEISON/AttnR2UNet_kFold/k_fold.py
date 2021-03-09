@@ -34,6 +34,7 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras import backend as K
 from sklearn.model_selection import KFold
+from sklearn.metrics import average_precision_score
 
 import sys
 sys.path.insert(0, '../../')
@@ -202,7 +203,7 @@ for train_index, test_index in kf.split(X):
 
         jacard = 0
         dice = 0
-        iou_score = 0
+        avg_precision = 0
 
         for i in range(len(Y_test)):
             yp_2 = yp[i].ravel()
@@ -210,9 +211,7 @@ for train_index, test_index in kf.split(X):
 
             intersection = yp_2 * y2
             union = yp_2 + y2 - intersection
-            intersection_ = np.logical_and(yp_2, y2)
-            union_ = np.logical_or(yp_2, y2)
-            iou_score += np.sum(intersection_) / np.sum(union_)
+            avg_precision += average_precision_score(yp_2, y2)
 
             jacard += (np.sum(intersection)/np.sum(union))
 
@@ -221,13 +220,13 @@ for train_index, test_index in kf.split(X):
 
         jacard /= len(Y_test)
         dice /= len(Y_test)
-        iou_score /= len(Y_test)
+        avg_precision /= len(Y_test)
 
         print('Jacard Index : '+str(jacard))
         print('Dice Coefficient : '+str(dice))
         with open("Output.txt", "a") as text_file:
-            text_file.write("Fold = {} Jacard : {} Dice Coef : {} IoU : {}\n".format(str(fold_no), 
-            str(jacard), str(dice), str(iou_score)))
+            text_file.write("Fold = {} Jacard : {} Dice Coef : {} Avg. Precision : {}\n".format(str(fold_no), 
+            str(jacard), str(dice), str(avg_precision)))
         
 
         jaccard_index_list.append(jacard)
