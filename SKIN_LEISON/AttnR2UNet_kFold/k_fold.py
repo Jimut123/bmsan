@@ -72,8 +72,9 @@ Y = np.array(Y)
 kf = KFold(n_splits=5)
 kf.get_n_splits(X)
 
-fold_no = 1
+fold_no = 0
 for train_index, test_index in kf.split(X):
+    fold_no += 1
     # print("TRAIN:", train_index, "TEST:", test_index)
     X_train, X_test = X[train_index], X[test_index]
     Y_train, Y_test = Y[train_index], Y[test_index]
@@ -224,8 +225,8 @@ for train_index, test_index in kf.split(X):
         print('Dice Coefficient : '+str(dice))
         with open("Output.txt", "a") as text_file:
             text_file.write("Fold = {} Jacard : {} Dice Coef : {} \n".format(str(fold_no), str(jacard), str(dice)))
-        fold_no += 1
         
+
         jaccard_index_list.append(jacard)
         dice_coeff_list.append(dice)
         fp = open('models/log_attnR2Unet_skinLesion.txt','a')
