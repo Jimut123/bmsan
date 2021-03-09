@@ -34,10 +34,11 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras import backend as K
 from sklearn.model_selection import KFold
+from sklearn.metrics import average_precision_score, recall_score
 
 import sys
 sys.path.insert(0, '../../')
-from models import att_unet
+from models import att_r2_unet
 
 
 img_files = glob.glob('../trainx/*.bmp')
@@ -72,8 +73,9 @@ Y = np.array(Y)
 kf = KFold(n_splits=5)
 kf.get_n_splits(X)
 
-fold_no = 1
+fold_no = 0
 for train_index, test_index in kf.split(X):
+    fold_no += 1
     # print("TRAIN:", train_index, "TEST:", test_index)
     X_train, X_test = X[train_index], X[test_index]
     Y_train, Y_test = Y[train_index], Y[test_index]
@@ -156,9 +158,9 @@ for train_index, test_index in kf.split(X):
         except:
             pass
 
-        fp = open('models/modelP_attnR2Unet_skinLesion.json','w')
+        fp = open('models/modelP_attnUnet_skinLesion.json','w')
         fp.write(model_json)
-        model.save_weights('models/modelW_attnR2Unet_skinLesion.h5')
+        model.save_weights('models/modelW_attnUnet_skinLesion.h5')
 
 
     jaccard_index_list = []
@@ -167,7 +169,7 @@ for train_index, test_index in kf.split(X):
     def evaluateModel(model, X_test, Y_test, batchSize):
 
         try:
-            os.makedirs('results')
+            os.makedirs('results_{}'.format(fold_no))
         except:
             pass
 
@@ -195,13 +197,14 @@ for train_index, test_index in kf.split(X):
             jacard = (np.sum(intersection)/np.sum(union))
             plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard))
 
-            plt.savefig('results/'+str(i)+'.png',format='png')
+            plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
             plt.close()
 
 
         jacard = 0
         dice = 0
-
+        avg_precision = 0
+        recall_score = 0
 
         for i in range(len(Y_test)):
             yp_2 = yp[i].ravel()
@@ -209,6 +212,8 @@ for train_index, test_index in kf.split(X):
 
             intersection = yp_2 * y2
             union = yp_2 + y2 - intersection
+            avg_precision += average_precision_score(yp_2, y2)
+            # recall_score += recall_score(yp_2, y2)
 
             jacard += (np.sum(intersection)/np.sum(union))
 
@@ -217,21 +222,23 @@ for train_index, test_index in kf.split(X):
 
         jacard /= len(Y_test)
         dice /= len(Y_test)
-
-
+        avg_precision /= len(Y_test)
+        # recall_score /= len(Y_test)
 
         print('Jacard Index : '+str(jacard))
         print('Dice Coefficient : '+str(dice))
         with open("Output.txt", "a") as text_file:
-            text_file.write("Fold = {} Jacard : {} Dice Coef : {} \n".format(str(fold_no), str(jacard), str(dice)))
-        fold_no += 1
+            text_file.write("Fold = {} Jacard : {} Dice Coef : {} Avg. Precision : {}  \n".format(str(fold_no), 
+            str(jacard), str(dice), str(avg_precision)))
+        
+
         jaccard_index_list.append(jacard)
         dice_coeff_list.append(dice)
-        fp = open('models/log_attnR2Unet_skinLesion.txt','a')
+        fp = open('models/log_attnUnet_skinLesion.txt','a')
         fp.write(str(jacard)+'\n')
         fp.close()
 
-        fp = open('models/best_attnR2Unet_skinLesion.txt','r')
+        fp = open('models/best_attnUnet_skinLesion.txt','r')
         best = fp.read()
         fp.close()
 
@@ -239,7 +246,7 @@ for train_index, test_index in kf.split(X):
             print('***********************************************')
             print('Jacard Index improved from '+str(best)+' to '+str(jacard))
             print('***********************************************')
-            fp = open('models/best_attnR2Unet_skinLesion.txt','w')
+            fp = open('models/best_attnUnet_skinLesion.txt','w')
             fp.write(str(jacard))
             fp.close()
 
@@ -255,7 +262,7 @@ for train_index, test_index in kf.split(X):
 
 
         # save to json:
-        hist_json_file = 'history_attnR2Unet_skinLesion_fold_{}.json'.format(fold_no)
+        hist_json_file = 'history_attnUnet_skinLesion_fold_{}.json'.format(fold_no)
         # with open(hist_json_file, 'a') as out:
         #     out.write(hist_df.to_json())
         #     out.write(",")
@@ -265,7 +272,7 @@ for train_index, test_index in kf.split(X):
             hist_df.to_json(f)
 
         # or save to csv:
-        hist_csv_file = 'history_attnR2Unet_skinLesion_fold_{}.csv'.format(fold_no)
+        hist_csv_file = 'history_attnUnet_skinLesion_fold_{}.csv'.format(fold_no)
         # with open(hist_csv_file, 'a') as out:
         #     out.write(str(hist_df.to_csv()))
         #     out.write(",")
@@ -279,16 +286,16 @@ for train_index, test_index in kf.split(X):
 
         return model
     # img_w, img_h, n_label, data_format='channels_first'
-    model = att_unet(img_h=256, img_w=192, n_label=3)
+    model = att_r2_unet(img_h=256, img_w=192, n_label=3)
 
     #model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
     model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
 
     saveModel(model)
 
-    fp = open('models/log_attnR2Unet_skinLesion.txt','w')
+    fp = open('models/log_attnUnet_skinLesion.txt','w')
     fp.close()
-    fp = open('models/best_attnR2Unet_skinLesion.txt','w')
+    fp = open('models/best_attnUnet_skinLesion.txt','w')
     fp.write('-1.0')
     fp.close()
 

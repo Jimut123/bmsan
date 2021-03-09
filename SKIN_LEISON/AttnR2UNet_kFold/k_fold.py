@@ -197,7 +197,7 @@ for train_index, test_index in kf.split(X):
             jacard = (np.sum(intersection)/np.sum(union))
             plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard))
 
-            plt.savefig('results_{}'.format(fold_no)+str(i)+'.png',format='png')
+            plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
             plt.close()
 
 
