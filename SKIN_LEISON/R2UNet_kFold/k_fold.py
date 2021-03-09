@@ -38,7 +38,7 @@ from sklearn.metrics import average_precision_score, recall_score
 
 import sys
 sys.path.insert(0, '../../')
-from models import MultiResUnet
+from models import r2_unet
 
 
 img_files = glob.glob('../trainx/*.bmp')

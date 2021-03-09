@@ -181,13 +181,13 @@ for train_index, test_index in kf.split(X):
         for i in range(10):
             plt.figure(figsize=(20,10))
             plt.subplot(1,3,1)
-            plt.imshow(np.moveaxis(X_test[i],0,-1))
+            plt.imshow(X_test[i])
             plt.title('Input')
             plt.subplot(1,3,2)
-            plt.imshow(np.moveaxis(Y_test[i],0,-1))
+            plt.imshow(Y_test[i].reshape(Y_test[i].shape[0],Y_test[i].shape[1]))
             plt.title('Ground Truth')
             plt.subplot(1,3,3)
-            plt.imshow(np.moveaxis(yp[i],0,-1))
+            plt.imshow(yp[i].reshape(yp[i].shape[0],yp[i].shape[1]))
             plt.title('Prediction')
 
             intersection = yp[i].ravel() * Y_test[i].ravel()
