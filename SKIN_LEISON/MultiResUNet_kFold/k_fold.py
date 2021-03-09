@@ -38,7 +38,7 @@ from sklearn.metrics import average_precision_score, recall_score
 
 import sys
 sys.path.insert(0, '../../')
-from models import ModifiedUNet
+from models import MultiResUnet
 
 
 img_files = glob.glob('../trainx/*.bmp')
@@ -181,23 +181,20 @@ for train_index, test_index in kf.split(X):
         for i in range(10):
             plt.figure(figsize=(20,10))
             plt.subplot(1,3,1)
-            plt.imshow(X_test[i])
+            plt.imshow(np.moveaxis(X_test[i],0,-1))
             plt.title('Input')
             plt.subplot(1,3,2)
-            plt.imshow(Y_test[i].reshape(Y_test[i].shape[0],Y_test[i].shape[1]))
+            plt.imshow(np.moveaxis(Y_test[i],0,-1))
             plt.title('Ground Truth')
             plt.subplot(1,3,3)
-            plt.imshow(yp[i].reshape(yp[i].shape[0],yp[i].shape[1]))
+            plt.imshow(np.moveaxis(yp[i],0,-1))
             plt.title('Prediction')
 
             intersection = yp[i].ravel() * Y_test[i].ravel()
             union = yp[i].ravel() + Y_test[i].ravel() - intersection
-            avg_precision = average_precision_score(yp[i].ravel(), Y_test[i].ravel())
 
             jacard = (np.sum(intersection)/np.sum(union))
-            plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard)
-            +" Dice : "+str((2. * np.sum(intersection) ) / (np.sum(yp[i].ravel()) + np.sum(Y_test[i].ravel())))+
-            " Precision : "+avg_precision )
+            plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard))
 
             plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
             plt.close()
