@@ -213,7 +213,7 @@ for train_index, test_index in kf.split(X):
             intersection = yp_2 * y2
             union = yp_2 + y2 - intersection
             avg_precision += average_precision_score(yp_2, y2)
-            recall_score += recall_score(yp_2, y2)
+            # recall_score += recall_score(yp_2, y2)
 
             jacard += (np.sum(intersection)/np.sum(union))
 
@@ -223,13 +223,13 @@ for train_index, test_index in kf.split(X):
         jacard /= len(Y_test)
         dice /= len(Y_test)
         avg_precision /= len(Y_test)
-        recall_score /= len(Y_test)
+        # recall_score /= len(Y_test)
 
         print('Jacard Index : '+str(jacard))
         print('Dice Coefficient : '+str(dice))
         with open("Output.txt", "a") as text_file:
-            text_file.write("Fold = {} Jacard : {} Dice Coef : {} Avg. Precision : {} Recall Score :{} \n".format(str(fold_no), 
-            str(jacard), str(dice), str(avg_precision), str(recall_score)))
+            text_file.write("Fold = {} Jacard : {} Dice Coef : {} Avg. Precision : {}  \n".format(str(fold_no), 
+            str(jacard), str(dice), str(avg_precision)))
         
 
         jaccard_index_list.append(jacard)
