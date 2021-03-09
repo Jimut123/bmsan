@@ -201,6 +201,9 @@ for train_index, test_index in kf.split(X):
             plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard)
             +" Dice : "+str(dice)+ " Precision : "+str(avg_precision))
 
+            plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
+            plt.close()
+
         jacard = 0
         dice = 0
         avg_precision = 0
