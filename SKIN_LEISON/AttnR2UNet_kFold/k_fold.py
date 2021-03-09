@@ -202,7 +202,7 @@ for train_index, test_index in kf.split(X):
 
         jacard = 0
         dice = 0
-
+        iou_score = 0
 
         for i in range(len(Y_test)):
             yp_2 = yp[i].ravel()
@@ -210,6 +210,9 @@ for train_index, test_index in kf.split(X):
 
             intersection = yp_2 * y2
             union = yp_2 + y2 - intersection
+            intersection_ = np.logical_and(yp_2, y2)
+            union_ = np.logical_or(yp_2, y2)
+            iou_score += np.sum(intersection_) / np.sum(union_)
 
             jacard += (np.sum(intersection)/np.sum(union))
 
@@ -218,13 +221,13 @@ for train_index, test_index in kf.split(X):
 
         jacard /= len(Y_test)
         dice /= len(Y_test)
-
-
+        iou_score /= len(Y_test)
 
         print('Jacard Index : '+str(jacard))
         print('Dice Coefficient : '+str(dice))
         with open("Output.txt", "a") as text_file:
-            text_file.write("Fold = {} Jacard : {} Dice Coef : {} \n".format(str(fold_no), str(jacard), str(dice)))
+            text_file.write("Fold = {} Jacard : {} Dice Coef : {} IoU : {}\n".format(str(fold_no), 
+            str(jacard), str(dice), str(iou_score)))
         
 
         jaccard_index_list.append(jacard)
