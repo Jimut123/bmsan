@@ -262,7 +262,7 @@ for train_index, test_index in kf.split(X):
         #     out.close()
 
         with open(hist_json_file, mode='w') as f:
-        hist_df.to_json(f)
+            hist_df.to_json(f)
 
         # or save to csv:
         hist_csv_file = 'history_attnR2Unet_skinLesion_fold_{}.csv'.format(fold_no)
