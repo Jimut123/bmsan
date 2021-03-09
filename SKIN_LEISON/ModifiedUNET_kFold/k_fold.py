@@ -82,12 +82,8 @@ for train_index, test_index in kf.split(X):
     
     # X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=3)
     print(Y_train.shape)
-
     Y_train = Y_train.reshape((Y_train.shape[0],Y_train.shape[1],Y_train.shape[2],1))
-
-
     Y_test = Y_test.reshape((Y_test.shape[0],Y_test.shape[1],Y_test.shape[2],1))
-
 
     X_train = X_train / 255
     X_test = X_test / 255
@@ -101,37 +97,6 @@ for train_index, test_index in kf.split(X):
     print(Y_train.shape)
     print(X_test.shape)
     print(Y_test.shape)
-
-
-    import numpy as np
-    """
-    >>> x = np.zeros((100, 12, 12, 3))
-    >>> x.shape
-    (100, 12, 12, 3)
-    >>> y = np.transpose(x)
-    >>> y.shape
-    (3, 12, 12, 100)
-    >>> z = np.moveaxis(y,-1,0)
-    >>> z.shape
-    (100, 3, 12, 12)
-
-    """
-    # X_train = np.moveaxis(X_train,-1,1)
-    # print(X_train.shape)
-
-    # Y_train = np.moveaxis(Y_train,-1,1)
-    # Y_train = np.repeat(Y_train,repeats=3,axis=1)
-    # print(Y_train.shape)
-
-    # X_test = np.moveaxis(X_test,-1,1)
-    # print(X_test.shape)
-
-    # Y_test = np.moveaxis(Y_test,-1,1)
-    # Y_test = np.repeat(Y_test,repeats=3,axis=1)
-    # print(Y_test.shape)
-
-
-
 
     def dice_coef(y_true, y_pred):
         smooth = 0.0
@@ -286,7 +251,7 @@ for train_index, test_index in kf.split(X):
 
         return model
     # img_w, img_h, n_label, data_format='channels_first'
-    model = ModifiedUNet(height=256, width=192, n_channels=3)
+    model = ModifiedUNet(height=192, width=256, n_channels=3)
 
     #model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
     model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
