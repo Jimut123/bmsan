@@ -158,9 +158,9 @@ for train_index, test_index in kf.split(X):
         except:
             pass
 
-        fp = open('models/modelP_UNet_skinLesion.json','w')
+        fp = open('models/modelP_orunet_skinLesion.json','w')
         fp.write(model_json)
-        model.save_weights('models/modelW_UNet_skinLesion.h5')
+        model.save_weights('models/modelW_orunet_skinLesion.h5')
 
 
     jaccard_index_list = []
@@ -236,11 +236,11 @@ for train_index, test_index in kf.split(X):
 
         jaccard_index_list.append(jacard)
         dice_coeff_list.append(dice)
-        fp = open('models/log_Unet_skinLesion.txt','a')
+        fp = open('models/log_orunet_skinLesion.txt','a')
         fp.write(str(jacard)+'\n')
         fp.close()
 
-        fp = open('models/best_Unet_skinLesion.txt','r')
+        fp = open('models/best_orunet_skinLesion.txt','r')
         best = fp.read()
         fp.close()
 
@@ -248,7 +248,7 @@ for train_index, test_index in kf.split(X):
             print('***********************************************')
             print('Jacard Index improved from '+str(best)+' to '+str(jacard))
             print('***********************************************')
-            fp = open('models/best_Unet_skinLesion.txt','w')
+            fp = open('models/best_orunet_skinLesion.txt','w')
             fp.write(str(jacard))
             fp.close()
 
@@ -264,7 +264,7 @@ for train_index, test_index in kf.split(X):
 
 
         # save to json:
-        hist_json_file = 'history_Unet_skinLesion_fold_{}.json'.format(fold_no)
+        hist_json_file = 'history_orunet_skinLesion_fold_{}.json'.format(fold_no)
         # with open(hist_json_file, 'a') as out:
         #     out.write(hist_df.to_json())
         #     out.write(",")
@@ -274,7 +274,7 @@ for train_index, test_index in kf.split(X):
             hist_df.to_json(f)
 
         # or save to csv:
-        hist_csv_file = 'history_Unet_skinLesion_fold_{}.csv'.format(fold_no)
+        hist_csv_file = 'history_orunet_skinLesion_fold_{}.csv'.format(fold_no)
         # with open(hist_csv_file, 'a') as out:
         #     out.write(str(hist_df.to_csv()))
         #     out.write(",")
@@ -295,9 +295,9 @@ for train_index, test_index in kf.split(X):
 
     saveModel(model)
 
-    fp = open('models/log_Unet_skinLesion.txt','w')
+    fp = open('models/log_orunet_skinLesion.txt','w')
     fp.close()
-    fp = open('models/best_Unet_skinLesion.txt','w')
+    fp = open('models/best_orunet_skinLesion.txt','w')
     fp.write('-1.0')
     fp.close()
 
