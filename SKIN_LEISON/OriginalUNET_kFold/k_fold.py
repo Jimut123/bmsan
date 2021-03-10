@@ -193,8 +193,12 @@ for train_index, test_index in kf.split(X):
             intersection = yp[i].ravel() * Y_test[i].ravel()
             union = yp[i].ravel() + Y_test[i].ravel() - intersection
 
+            avg_precision = average_precision_score(yp[i].ravel(), Y_test[i].ravel())
+            dice = (2. * np.sum(intersection)) / (np.sum(yp[i].ravel()) + np.sum(Y_test[i].ravel()))
+
             jacard = (np.sum(intersection)/np.sum(union))
-            plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard))
+            plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard)
+            +" Dice : "+str(dice)+ " Precision : "+str(avg_precision))
 
             plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
             plt.close()
