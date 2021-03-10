@@ -116,19 +116,19 @@ for train_index, test_index in kf.split(X):
     (100, 3, 12, 12)
 
     """
-    # X_train = np.moveaxis(X_train,-1,1)
-    # print(X_train.shape)
+    X_train = np.moveaxis(X_train,-1,1)
+    print(X_train.shape)
 
-    # Y_train = np.moveaxis(Y_train,-1,1)
-    # Y_train = np.repeat(Y_train,repeats=3,axis=1)
-    # print(Y_train.shape)
+    Y_train = np.moveaxis(Y_train,-1,1)
+    Y_train = np.repeat(Y_train,repeats=3,axis=1)
+    print(Y_train.shape)
 
-    # X_test = np.moveaxis(X_test,-1,1)
-    # print(X_test.shape)
+    X_test = np.moveaxis(X_test,-1,1)
+    print(X_test.shape)
 
-    # Y_test = np.moveaxis(Y_test,-1,1)
-    # Y_test = np.repeat(Y_test,repeats=3,axis=1)
-    # print(Y_test.shape)
+    Y_test = np.moveaxis(Y_test,-1,1)
+    Y_test = np.repeat(Y_test,repeats=3,axis=1)
+    print(Y_test.shape)
 
 
 
