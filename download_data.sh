@@ -3,7 +3,7 @@
 # download all the dataset hosted from
 # my gsuite account
 
-# ISIC 2017 Datset
+# ISIC 2017 Datset = 
 gdown https://drive.google.com/u/3/uc?id=1-PAttyqJLImKMdz0gTLM3soiWWvi8PAD
 
 # BrainMRI Datset
