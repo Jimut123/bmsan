@@ -237,9 +237,9 @@ for train_index, test_index in kf.split(X):
                 dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
 
 
-        jacard /= len(count)
-        dice /= len(count)
-        avg_precision /= len(count)
+        jacard /= count
+        dice /= count
+        avg_precision /= count
         # recall_score /= len(Y_test)
 
         print('Jacard Index : '+str(jacard))
