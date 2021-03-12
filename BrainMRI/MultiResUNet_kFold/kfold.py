@@ -40,8 +40,10 @@ import sys
 sys.path.insert(0, '../../')
 from models import MultiResUnet
 
-img_files = next(os.walk('../2d_images/'))[2]
-msk_files = next(os.walk('../2d_masks/'))[2]
+
+img_files = glob.glob('../original_img/*.tif')
+msk_files = glob.glob('../ground_truth/*.tif')
+
 
 img_files.sort()
 msk_files.sort()
@@ -50,19 +52,27 @@ print(len(img_files))
 print(len(msk_files))
 
 
-
-
 X = []
 Y = []
 
 for img_fl in tqdm(img_files):
-    if(img_fl.split('.')[-1]=='tif'):
-        img = cv2.imread('../2d_images/{}'.format(img_fl), cv2.IMREAD_COLOR)
-        resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
-        X.append(resized_img)
-        msk = cv2.imread('../2d_masks/{}'.format(img_fl), cv2.IMREAD_GRAYSCALE)
-        resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
-        Y.append(resized_msk)
+  #print(img_fl)
+  name = str(img_fl.split('.')[2]).split('/')[2]
+  original_name = "../original_img/"+name+".tif"
+  #print(name)
+  mask_name = "../ground_truth/"+name+"_mask.tif"
+  #break
+  if(img_fl.split('.')[-1]=='tif'):
+    img = cv2.imread('{}'.format(original_name), cv2.IMREAD_COLOR)
+    #resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
+    
+    X.append(img) #resized_img)
+    
+    msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
+    #resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
+    
+    Y.append(msk)#resized_msk)
+
 
 print(len(X))
 print(len(Y))
@@ -103,7 +113,6 @@ for train_index, test_index in kf.split(X):
     print(Y_test.shape)
 
 
-
     def dice_coef(y_true, y_pred):
         smooth = 0.0
         y_true_f = K.flatten(y_true)
@@ -129,9 +138,9 @@ for train_index, test_index in kf.split(X):
         except:
             pass
 
-        fp = open('models/modelP_multi_res_unet_Lung.json','w')
+        fp = open('models/modelP_multi_res_unet_brainmri.json','w')
         fp.write(model_json)
-        model.save_weights('models/modelW_multi_res_unet_Lung.h5')
+        model.save_weights('models/modelW_multi_res_unet_brainmri.h5')
 
 
     jaccard_index_list = []
@@ -150,53 +159,59 @@ for train_index, test_index in kf.split(X):
         yp = np.round(yp,0)
 
         for i in range(10):
-            plt.figure(figsize=(20,10))
-            plt.subplot(1,3,1)
-            plt.imshow(X_test[i])
-            plt.title('Input')
-            plt.subplot(1,3,2)
-            plt.imshow(Y_test[i].reshape(Y_test[i].shape[0],Y_test[i].shape[1]))
-            plt.title('Ground Truth')
-            plt.subplot(1,3,3)
-            plt.imshow(yp[i].reshape(yp[i].shape[0],yp[i].shape[1]))
-            plt.title('Prediction')
+            try:
+                plt.figure(figsize=(20,10))
+                plt.subplot(1,3,1)
+                plt.imshow(X_test[i])
+                plt.title('Input')
+                plt.subplot(1,3,2)
+                plt.imshow(Y_test[i].reshape(Y_test[i].shape[0],Y_test[i].shape[1]))
+                plt.title('Ground Truth')
+                plt.subplot(1,3,3)
+                plt.imshow(yp[i].reshape(yp[i].shape[0],yp[i].shape[1]))
+                plt.title('Prediction')
 
-            intersection = yp[i].ravel() * Y_test[i].ravel()
-            union = yp[i].ravel() + Y_test[i].ravel() - intersection
+                intersection = yp[i].ravel() * Y_test[i].ravel()
+                union = yp[i].ravel() + Y_test[i].ravel() - intersection
 
-            avg_precision = average_precision_score(yp[i].ravel(), Y_test[i].ravel())
-            dice = (2. * np.sum(intersection)) / (np.sum(yp[i].ravel()) + np.sum(Y_test[i].ravel()))
+                avg_precision = average_precision_score(yp[i].ravel(), Y_test[i].ravel())
+                dice = (2. * np.sum(intersection)) / (np.sum(yp[i].ravel()) + np.sum(Y_test[i].ravel()))
 
-            jacard = (np.sum(intersection)/np.sum(union))
-            plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard)
-            +" Dice : "+str(dice)+ " Precision : "+str(avg_precision))
+                jacard = (np.sum(intersection)/np.sum(union))
+                plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard)
+                +" Dice : "+str(dice)+ " Precision : "+str(avg_precision))
 
-            plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
-            plt.close()
+                plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
+                plt.close()
+            except:
+                pass
         
         jacard = 0
         dice = 0
         avg_precision = 0
         recall_score = 0
 
-        for i in range(len(Y_test)):
+         for i in range(len(Y_test)):
             yp_2 = yp[i].ravel()
-            y2 = Y_test[i].ravel()
+            if np.sum(yp_2) > 0:
+                count += 1
+                y2 = Y_test[i].ravel()
 
-            intersection = yp_2 * y2
-            union = yp_2 + y2 - intersection
-            avg_precision += average_precision_score(yp_2, y2)
-            # recall_score += recall_score(yp_2, y2)
+                intersection = yp_2 * y2
+                union = yp_2 + y2 - intersection
+                avg_precision += average_precision_score(yp_2, y2)
+                # recall_score += recall_score(yp_2, y2)
 
-            jacard += (np.sum(intersection)/np.sum(union))
+                jacard += (np.sum(intersection)/np.sum(union))
 
-            dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
+                dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
 
 
-        jacard /= len(Y_test)
-        dice /= len(Y_test)
-        avg_precision /= len(Y_test)
+        jacard /= count
+        dice /= count
+        avg_precision /= count
         # recall_score /= len(Y_test)
+        
 
         print('Jacard Index : '+str(jacard))
         print('Dice Coefficient : '+str(dice))
@@ -207,11 +222,11 @@ for train_index, test_index in kf.split(X):
 
         jaccard_index_list.append(jacard)
         dice_coeff_list.append(dice)
-        fp = open('models/log_multi_res_unet_Lung.txt','a')
+        fp = open('models/log_multi_res_unet_brainmri.txt','a')
         fp.write(str(jacard)+'\n')
         fp.close()
 
-        fp = open('models/best_multi_res_unet_Lung.txt','r')
+        fp = open('models/best_multi_res_unet_brainmri.txt','r')
         best = fp.read()
         fp.close()
 
@@ -219,7 +234,7 @@ for train_index, test_index in kf.split(X):
             print('***********************************************')
             print('Jacard Index improved from '+str(best)+' to '+str(jacard))
             print('***********************************************')
-            fp = open('models/best_multi_res_unet_Lung.txt','w')
+            fp = open('models/best_multi_res_unet_brainmri.txt','w')
             fp.write(str(jacard))
             fp.close()
 
@@ -235,7 +250,7 @@ for train_index, test_index in kf.split(X):
 
 
         # save to json:
-        hist_json_file = 'history_multi_res_unet_Lung_fold_{}.json'.format(fold_no)
+        hist_json_file = 'history_multi_res_unet_brainmri_fold_{}.json'.format(fold_no)
         # with open(hist_json_file, 'a') as out:
         #     out.write(hist_df.to_json())
         #     out.write(",")
@@ -245,7 +260,7 @@ for train_index, test_index in kf.split(X):
             hist_df.to_json(f)
 
         # or save to csv:
-        hist_csv_file = 'history_multi_res_unet_Lung_fold_{}.csv'.format(fold_no)
+        hist_csv_file = 'history_multi_res_unet_brainmri_fold_{}.csv'.format(fold_no)
         # with open(hist_csv_file, 'a') as out:
         #     out.write(str(hist_df.to_csv()))
         #     out.write(",")
@@ -266,11 +281,11 @@ for train_index, test_index in kf.split(X):
 
     saveModel(model)
 
-    fp = open('models/log_multi_res_unet_Lung.txt','w')
+    fp = open('models/log_multi_res_unet_brainmri.txt','w')
     fp.close()
-    fp = open('models/best_multi_res_unet_Lung.txt','w')
+    fp = open('models/best_multi_res_unet_brainmri.txt','w')
     fp.write('-1.0')
     fp.close()
 
-    trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
+    trainStep(model, X_train, Y_train, X_test, Y_test, epochs=5, batchSize=2)
 
