@@ -1,0 +1,5 @@
+Fold = 1 Jacard : 0.479700587346035 Dice Coef : 0.5848747084290422 Avg. Precision : nan  
+Fold = 2 Jacard : 0.46841745493977194 Dice Coef : 0.5669123560925482 Avg. Precision : nan  
+Fold = 3 Jacard : 0.5224377843991667 Dice Coef : 0.6409311489260296 Avg. Precision : 0.5643447719540228  
+Fold = 4 Jacard : 0.5147485415631246 Dice Coef : 0.6181921086487207 Avg. Precision : nan  
+Fold = 5 Jacard : 0.5011377487135289 Dice Coef : 0.6072112199415594 Avg. Precision : nan  
