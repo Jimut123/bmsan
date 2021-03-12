@@ -186,6 +186,7 @@ for train_index, test_index in kf.split(X):
         dice = 0
         avg_precision = 0
         recall_score = 0
+        count = 0
         
         for i in range(len(Y_test)):
             yp_2 = yp[i].ravel()
