@@ -38,11 +38,11 @@ from sklearn.metrics import average_precision_score, recall_score
 
 import sys
 sys.path.insert(0, '../../')
-from models import att_r2_unet
+from models import  unet
 
 
-img_files = glob.glob('../original_img/*.tif')
-msk_files = glob.glob('../ground_truth/*.tif')
+img_files = next(os.walk('../2d_images/'))[2]
+msk_files = next(os.walk('../2d_masks/'))[2]
 
 img_files.sort()
 msk_files.sort()
@@ -51,26 +51,24 @@ print(len(img_files))
 print(len(msk_files))
 
 
+
+
 X = []
 Y = []
 
 for img_fl in tqdm(img_files):
-  #print(img_fl)
-  name = str(img_fl.split('.')[2]).split('/')[2]
-  original_name = "../original_img/"+name+".tif"
-  #print(name)
-  mask_name = "../ground_truth/"+name+"_mask.tif"
-  #break
-  if(img_fl.split('.')[-1]=='tif'):
-    img = cv2.imread('{}'.format(original_name), cv2.IMREAD_COLOR)
-    #resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
-    
-    X.append(img) #resized_img)
-    
-    msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
-    #resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
-    
-    Y.append(msk)#resized_msk)
+    if(img_fl.split('.')[-1]=='tif'):
+
+
+        img = cv2.imread('../2d_images/{}'.format(img_fl), cv2.IMREAD_COLOR)
+        resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
+
+        X.append(resized_img)
+
+        msk = cv2.imread('../2d_masks/{}'.format(img_fl), cv2.IMREAD_GRAYSCALE)
+        resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
+
+        Y.append(resized_msk)
 
 print(len(X))
 print(len(Y))
@@ -166,9 +164,9 @@ for train_index, test_index in kf.split(X):
         except:
             pass
 
-        fp = open('models/modelP_attnR2Unet_brainMRI.json','w')
+        fp = open('models/modelP_orunet_lungs.json','w')
         fp.write(model_json)
-        model.save_weights('models/modelW_attnR2Unet_brainMRI.h5')
+        model.save_weights('models/modelW_orunet_lungs.h5')
 
 
     jaccard_index_list = []
@@ -187,59 +185,52 @@ for train_index, test_index in kf.split(X):
         yp = np.round(yp,0)
 
         for i in range(10):
-            try:
-                plt.figure(figsize=(20,10))
-                plt.subplot(1,3,1)
-                plt.imshow(np.moveaxis(X_test[i],0,-1))
-                plt.title('Input')
-                plt.subplot(1,3,2)
-                plt.imshow(np.moveaxis(Y_test[i],0,-1))
-                plt.title('Ground Truth')
-                plt.subplot(1,3,3)
-                plt.imshow(np.moveaxis(yp[i],0,-1))
-                plt.title('Prediction')
+            plt.figure(figsize=(20,10))
+            plt.subplot(1,3,1)
+            plt.imshow(np.moveaxis(X_test[i],0,-1))
+            plt.title('Input')
+            plt.subplot(1,3,2)
+            plt.imshow(np.moveaxis(Y_test[i],0,-1))
+            plt.title('Ground Truth')
+            plt.subplot(1,3,3)
+            plt.imshow(np.moveaxis(yp[i],0,-1))
+            plt.title('Prediction')
 
-                intersection = yp[i].ravel() * Y_test[i].ravel()
-                union = yp[i].ravel() + Y_test[i].ravel() - intersection
+            intersection = yp[i].ravel() * Y_test[i].ravel()
+            union = yp[i].ravel() + Y_test[i].ravel() - intersection
 
-                avg_precision = average_precision_score(yp[i].ravel(), Y_test[i].ravel())
-                dice = (2. * np.sum(intersection)) / (np.sum(yp[i].ravel()) + np.sum(Y_test[i].ravel()))
+            avg_precision = average_precision_score(yp[i].ravel(), Y_test[i].ravel())
+            dice = (2. * np.sum(intersection)) / (np.sum(yp[i].ravel()) + np.sum(Y_test[i].ravel()))
 
-                jacard = (np.sum(intersection)/np.sum(union))
-                plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard)
-                +" Dice : "+str(dice)+ " Precision : "+str(avg_precision))
+            jacard = (np.sum(intersection)/np.sum(union))
+            plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard)
+            +" Dice : "+str(dice)+ " Precision : "+str(avg_precision))
 
-                plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
-                plt.close()
-            except:
-                pass
-
+            plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
+            plt.close()
+        
         jacard = 0
         dice = 0
         avg_precision = 0
         recall_score = 0
-        count = 0
 
         for i in range(len(Y_test)):
-            
             yp_2 = yp[i].ravel()
-            if np.sum(yp_2) > 0:
-                count += 1
-                y2 = Y_test[i].ravel()
+            y2 = Y_test[i].ravel()
 
-                intersection = yp_2 * y2
-                union = yp_2 + y2 - intersection
-                avg_precision += average_precision_score(yp_2, y2)
-                # recall_score += recall_score(yp_2, y2)
+            intersection = yp_2 * y2
+            union = yp_2 + y2 - intersection
+            avg_precision += average_precision_score(yp_2, y2)
+            # recall_score += recall_score(yp_2, y2)
 
-                jacard += (np.sum(intersection)/np.sum(union))
+            jacard += (np.sum(intersection)/np.sum(union))
 
-                dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
+            dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
 
 
-        jacard /= count
-        dice /= count
-        avg_precision /= count
+        jacard /= len(Y_test)
+        dice /= len(Y_test)
+        avg_precision /= len(Y_test)
         # recall_score /= len(Y_test)
 
         print('Jacard Index : '+str(jacard))
@@ -251,11 +242,11 @@ for train_index, test_index in kf.split(X):
 
         jaccard_index_list.append(jacard)
         dice_coeff_list.append(dice)
-        fp = open('models/log_attnR2Unet_brainMRI.txt','a')
+        fp = open('models/log_orunet_lungs.txt','a')
         fp.write(str(jacard)+'\n')
         fp.close()
 
-        fp = open('models/best_attnR2Unet_brainMRI.txt','r')
+        fp = open('models/best_orunet_lungs.txt','r')
         best = fp.read()
         fp.close()
 
@@ -263,7 +254,7 @@ for train_index, test_index in kf.split(X):
             print('***********************************************')
             print('Jacard Index improved from '+str(best)+' to '+str(jacard))
             print('***********************************************')
-            fp = open('models/best_attnR2Unet_brainMRI.txt','w')
+            fp = open('models/best_orunet_lungs.txt','w')
             fp.write(str(jacard))
             fp.close()
 
@@ -279,7 +270,7 @@ for train_index, test_index in kf.split(X):
 
 
         # save to json:
-        hist_json_file = 'history_attnR2Unet_brainMRI_fold_{}.json'.format(fold_no)
+        hist_json_file = 'history_orunet_lungs_fold_{}.json'.format(fold_no)
         # with open(hist_json_file, 'a') as out:
         #     out.write(hist_df.to_json())
         #     out.write(",")
@@ -289,7 +280,7 @@ for train_index, test_index in kf.split(X):
             hist_df.to_json(f)
 
         # or save to csv:
-        hist_csv_file = 'history_attnR2Unet_brainMRI_fold_{}.csv'.format(fold_no)
+        hist_csv_file = 'history_orunet_lungs_fold_{}.csv'.format(fold_no)
         # with open(hist_csv_file, 'a') as out:
         #     out.write(str(hist_df.to_csv()))
         #     out.write(",")
@@ -303,16 +294,16 @@ for train_index, test_index in kf.split(X):
 
         return model
     # img_w, img_h, n_label, data_format='channels_first'
-    model = att_r2_unet(img_h=256, img_w=256, n_label=3)
+    model = unet(img_h=256, img_w=256, n_label=3)
 
     #model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
     model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
 
     saveModel(model)
 
-    fp = open('models/log_attnR2Unet_brainMRI.txt','w')
+    fp = open('models/log_orunet_lungs.txt','w')
     fp.close()
-    fp = open('models/best_attnR2Unet_brainMRI.txt','w')
+    fp = open('models/best_orunet_lungs.txt','w')
     fp.write('-1.0')
     fp.close()
 
