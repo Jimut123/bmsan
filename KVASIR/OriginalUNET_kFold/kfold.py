@@ -310,3 +310,4 @@ for train_index, test_index in kf.split(X):
 
     trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
 
+
