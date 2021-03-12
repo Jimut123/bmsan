@@ -221,9 +221,10 @@ for train_index, test_index in kf.split(X):
         count = 0
 
         for i in range(len(Y_test)):
-            if sum(yp_2) > 0:
+            
+            yp_2 = yp[i].ravel()
+            if np.sum(yp_2) > 0:
                 count += 1
-                yp_2 = yp[i].ravel()
                 y2 = Y_test[i].ravel()
 
                 intersection = yp_2 * y2
