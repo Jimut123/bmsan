@@ -64,11 +64,14 @@ for img_fl, msk_fl in tqdm(img_files, msk_files):
     Y.append(resized_mask)
 
 
+
 print(len(X))
 print(len(Y))
 
 X = np.array(X)
 Y = np.array(Y)
+print(X.shape)
+print(Y.shape)
 
 kf = KFold(n_splits=5)
 kf.get_n_splits(X)
