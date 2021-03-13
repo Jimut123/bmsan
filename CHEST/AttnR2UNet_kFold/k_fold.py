@@ -58,6 +58,7 @@ Y = []
 for img_fl, msk_fl in tqdm(img_files, msk_files):
     img = cv2.imread('{}'.format(img_fl), cv2.IMREAD_COLOR)
     resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
+    print(resized_img.shape)
     X.append(resized_img) 
     mask = cv2.imread('{}'.format(msk_fl), cv2.IMREAD_GRAYSCALE)
     resized_mask = cv2.resize(mask,(256, 256), interpolation = cv2.INTER_CUBIC)
