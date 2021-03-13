@@ -21,7 +21,8 @@ gdown https://drive.google.com/u/3/uc?id=1VzOUEvIyhmOGQUBGzfI7M8GMW2NjIFeH
 
 # CHEST dataset : https://www.kaggle.com/nikhilpandey360/chest-xray-masks-and-labels
 gdown https://drive.google.com/u/3/uc?id=1c8dcQiwQgFQ5G0K6-B0tOdxAXB5Mo7qz
-# qq https://drive.google.com/u/3/uc?id=1c5ai_Z0DrGLMdIVC0TXDcgzOA1h96XHz
+# qq https://drive.google.com/u/2/uc?id=1OF4L6tHP-3cyVrK7NhWYnNTUWJBT4gDu
+
 # ! unrar x chestxray_qq.zip > /dev/null
 
 # Nerve - ultrasound dataset: https://www.kaggle.com/c/ultrasound-nerve-segmentation/
