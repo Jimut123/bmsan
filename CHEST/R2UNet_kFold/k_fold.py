@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # encoding: utf-8
-# @Time    : 01/12/2020 15:56
+# @Time    : 13/3/2021 21:40
 # @Author  : Jimut Bahan Pal
+
 
 import glob
 import json
@@ -38,36 +39,32 @@ from sklearn.metrics import average_precision_score, recall_score
 
 import sys
 sys.path.insert(0, '../../')
-from models import att_unet
+from models import r2_unet
 
-img_files = sorted(glob.glob('../ISIC-2017_Training_Data/ISIC_*.jpg'))
-msk_files = sorted(glob.glob('../ISIC-2017_Training_Data/*_superpixels.png'))
+
+
+img_files = glob.glob('../chest_qq_files/images/*')
+msk_files = glob.glob('../chest_qq_files/masks/*')
 
 img_files.sort()
 msk_files.sort()
-
-print("B==>",len(img_files))
+print(img_files[:10])
+print(msk_files[:10])
+print(len(img_files))
 print(len(msk_files))
 
 
 X = []
 Y = []
 
-
-for img_fl in tqdm(img_files):
+for img_fl, msk_fl in tqdm(img_files, msk_files):
     img = cv2.imread('{}'.format(img_fl), cv2.IMREAD_COLOR)
-    resized_img = cv2.resize(img,(256 ,256), interpolation = cv2.INTER_CUBIC)
+    resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
+    X.append(resized_img) 
+    mask = cv2.imread('{}'.format(msk_fl), cv2.IMREAD_GRAYSCALE)
+    resized_mask = cv2.resize(mask,(256, 256), interpolation = cv2.INTER_CUBIC)
+    Y.append(resized_mask)
 
-    X.append(resized_img)
-
-    im_name = str(str(img_fl.split('.')[2]).split('/')[2]).split('_')[1]
-
-    mask_name = '../ISIC-2017_Training_Data/ISIC_'+im_name+'_superpixels.png'
-
-    msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
-    resized_msk = cv2.resize(msk,(256 ,256), interpolation = cv2.INTER_CUBIC)
-
-    Y.append(resized_msk)
 
 print(len(X))
 print(len(Y))
@@ -163,9 +160,9 @@ for train_index, test_index in kf.split(X):
         except:
             pass
 
-        fp = open('models/modelP_attnUNET_ISIC.json','w')
+        fp = open('models/modelP_r2unet_chest.json','w')
         fp.write(model_json)
-        model.save_weights('models/modelW_attnUNET_ISIC.h5')
+        model.save_weights('models/modelW_r2unet_chest.h5')
 
 
     jaccard_index_list = []
@@ -184,7 +181,6 @@ for train_index, test_index in kf.split(X):
         yp = np.round(yp,0)
 
         for i in range(10):
-
             plt.figure(figsize=(20,10))
             plt.subplot(1,3,1)
             plt.imshow(np.moveaxis(X_test[i],0,-1))
@@ -200,16 +196,15 @@ for train_index, test_index in kf.split(X):
             union = yp[i].ravel() + Y_test[i].ravel() - intersection
 
             avg_precision = average_precision_score(yp[i].ravel(), Y_test[i].ravel())
-            dice = (2. * np.sum(intersection) ) / (np.sum(yp[i].ravel()) + np.sum(Y_test[i].ravel()))
+            dice = (2. * np.sum(intersection)) / (np.sum(yp[i].ravel()) + np.sum(Y_test[i].ravel()))
 
             jacard = (np.sum(intersection)/np.sum(union))
             plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard)
-            +" Dice : "+str(dice)+ " Precision : "+str(avg_precision) )
+            +" Dice : "+str(dice)+ " Precision : "+str(avg_precision))
 
             plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
             plt.close()
-
-
+        
         jacard = 0
         dice = 0
         avg_precision = 0
@@ -243,11 +238,11 @@ for train_index, test_index in kf.split(X):
 
         jaccard_index_list.append(jacard)
         dice_coeff_list.append(dice)
-        fp = open('models/log_attnUNET_ISIC.txt','a')
+        fp = open('models/log_r2unet_chest.txt','a')
         fp.write(str(jacard)+'\n')
         fp.close()
 
-        fp = open('models/best_attnUNET_ISIC.txt','r')
+        fp = open('models/best_r2unet_chest.txt','r')
         best = fp.read()
         fp.close()
 
@@ -255,7 +250,7 @@ for train_index, test_index in kf.split(X):
             print('***********************************************')
             print('Jacard Index improved from '+str(best)+' to '+str(jacard))
             print('***********************************************')
-            fp = open('models/best_attnUNET_ISIC.txt','w')
+            fp = open('models/best_r2unet_chest.txt','w')
             fp.write(str(jacard))
             fp.close()
 
@@ -271,7 +266,7 @@ for train_index, test_index in kf.split(X):
 
 
         # save to json:
-        hist_json_file = 'history_attnUNET_ISIC_fold_{}.json'.format(fold_no)
+        hist_json_file = 'history_r2unet_chest_fold_{}.json'.format(fold_no)
         # with open(hist_json_file, 'a') as out:
         #     out.write(hist_df.to_json())
         #     out.write(",")
@@ -281,7 +276,7 @@ for train_index, test_index in kf.split(X):
             hist_df.to_json(f)
 
         # or save to csv:
-        hist_csv_file = 'history_attnUNET_ISIC_fold_{}.csv'.format(fold_no)
+        hist_csv_file = 'history_r2unet_chest_fold_{}.csv'.format(fold_no)
         # with open(hist_csv_file, 'a') as out:
         #     out.write(str(hist_df.to_csv()))
         #     out.write(",")
@@ -295,18 +290,18 @@ for train_index, test_index in kf.split(X):
 
         return model
     # img_w, img_h, n_label, data_format='channels_first'
-    model = att_unet(img_h=256, img_w=256, n_label=3)
+    model = r2_unet(img_h=256, img_w=256, n_label=3)
 
     #model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
     model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
 
     saveModel(model)
 
-    fp = open('models/log_attnUNET_ISIC.txt','w')
+    fp = open('models/log_r2unet_chest.txt','w')
     fp.close()
-    fp = open('models/best_attnUNET_ISIC.txt','w')
+    fp = open('models/best_r2unet_chest.txt','w')
     fp.write('-1.0')
     fp.close()
 
-    trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
+    trainStep(model, X_train, Y_train, X_test, Y_test, epochs=5, batchSize=2)
 
