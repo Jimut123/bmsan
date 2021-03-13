@@ -56,7 +56,7 @@ print(len(msk_files))
 X = []
 Y = []
 
-for img_fl, msk_fl in tqdm(img_files, msk_files):
+for img_fl, msk_fl in tqdm(zip(img_files, msk_files)):
     img = cv2.imread('{}'.format(img_fl), cv2.IMREAD_COLOR)
     resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
     X.append(resized_img) 
