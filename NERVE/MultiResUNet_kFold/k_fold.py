@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # encoding: utf-8
-# @Time    : 01/12/2020 15:56
+# @Time    : 13/3/2021 21:40
 # @Author  : Jimut Bahan Pal
 
 import glob
@@ -38,15 +38,24 @@ from sklearn.metrics import average_precision_score, recall_score
 
 import sys
 sys.path.insert(0, '../../')
-from models import att_unet
+from models import MultiResUnet
 
 
-img_files = glob.glob('../original_img/*.tif')
-msk_files = glob.glob('../ground_truth/*.tif')
+all_names = glob.glob('../train/*.tif')
+len(all_names)
 
-img_files.sort()
-msk_files.sort()
+img_files = []
+msk_files = []
 
+for name in all_names:
+    split_name = name.split('_')
+    if len(split_name) == 2:
+        img_files.append(name)
+        mask_name = split_name[0]+"_"+str(split_name[1]).split('.')[0]+"_mask.tif"
+        msk_files.append(mask_name)
+
+print(img_files[:10])
+print(msk_files[:10])
 print(len(img_files))
 print(len(msk_files))
 
@@ -56,22 +65,13 @@ print(len(msk_files))
 X = []
 Y = []
 
-for img_fl in tqdm(img_files):
-  #print(img_fl)
-  name = str(img_fl.split('.')[2]).split('/')[2]
-  original_name = "../original_img/"+name+".tif"
-  #print(name)
-  mask_name = "../ground_truth/"+name+"_mask.tif"
-  if(img_fl.split('.')[-1]=='tif'):
-    img = cv2.imread('{}'.format(original_name), cv2.IMREAD_COLOR)
-    #resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
-
-    X.append(img) #resized_img)
-
-    msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
-    #resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
-
-    Y.append(msk)#resized_msk)
+for img_fl, msk_fl in tqdm(zip(img_files, msk_files)):
+    img = cv2.imread('{}'.format(img_fl), cv2.IMREAD_COLOR)
+    resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
+    X.append(resized_img) 
+    mask = cv2.imread('{}'.format(msk_fl), cv2.IMREAD_GRAYSCALE)
+    resized_mask = cv2.resize(mask,(256, 256), interpolation = cv2.INTER_CUBIC)
+    Y.append(resized_mask)
 
 
 print(len(X))
@@ -114,20 +114,31 @@ for train_index, test_index in kf.split(X):
 
 
     import numpy as np
+    """
+    >>> x = np.zeros((100, 12, 12, 3))
+    >>> x.shape
+    (100, 12, 12, 3)
+    >>> y = np.transpose(x)
+    >>> y.shape
+    (3, 12, 12, 100)
+    >>> z = np.moveaxis(y,-1,0)
+    >>> z.shape
+    (100, 3, 12, 12)
 
-    X_train = np.moveaxis(X_train,-1,1)
-    print(X_train.shape)
+    """
+    # X_train = np.moveaxis(X_train,-1,1)
+    # print(X_train.shape)
 
-    Y_train = np.moveaxis(Y_train,-1,1)
-    Y_train = np.repeat(Y_train,repeats=3,axis=1)
-    print(Y_train.shape)
+    # Y_train = np.moveaxis(Y_train,-1,1)
+    # Y_train = np.repeat(Y_train,repeats=3,axis=1)
+    # print(Y_train.shape)
 
-    X_test = np.moveaxis(X_test,-1,1)
-    print(X_test.shape)
+    # X_test = np.moveaxis(X_test,-1,1)
+    # print(X_test.shape)
 
-    Y_test = np.moveaxis(Y_test,-1,1)
-    Y_test = np.repeat(Y_test,repeats=3,axis=1)
-    print(Y_test.shape)
+    # Y_test = np.moveaxis(Y_test,-1,1)
+    # Y_test = np.repeat(Y_test,repeats=3,axis=1)
+    # print(Y_test.shape)
 
 
 
@@ -157,9 +168,9 @@ for train_index, test_index in kf.split(X):
         except:
             pass
 
-        fp = open('models/modelP_attnUnet_brainMRI.json','w')
+        fp = open('models/modelP_multi_res_unet_nerve.json','w')
         fp.write(model_json)
-        model.save_weights('models/modelW_attnUnet_brainMRI.h5')
+        model.save_weights('models/modelW_multi_res_unet_nerve.h5')
 
 
     jaccard_index_list = []
@@ -178,62 +189,54 @@ for train_index, test_index in kf.split(X):
         yp = np.round(yp,0)
 
         for i in range(10):
-            try:
+            plt.figure(figsize=(20,10))
+            plt.subplot(1,3,1)
+            plt.imshow(X_test[i])
+            plt.title('Input')
+            plt.subplot(1,3,2)
+            plt.imshow(Y_test[i].reshape(Y_test[i].shape[0],Y_test[i].shape[1]))
+            plt.title('Ground Truth')
+            plt.subplot(1,3,3)
+            plt.imshow(yp[i].reshape(yp[i].shape[0],yp[i].shape[1]))
+            plt.title('Prediction')
 
-                plt.figure(figsize=(20,10))
-                plt.subplot(1,3,1)
-                plt.imshow(np.moveaxis(X_test[i],0,-1))
-                plt.title('Input')
-                plt.subplot(1,3,2)
-                plt.imshow(np.moveaxis(Y_test[i],0,-1))
-                plt.title('Ground Truth')
-                plt.subplot(1,3,3)
-                plt.imshow(np.moveaxis(yp[i],0,-1))
-                plt.title('Prediction')
+            intersection = yp[i].ravel() * Y_test[i].ravel()
+            union = yp[i].ravel() + Y_test[i].ravel() - intersection
 
-                intersection = yp[i].ravel() * Y_test[i].ravel()
-                union = yp[i].ravel() + Y_test[i].ravel() - intersection
+            avg_precision = average_precision_score(yp[i].ravel(), Y_test[i].ravel())
+            dice = (2. * np.sum(intersection)) / (np.sum(yp[i].ravel()) + np.sum(Y_test[i].ravel()))
 
-                avg_precision = average_precision_score(yp[i].ravel(), Y_test[i].ravel())
-                dice = (2. * np.sum(intersection) ) / (np.sum(yp[i].ravel()) + np.sum(Y_test[i].ravel()))
+            jacard = (np.sum(intersection)/np.sum(union))
+            plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard)
+            +" Dice : "+str(dice)+ " Precision : "+str(avg_precision))
 
-                jacard = (np.sum(intersection)/np.sum(union))
-                plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard)
-                +" Dice : "+str(dice)+ " Precision : "+str(avg_precision) )
-
-                plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
-                plt.close()
-            except:
-                pass
-
-
+            plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
+            plt.close()
+        
         jacard = 0
         dice = 0
         avg_precision = 0
         recall_score = 0
-        count = 0
+
         for i in range(len(Y_test)):
-            
             yp_2 = yp[i].ravel()
-            if np.sum(yp_2) > 0:
-                count += 1
-                y2 = Y_test[i].ravel()
+            y2 = Y_test[i].ravel()
 
-                intersection = yp_2 * y2
-                union = yp_2 + y2 - intersection
-                avg_precision += average_precision_score(yp_2, y2)
-                # recall_score += recall_score(yp_2, y2)
+            intersection = yp_2 * y2
+            union = yp_2 + y2 - intersection
+            avg_precision += average_precision_score(yp_2, y2)
+            # recall_score += recall_score(yp_2, y2)
 
-                jacard += (np.sum(intersection)/np.sum(union))
+            jacard += (np.sum(intersection)/np.sum(union))
 
-                dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
+            dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
 
 
-        jacard /= count
-        dice /= count
-        avg_precision /= count
+        jacard /= len(Y_test)
+        dice /= len(Y_test)
+        avg_precision /= len(Y_test)
         # recall_score /= len(Y_test)
-        
+
         print('Jacard Index : '+str(jacard))
         print('Dice Coefficient : '+str(dice))
         with open("Output.txt", "a") as text_file:
@@ -243,11 +246,11 @@ for train_index, test_index in kf.split(X):
 
         jaccard_index_list.append(jacard)
         dice_coeff_list.append(dice)
-        fp = open('models/log_attnUnet_brainMRI.txt','a')
+        fp = open('models/log_multi_res_unet_nerve.txt','a')
         fp.write(str(jacard)+'\n')
         fp.close()
 
-        fp = open('models/best_attnUnet_brainMRI.txt','r')
+        fp = open('models/best_multi_res_unet_nerve.txt','r')
         best = fp.read()
         fp.close()
 
@@ -255,7 +258,7 @@ for train_index, test_index in kf.split(X):
             print('***********************************************')
             print('Jacard Index improved from '+str(best)+' to '+str(jacard))
             print('***********************************************')
-            fp = open('models/best_attnUnet_brainMRI.txt','w')
+            fp = open('models/best_multi_res_unet_nerve.txt','w')
             fp.write(str(jacard))
             fp.close()
 
@@ -271,7 +274,7 @@ for train_index, test_index in kf.split(X):
 
 
         # save to json:
-        hist_json_file = 'history_attnUnet_brainMRI_fold_{}.json'.format(fold_no)
+        hist_json_file = 'history_multi_res_unet_nerve_fold_{}.json'.format(fold_no)
         # with open(hist_json_file, 'a') as out:
         #     out.write(hist_df.to_json())
         #     out.write(",")
@@ -281,7 +284,7 @@ for train_index, test_index in kf.split(X):
             hist_df.to_json(f)
 
         # or save to csv:
-        hist_csv_file = 'history_attnUnet_brainMRI_fold_{}.csv'.format(fold_no)
+        hist_csv_file = 'history_multi_res_unet_nerve_fold_{}.csv'.format(fold_no)
         # with open(hist_csv_file, 'a') as out:
         #     out.write(str(hist_df.to_csv()))
         #     out.write(",")
@@ -295,18 +298,18 @@ for train_index, test_index in kf.split(X):
 
         return model
     # img_w, img_h, n_label, data_format='channels_first'
-    model = att_unet(img_h=256, img_w=256, n_label=3)
+    model = MultiResUnet(height=256, width=256, n_channels=3)
 
     #model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
     model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
 
     saveModel(model)
 
-    fp = open('models/log_attnUnet_brainMRI.txt','w')
+    fp = open('models/log_multi_res_unet_nerve.txt','w')
     fp.close()
-    fp = open('models/best_attnUnet_brainMRI.txt','w')
+    fp = open('models/best_multi_res_unet_nerve.txt','w')
     fp.write('-1.0')
     fp.close()
 
-    trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
+    trainStep(model, X_train, Y_train, X_test, Y_test, epochs=5, batchSize=2)
 
