@@ -11,7 +11,7 @@ gdown https://drive.google.com/u/3/uc?id=1-PAttyqJLImKMdz0gTLM3soiWWvi8PAD
 gdown https://drive.google.com/u/3/uc?id=1FO-LWzFiU__2jrYXOpHw53CeoaHVoZh9
 
 # Skin Lesion Datset
-gdown https://drive.google.com/u/0/uc?id=1-OdmzC3JvmUsZUMrNAKPnu8ZM7EeSK04
+gdown https://drive.google.com/u/2/uc?id=1oPVUwkc4R_JgPUYkvVwGtUj6pHQw1bue
 
 # Lungs Datset
 gdown https://drive.google.com/u/3/uc?id=1wkephfRzoFhrcRbz_7a97_muu8ecSJ9d
