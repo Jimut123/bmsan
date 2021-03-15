@@ -11,7 +11,7 @@ gdown https://drive.google.com/u/3/uc?id=1-PAttyqJLImKMdz0gTLM3soiWWvi8PAD
 gdown https://drive.google.com/u/3/uc?id=1FO-LWzFiU__2jrYXOpHw53CeoaHVoZh9
 
 # Skin Lesion Datset
-gdown https://drive.google.com/u/0/uc?id=1-OdmzC3JvmUsZUMrNAKPnu8ZM7EeSK04
+gdown https://drive.google.com/u/2/uc?id=1oPVUwkc4R_JgPUYkvVwGtUj6pHQw1bue
 
 # Lungs Datset
 gdown https://drive.google.com/u/3/uc?id=1wkephfRzoFhrcRbz_7a97_muu8ecSJ9d
@@ -21,6 +21,9 @@ gdown https://drive.google.com/u/3/uc?id=1VzOUEvIyhmOGQUBGzfI7M8GMW2NjIFeH
 
 # CHEST dataset : https://www.kaggle.com/nikhilpandey360/chest-xray-masks-and-labels
 gdown https://drive.google.com/u/3/uc?id=1c8dcQiwQgFQ5G0K6-B0tOdxAXB5Mo7qz
+# qq https://drive.google.com/u/2/uc?id=1OF4L6tHP-3cyVrK7NhWYnNTUWJBT4gDu
+
+# ! unrar x chestxray_qq.zip > /dev/null
 
 # Nerve - ultrasound dataset: https://www.kaggle.com/c/ultrasound-nerve-segmentation/
 gdown https://drive.google.com/u/3/uc?id=1-EQ_Tiu2m38143y_j0QgYs5Fj5-f6hit
