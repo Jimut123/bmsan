@@ -192,7 +192,8 @@ for train_index, test_index in kf.split(X):
         recall_score = 0
         count = 0
 
-         for i in range(len(Y_test)):
+        for i in range(len(Y_test)):
+
             yp_2 = yp[i].ravel()
             if np.sum(yp_2) > 0:
                 count += 1
@@ -288,5 +289,5 @@ for train_index, test_index in kf.split(X):
     fp.write('-1.0')
     fp.close()
 
-    trainStep(model, X_train, Y_train, X_test, Y_test, epochs=5, batchSize=2)
+    trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
 
