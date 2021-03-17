@@ -64,7 +64,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     ## Hyperparameters
 
     #IMG_SIZE = 256
-    EPOCHS = 150
+    EPOCHS = 5
     BATCH = 2
     LR = 1e-5
 
