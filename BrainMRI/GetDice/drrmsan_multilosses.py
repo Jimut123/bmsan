@@ -33,6 +33,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     import tensorflow as tf
     import matplotlib.pyplot as plt
     from sklearn.model_selection import train_test_split
+    from sklearn.metrics import average_precision_score, recall_score
 
     from tensorflow.keras.layers import Conv2D, Activation, BatchNormalization
     from tensorflow.keras.layers import UpSampling2D, Input, Concatenate
