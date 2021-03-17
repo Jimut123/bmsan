@@ -346,7 +346,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
         print('Jacard Index : '+str(jacard))
         print('Dice Coefficient : '+str(dice))
         with open("Output.txt", "a") as text_file:
-            text_file.write("Fold = {} Jacard : {} Dice Coef : {} Avg. Precision : {}  \n".format(str(fold_no), 
+            text_file.write("Jacard : {} Dice Coef : {} Avg. Precision : {}  \n".format( 
             str(jacard), str(dice), str(avg_precision)))
         
         jaccard_index_list.append(jacard)
