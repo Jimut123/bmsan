@@ -71,7 +71,7 @@ tf.random.set_seed(42)
 ## Hyperparameters
 
 #IMG_SIZE = 256
-EPOCHS = 2
+EPOCHS = 10
 BATCH = 2
 LR = 1e-5
 
@@ -250,7 +250,7 @@ def evaluateModel(model, X_test, Y_test, batchSize):
         #saveModel(model)
     
     print("00"*50)
-    f = open("./bayesian_opt.txt", "a+")
+    f = open("./bayesian_opt_logs.txt", "a+")
     dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " \n"
     f.write(dump_str)
     f.close()
