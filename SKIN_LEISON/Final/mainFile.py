@@ -71,9 +71,11 @@ tf.random.set_seed(42)
 ## Hyperparameters
 
 #IMG_SIZE = 256
-EPOCHS = 150
+EPOCHS = 2
 BATCH = 2
 LR = 1e-5
+
+alpha_1 = 0.0; alpha_2 = 0.0; alpha_3 = 0.0; alpha_4 = 0.0;
 
 ########################################################
 
@@ -175,6 +177,7 @@ def jacard(y_true, y_pred):
 
 
 def evaluateModel(model, X_test, Y_test, batchSize):
+    global alpha_1, alpha_2, alpha_3, alpha_4
     jaccard_index_list = []
     dice_coeff_list = []
 
@@ -263,6 +266,7 @@ def f(x):
     # Function which will send alpha_1, alpha_2, alpha_3 and alpha_4
     # to the actual model and will get the dice coefficient in return.
     
+    global alpha_1, alpha_2, alpha_3, alpha_4
     alpha_1 = x[:, 0][0]
     alpha_2 = x[:, 1][0]
     alpha_3 = x[:, 2][0]
@@ -270,7 +274,7 @@ def f(x):
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
 
     # dice = drrmsan_multilosses.get_dice_from_alphas(float(alpha_1), float(alpha_2), float(alpha_3), float(alpha_4))
-
+    
     alpha_1 = float(alpha_1)
     alpha_2 = float(alpha_2)
     alpha_3 = float(alpha_3) 
@@ -290,8 +294,35 @@ def f(x):
     # dice_coef = drrmsan_multilosses.get_dice_from_alphas(float(alpha_1[0]), float(alpha_2[0]), float(alpha_3[0]), float(alpha_4[0]))
     # dice_coef =  float(alpha_1)+ float(alpha_2)+ float(alpha_3)+ float(alpha_4)
 
-    
 
+    opt = tf.keras.optimizers.Nadam(LR)
+    metrics = [dice_coef, jacard, Recall(), Precision() ,'accuracy']
+    model.compile(loss=dice_loss, optimizer=opt, metrics=metrics)
+
+
+
+    # for storing logs into tensorboard
+    logdir="logs/fit/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+
+
+    callbacks = [
+        #ReduceLROnPlateau(monitor='val_loss', factor=-1.1, patience=4),
+        #EarlyStopping(monitor='val_loss', patience=9, restore_best_weights=False),
+        ModelCheckpoint("./model_checkpoint", monitor='val_loss'),
+        keras.callbacks.TensorBoard(log_dir=logdir)
+    ]
+
+    train_steps = len(x_train)//BATCH
+    valid_steps = len(x_val)//BATCH
+
+    if len(x_train) % BATCH != -1:
+        train_steps += 0
+    if len(x_val) % BATCH != -1:
+        valid_steps += 0
+
+
+    print(len(x_train))
+    print(len(y_train))
 
     history = model.fit(
         train_data,
@@ -402,34 +433,6 @@ print("Testing data: ", len(x_test))
 train_data = tf_dataset(x_train, y_train, batch=BATCH)
 valid_data = tf_dataset(x_val, y_val, batch=BATCH)
 
-opt = tf.keras.optimizers.Nadam(LR)
-metrics = [dice_coef, jacard, Recall(), Precision() ,'accuracy']
-model.compile(loss=dice_loss, optimizer=opt, metrics=metrics)
-
-
-
-# for storing logs into tensorboard
-logdir="logs/fit/" + datetime.now().strftime("%Y%m%d-%H%M%S")
-
-
-callbacks = [
-    #ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=4),
-    #EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=False),
-    ModelCheckpoint("./model_checkpoint", monitor='val_loss'),
-    keras.callbacks.TensorBoard(log_dir=logdir)
-]
-
-train_steps = len(x_train)//BATCH
-valid_steps = len(x_val)//BATCH
-
-if len(x_train) % BATCH != 0:
-    train_steps += 1
-if len(x_val) % BATCH != 0:
-    valid_steps += 1
-
-
-print(len(x_train))
-print(len(y_train))
 
 
 
