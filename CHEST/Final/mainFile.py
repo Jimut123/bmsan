@@ -75,8 +75,6 @@ EPOCHS = 10
 BATCH = 2
 LR = 1e-5
 
-alpha_1 = 0.0; alpha_2 = 0.0; alpha_3 = 0.0; alpha_4 = 0.0;
-
 ########################################################
 
 def load_data(path, split=0.2):
@@ -87,9 +85,12 @@ def load_data(path, split=0.2):
     #insert :: sys.path.insert(0, '../../')
     
     ############################## insert:: add ../ before two
-    img_files = glob.glob('../Kvasir-SEG/images/*')
-    msk_files = glob.glob('../Kvasir-SEG/masks/*')
 
+    images_list = []
+    masks_list = []
+
+    img_files = glob.glob('../original_img/*.tif')
+    msk_files = glob.glob('../ground_truth/*.tif')
 
     img_files.sort()
     msk_files.sort()
@@ -97,19 +98,16 @@ def load_data(path, split=0.2):
     print(len(img_files))
     print(len(msk_files))
 
-
-    images_list = []
-    masks_list = []
-
+    X = []
+    Y = []
 
     for img_fl in tqdm(img_files):
-
-        name = str(img_fl.split('.')[2]).split('/')[3]
-        original_name = "../Kvasir-SEG/images/"+name+".jpg"
-        mask_name = "../Kvasir-SEG/masks/"+name+".jpg"
-        images_list.append(original_name)
-        masks_list.append(mask_name)
-    
+        name = str(img_fl.split('.')[2]).split('/')[2]
+        original_name = "../original_img/"+name+".tif"
+        mask_name = "../ground_truth/"+name+"_mask.tif"
+        if(img_fl.split('.')[-1]=='tif'):
+            images_list.append(original_name)
+            masks_list.append(mask_name)
     
     tot_size = len(images_list)
     test_size = int(split * tot_size)
@@ -126,14 +124,14 @@ def load_data(path, split=0.2):
 def read_img(path):
     path = path.decode()
     tmp = cv2.imread(path, cv2.IMREAD_COLOR)
-    tmp = cv2.resize(tmp, (256, 192))
+    tmp = cv2.resize(tmp, (256, 256))
     tmp = tmp/255.0
     return tmp
 
 def read_mask(path):
     path = path.decode()
     tmp = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-    tmp = cv2.resize(tmp, (256, 192))
+    tmp = cv2.resize(tmp, (256, 256))
     tmp = tmp/255.0
     tmp = np.expand_dims(tmp, axis=-1)
     return tmp
@@ -145,8 +143,8 @@ def tf_parse(a, b):
         return a, b
 
     a, b = tf.numpy_function(_parse, [a, b], [tf.float64, tf.float64])
-    a.set_shape([192, 256, 3])
-    b.set_shape([192, 256, 1])
+    a.set_shape([256, 256, 3])
+    b.set_shape([256, 256, 1])
     return a, b
 
 def tf_dataset(a, b, batch=32):
@@ -182,54 +180,71 @@ def jacard(y_true, y_pred):
 
     return intersection/union
 
-
 def evaluateModel(model, X_test, Y_test, batchSize):
-    global alpha_1, alpha_2, alpha_3, alpha_4
-    jaccard_index_list = []
-    dice_coeff_list = []
 
     try:
-        os.makedirs('results')
+        os.makedirs('results_{}'.format(fold_no))
     except:
         pass
-    
+
+
     yp = model.predict(x=X_test, batch_size=batchSize, verbose=1)
+
     yp = np.round(yp,0)
-    # get the actual 4rth output
-    yp = yp[4]
+
     for i in range(10):
+        try:
+            plt.figure(figsize=(20,10))
+            plt.subplot(1,3,1)
+            plt.imshow(X_test[i])
+            plt.title('Input')
+            plt.subplot(1,3,2)
+            plt.imshow(Y_test[i].reshape(Y_test[i].shape[0],Y_test[i].shape[1]))
+            plt.title('Ground Truth')
+            plt.subplot(1,3,3)
+            plt.imshow(yp[i].reshape(yp[i].shape[0],yp[i].shape[1]))
+            plt.title('Prediction')
 
-        plt.figure(figsize=(20,10))
-        plt.subplot(1,3,1)
-        plt.imshow(X_test[i])
-        plt.title('Input')
-        plt.subplot(1,3,2)
-        plt.imshow(Y_test[i].reshape(Y_test[i].shape[0],Y_test[i].shape[1]))
-        plt.title('Ground Truth')
-        plt.subplot(1,3,3)
-        plt.imshow(yp[i].reshape(yp[i].shape[0],yp[i].shape[1]))
-        plt.title('Prediction')
+            intersection = yp[i].ravel() * Y_test[i].ravel()
+            union = yp[i].ravel() + Y_test[i].ravel() - intersection
+            avg_precision = average_precision_score(yp[i].ravel(), Y_test[i].ravel())
+            dice = (2. * np.sum(intersection) ) / (np.sum(yp[i].ravel()) + np.sum(Y_test[i].ravel()))
+            jacard = (np.sum(intersection)/np.sum(union))
+            plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard)
+            +" Dice : "+str(dice)+ " Precision : "+str(avg_precision))
 
-        intersection = yp[i].ravel() * Y_test[i].ravel()
-        union = yp[i].ravel() + Y_test[i].ravel() - intersection
-        jacard = (np.sum(intersection)/np.sum(union))
-        plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard))
-        plt.savefig('results/'+str(i)+'.png',format='png')
-        plt.close()
+            plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
+            plt.close()
+        except:
+            pass
+    
     jacard = 0
-    # global dice 
     dice = 0
+    avg_precision = 0
+    recall_score = 0
+    count = 0
+    
     for i in range(len(Y_test)):
-
         yp_2 = yp[i].ravel()
-        y2 = Y_test[i].ravel()
-        intersection = yp_2 * y2
-        union = yp_2 + y2 - intersection
-        jacard += (np.sum(intersection)/np.sum(union))
-        dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
+        if np.sum(yp_2) > 0:
+            count += 1
+            y2 = Y_test[i].ravel()
 
-    jacard /= len(Y_test)
-    dice /= len(Y_test)
+            intersection = yp_2 * y2
+            union = yp_2 + y2 - intersection
+            avg_precision += average_precision_score(yp_2, y2)
+            # recall_score += recall_score(yp_2, y2)
+
+            jacard += (np.sum(intersection)/np.sum(union))
+
+            dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
+
+
+
+    jacard /= count
+    dice /= count
+    avg_precision /= count
+    # recall_score /= len(Y_test)
     print('Jacard Index : '+str(jacard))
     print('Dice Coefficient : '+str(dice))
 
@@ -238,11 +253,11 @@ def evaluateModel(model, X_test, Y_test, batchSize):
 
     jaccard_index_list.append(jacard)
     dice_coeff_list.append(dice)
-    fp = open('models/log_drrmsan_kvasir.txt','a')
+    fp = open('models/log_drrmsan_brain_mri.txt','a')
     fp.write(str(jacard)+'\n')
     fp.close()
 
-    fp = open('models/best_drrmsan_kvasir.txt','r')
+    fp = open('models/best_drrmsan_brain_mri.txt','r')
     best = fp.read()
     fp.close()
 
@@ -250,14 +265,14 @@ def evaluateModel(model, X_test, Y_test, batchSize):
         print('***********************************************')
         print('Jacard Index improved from '+str(best)+' to '+str(jacard))
         print('***********************************************')
-        fp = open('models/best_UNet_kvasir.txt','w')
+        fp = open('models/best_UNet_brain_mri.txt','w')
         fp.write(str(jacard))
         fp.close()
 
         #saveModel(model)
     
     print("00"*50)
-    f = open("./bayesian_opt_logs.txt", "a+")
+    f = open("./bayesian_opt.txt", "a+")
     dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " \n"
     f.write(dump_str)
     f.close()
@@ -273,7 +288,6 @@ def f(x):
     # Function which will send alpha_1, alpha_2, alpha_3 and alpha_4
     # to the actual model and will get the dice coefficient in return.
     
-    global alpha_1, alpha_2, alpha_3, alpha_4
     alpha_1 = x[:, 0][0]
     alpha_2 = x[:, 1][0]
     alpha_3 = x[:, 2][0]
@@ -281,7 +295,7 @@ def f(x):
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
 
     # dice = drrmsan_multilosses.get_dice_from_alphas(float(alpha_1), float(alpha_2), float(alpha_3), float(alpha_4))
-    
+
     alpha_1 = float(alpha_1)
     alpha_2 = float(alpha_2)
     alpha_3 = float(alpha_3) 
@@ -290,7 +304,7 @@ def f(x):
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
     print("Total => ",alpha_1+alpha_2+alpha_3+alpha_4)
     
-    model = DRRMSAN_multiscale_attention_bayes(height=192, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
+    model = DRRMSAN_multiscale_attention_bayes(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
     #model.summary()
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
 
@@ -301,35 +315,8 @@ def f(x):
     # dice_coef = drrmsan_multilosses.get_dice_from_alphas(float(alpha_1[0]), float(alpha_2[0]), float(alpha_3[0]), float(alpha_4[0]))
     # dice_coef =  float(alpha_1)+ float(alpha_2)+ float(alpha_3)+ float(alpha_4)
 
+    
 
-    opt = tf.keras.optimizers.Nadam(LR)
-    metrics = [dice_coef, jacard, Recall(), Precision() ,'accuracy']
-    model.compile(loss=dice_loss, optimizer=opt, metrics=metrics)
-
-
-
-    # for storing logs into tensorboard
-    logdir="logs/fit/" + datetime.now().strftime("%Y%m%d-%H%M%S")
-
-
-    callbacks = [
-        #ReduceLROnPlateau(monitor='val_loss', factor=-1.1, patience=4),
-        #EarlyStopping(monitor='val_loss', patience=9, restore_best_weights=False),
-        ModelCheckpoint("./model_checkpoint", monitor='val_loss'),
-        keras.callbacks.TensorBoard(log_dir=logdir)
-    ]
-
-    train_steps = len(x_train)//BATCH
-    valid_steps = len(x_val)//BATCH
-
-    if len(x_train) % BATCH != -1:
-        train_steps += 0
-    if len(x_val) % BATCH != -1:
-        valid_steps += 0
-
-
-    print(len(x_train))
-    print(len(y_train))
 
     history = model.fit(
         train_data,
@@ -346,7 +333,7 @@ def f(x):
     hist_df = pd.DataFrame(history.history)
 
     # save to json:
-    hist_json_file = 'history_kvasir_drrmsan.json'
+    hist_json_file = 'history_brain_mri_drrmsan.json'
     # with open(hist_json_file, 'a') as out:
     #     out.write(hist_df.to_json())
     #     out.write(",")
@@ -356,7 +343,7 @@ def f(x):
         hist_df.to_json(f)
     
     # or save to csv:
-    hist_csv_file = 'history_kvasir_drrmsan.csv'
+    hist_csv_file = 'history_brain_mri_drrmsan.csv'
     # with open(hist_csv_file, 'a') as out:
     #     out.write(str(hist_df.to_csv()))
     #     out.write(",")
@@ -366,11 +353,11 @@ def f(x):
     with open(hist_csv_file, mode='w') as f:
         hist_df.to_csv(f)
     
-    model.save_weights("kvasir_drrmsan_150e.h5")
-    model.save("kvasir_drrmsan_with_weight_150e.h5")
+    model.save_weights("brain_mri_drrmsan_150e.h5")
+    model.save("brain_mri_drrmsan_with_weight_150e.h5")
 
     # Run this module only while loading the pre-trained model.
-    model = load_model('kvasir_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jacard':jacard})
+    model = load_model('brain_mri_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jacard':jacard})
     #model.summary()
 
     from tqdm import tqdm
@@ -407,9 +394,9 @@ def f(x):
     except:
         pass
 
-    fp = open('models/log_drrmsan_kvasir.txt','w')
+    fp = open('models/log_drrmsan_brain_mri.txt','w')
     fp.close()
-    fp = open('models/best_drrmsan_kvasir.txt','w')
+    fp = open('models/best_drrmsan_brain_mri.txt','w')
     fp.write('-1.0')
     fp.close()
 
@@ -440,6 +427,34 @@ print("Testing data: ", len(x_test))
 train_data = tf_dataset(x_train, y_train, batch=BATCH)
 valid_data = tf_dataset(x_val, y_val, batch=BATCH)
 
+opt = tf.keras.optimizers.Nadam(LR)
+metrics = [dice_coef, jacard, Recall(), Precision() ,'accuracy']
+model.compile(loss=dice_loss, optimizer=opt, metrics=metrics)
+
+
+
+# for storing logs into tensorboard
+logdir="logs/fit/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+
+
+callbacks = [
+    #ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=4),
+    #EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=False),
+    ModelCheckpoint("./model_checkpoint", monitor='val_loss'),
+    keras.callbacks.TensorBoard(log_dir=logdir)
+]
+
+train_steps = len(x_train)//BATCH
+valid_steps = len(x_val)//BATCH
+
+if len(x_train) % BATCH != 0:
+    train_steps += 1
+if len(x_val) % BATCH != 0:
+    valid_steps += 1
+
+
+print(len(x_train))
+print(len(y_train))
 
 
 
