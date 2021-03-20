@@ -71,7 +71,7 @@ tf.random.set_seed(42)
 ## Hyperparameters
 
 #IMG_SIZE = 256
-EPOCHS = 150
+EPOCHS = 10
 BATCH = 2
 LR = 1e-5
 
@@ -238,11 +238,11 @@ def evaluateModel(model, X_test, Y_test, batchSize):
 
     jaccard_index_list.append(jacard)
     dice_coeff_list.append(dice)
-    fp = open('models/log_drrmsan_skinleison.txt','a')
+    fp = open('models/log_drrmsan_kvasir.txt','a')
     fp.write(str(jacard)+'\n')
     fp.close()
 
-    fp = open('models/best_drrmsan_skinleison.txt','r')
+    fp = open('models/best_drrmsan_kvasir.txt','r')
     best = fp.read()
     fp.close()
 
@@ -250,7 +250,7 @@ def evaluateModel(model, X_test, Y_test, batchSize):
         print('***********************************************')
         print('Jacard Index improved from '+str(best)+' to '+str(jacard))
         print('***********************************************')
-        fp = open('models/best_UNet_skinleison.txt','w')
+        fp = open('models/best_UNet_kvasir.txt','w')
         fp.write(str(jacard))
         fp.close()
 
@@ -407,9 +407,9 @@ def f(x):
     except:
         pass
 
-    fp = open('models/log_drrmsan_skinleison.txt','w')
+    fp = open('models/log_drrmsan_kvasir.txt','w')
     fp.close()
-    fp = open('models/best_drrmsan_skinleison.txt','w')
+    fp = open('models/best_drrmsan_kvasir.txt','w')
     fp.write('-1.0')
     fp.close()
 
@@ -456,7 +456,7 @@ def load_entire_file_into_memory_and_then_convert(filename):
     with open(filename, 'r') as input_file:
         full_file_contents = input_file.read()
         lines_of_file = full_file_contents.split('\n')
-        return numpy.array(lines_of_file)
+        return np.array(lines_of_file)
 
 dump = load_entire_file_into_memory_and_then_convert('store_alphas_dice.txt')
 print(dump)
@@ -468,10 +468,10 @@ for item in dump[:-1]:
     X.append([float(i) for i in all_items[:4]]) 
     Y.append(float(all_items[-2]))
 
-X = numpy.array(X)
+X = np.array(X)
 print(X)
 
-Y = -numpy.array(Y)
+Y = -np.array(Y)
 print(Y)
 
 Y = np.expand_dims(Y, axis=1)
