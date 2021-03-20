@@ -435,6 +435,16 @@ valid_data = tf_dataset(x_val, y_val, batch=BATCH)
 
 
 
+
+domain = [{'name': 'alpha_1', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1},
+          {'name': 'alpha_2', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1},
+          {'name': 'alpha_3', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1},
+          {'name': 'alpha_4', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1}]
+
+constraints = [{'name': 'constr_1', 'constraint': '0.9999 - x[:,0] - x[:,1] - x[:,2] - x[:,3]'},
+               {'name': 'constr_1', 'constraint': '-1.00001 + x[:,0] + x[:,1] + x[:,2] + x[:,3]'}]
+
+
 def load_entire_file_into_memory_and_then_convert(filename):
     with open(filename, 'r') as input_file:
         full_file_contents = input_file.read()
@@ -460,7 +470,7 @@ print(Y)
 Y = np.expand_dims(Y, axis=1)
 Y
 
-maxiter = 20
+maxiter = 10
 
 kernel = GPy.kern.Matern52(input_dim=4, ARD=True, variance=1, lengthscale=[1,1,1,1]);
 
