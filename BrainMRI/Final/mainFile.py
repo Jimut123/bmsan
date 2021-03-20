@@ -183,7 +183,7 @@ def jacard(y_true, y_pred):
 def evaluateModel(model, X_test, Y_test, batchSize):
 
     try:
-        os.makedirs('results_{}'.format(fold_no))
+        os.makedirs('results')
     except:
         pass
 
@@ -213,7 +213,7 @@ def evaluateModel(model, X_test, Y_test, batchSize):
             plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard)
             +" Dice : "+str(dice)+ " Precision : "+str(avg_precision))
 
-            plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
+            plt.savefig('results/'+str(i)+'.png',format='png')
             plt.close()
         except:
             pass

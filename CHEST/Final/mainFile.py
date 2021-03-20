@@ -86,28 +86,16 @@ def load_data(path, split=0.2):
     
     ############################## insert:: add ../ before two
 
-    images_list = []
-    masks_list = []
+    images_list = glob.glob('../chest_qq_files/images/*')
+    masks_list = glob.glob('../chest_qq_files/masks/*')
 
-    img_files = glob.glob('../original_img/*.tif')
-    msk_files = glob.glob('../ground_truth/*.tif')
+    images_list.sort()
+    masks_list.sort()
+    print(images_list[:10])
+    print(masks_list[:10])
+    print(len(images_list))
+    print(len(masks_list))
 
-    img_files.sort()
-    msk_files.sort()
-
-    print(len(img_files))
-    print(len(msk_files))
-
-    X = []
-    Y = []
-
-    for img_fl in tqdm(img_files):
-        name = str(img_fl.split('.')[2]).split('/')[2]
-        original_name = "../original_img/"+name+".tif"
-        mask_name = "../ground_truth/"+name+"_mask.tif"
-        if(img_fl.split('.')[-1]=='tif'):
-            images_list.append(original_name)
-            masks_list.append(mask_name)
     
     tot_size = len(images_list)
     test_size = int(split * tot_size)
@@ -182,62 +170,86 @@ def jacard(y_true, y_pred):
 
 def evaluateModel(model, X_test, Y_test, batchSize):
 
+    jaccard_index_list = []
+    dice_coeff_list = []
+
     try:
-        os.makedirs('results_{}'.format(fold_no))
+        os.makedirs('results')
     except:
         pass
-
-
+    
     yp = model.predict(x=X_test, batch_size=batchSize, verbose=1)
-
     yp = np.round(yp,0)
-
+    # get the actual 4rth output
+    yp = yp[4]
     for i in range(10):
-        try:
-            plt.figure(figsize=(20,10))
-            plt.subplot(1,3,1)
-            plt.imshow(X_test[i])
-            plt.title('Input')
-            plt.subplot(1,3,2)
-            plt.imshow(Y_test[i].reshape(Y_test[i].shape[0],Y_test[i].shape[1]))
-            plt.title('Ground Truth')
-            plt.subplot(1,3,3)
-            plt.imshow(yp[i].reshape(yp[i].shape[0],yp[i].shape[1]))
-            plt.title('Prediction')
 
-            intersection = yp[i].ravel() * Y_test[i].ravel()
-            union = yp[i].ravel() + Y_test[i].ravel() - intersection
-            avg_precision = average_precision_score(yp[i].ravel(), Y_test[i].ravel())
-            dice = (2. * np.sum(intersection) ) / (np.sum(yp[i].ravel()) + np.sum(Y_test[i].ravel()))
-            jacard = (np.sum(intersection)/np.sum(union))
-            plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard)
-            +" Dice : "+str(dice)+ " Precision : "+str(avg_precision))
+        plt.figure(figsize=(20,10))
+        plt.subplot(1,3,1)
+        plt.imshow(X_test[i])
+        plt.title('Input')
+        plt.subplot(1,3,2)
+        plt.imshow(Y_test[i].reshape(Y_test[i].shape[0],Y_test[i].shape[1]))
+        plt.title('Ground Truth')
+        plt.subplot(1,3,3)
+        plt.imshow(yp[i].reshape(yp[i].shape[0],yp[i].shape[1]))
+        plt.title('Prediction')
 
-            plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
-            plt.close()
-        except:
-            pass
-    
+        intersection = yp[i].ravel() * Y_test[i].ravel()
+        union = yp[i].ravel() + Y_test[i].ravel() - intersection
+        jacard = (np.sum(intersection)/np.sum(union))
+        plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard))
+        plt.savefig('results/'+str(i)+'.png',format='png')
+        plt.close()
     jacard = 0
+    # global dice 
     dice = 0
-    avg_precision = 0
-    recall_score = 0
-    count = 0
-    
     for i in range(len(Y_test)):
+
         yp_2 = yp[i].ravel()
-        if np.sum(yp_2) > 0:
-            count += 1
-            y2 = Y_test[i].ravel()
+        y2 = Y_test[i].ravel()
+        intersection = yp_2 * y2
+        union = yp_2 + y2 - intersection
+        jacard += (np.sum(intersection)/np.sum(union))
+        dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
 
-            intersection = yp_2 * y2
-            union = yp_2 + y2 - intersection
-            avg_precision += average_precision_score(yp_2, y2)
-            # recall_score += recall_score(yp_2, y2)
+    jacard /= len(Y_test)
+    dice /= len(Y_test)
+    print('Jacard Index : '+str(jacard))
+    print('Dice Coefficient : '+str(dice))
 
-            jacard += (np.sum(intersection)/np.sum(union))
+    with open("Output.txt", "w") as text_file:
+        text_file.write("Jacard : {} Dice Coef : {} ".format(str(jacard), str(dice)))
 
-            dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
+    jaccard_index_list.append(jacard)
+    dice_coeff_list.append(dice)
+    fp = open('models/log_drrmsan_chest.txt','a')
+    fp.write(str(jacard)+'\n')
+    fp.close()
+
+    fp = open('models/best_drrmsan_chest.txt','r')
+    best = fp.read()
+    fp.close()
+
+    if(jacard>float(best)):
+        print('***********************************************')
+        print('Jacard Index improved from '+str(best)+' to '+str(jacard))
+        print('***********************************************')
+        fp = open('models/best_UNet_chest.txt','w')
+        fp.write(str(jacard))
+        fp.close()
+
+        #saveModel(model)
+    
+    print("00"*50)
+    f = open("./bayesian_opt.txt", "a+")
+    dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " \n"
+    f.write(dump_str)
+    f.close()
+    print("Dice Value Used = ", -float(dice))
+    # del model
+    print("Model deleted and dice value returned!!")
+    return dice
 
 
 
@@ -253,11 +265,11 @@ def evaluateModel(model, X_test, Y_test, batchSize):
 
     jaccard_index_list.append(jacard)
     dice_coeff_list.append(dice)
-    fp = open('models/log_drrmsan_brain_mri.txt','a')
+    fp = open('models/log_drrmsan_chest.txt','a')
     fp.write(str(jacard)+'\n')
     fp.close()
 
-    fp = open('models/best_drrmsan_brain_mri.txt','r')
+    fp = open('models/best_drrmsan_chest.txt','r')
     best = fp.read()
     fp.close()
 
@@ -265,7 +277,7 @@ def evaluateModel(model, X_test, Y_test, batchSize):
         print('***********************************************')
         print('Jacard Index improved from '+str(best)+' to '+str(jacard))
         print('***********************************************')
-        fp = open('models/best_UNet_brain_mri.txt','w')
+        fp = open('models/best_UNet_chest.txt','w')
         fp.write(str(jacard))
         fp.close()
 
@@ -333,7 +345,7 @@ def f(x):
     hist_df = pd.DataFrame(history.history)
 
     # save to json:
-    hist_json_file = 'history_brain_mri_drrmsan.json'
+    hist_json_file = 'history_chest_drrmsan.json'
     # with open(hist_json_file, 'a') as out:
     #     out.write(hist_df.to_json())
     #     out.write(",")
@@ -343,7 +355,7 @@ def f(x):
         hist_df.to_json(f)
     
     # or save to csv:
-    hist_csv_file = 'history_brain_mri_drrmsan.csv'
+    hist_csv_file = 'history_chest_drrmsan.csv'
     # with open(hist_csv_file, 'a') as out:
     #     out.write(str(hist_df.to_csv()))
     #     out.write(",")
@@ -353,11 +365,11 @@ def f(x):
     with open(hist_csv_file, mode='w') as f:
         hist_df.to_csv(f)
     
-    model.save_weights("brain_mri_drrmsan_150e.h5")
-    model.save("brain_mri_drrmsan_with_weight_150e.h5")
+    model.save_weights("chest_drrmsan_150e.h5")
+    model.save("chest_drrmsan_with_weight_150e.h5")
 
     # Run this module only while loading the pre-trained model.
-    model = load_model('brain_mri_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jacard':jacard})
+    model = load_model('chest_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jacard':jacard})
     #model.summary()
 
     from tqdm import tqdm
@@ -394,9 +406,9 @@ def f(x):
     except:
         pass
 
-    fp = open('models/log_drrmsan_brain_mri.txt','w')
+    fp = open('models/log_drrmsan_chest.txt','w')
     fp.close()
-    fp = open('models/best_drrmsan_brain_mri.txt','w')
+    fp = open('models/best_drrmsan_chest.txt','w')
     fp.write('-1.0')
     fp.close()
 
