@@ -33,9 +33,9 @@ Medical sectors are generally presented with challenge of segmenting images with
 * [KVASIR-SEG](https://drive.google.com/u/3/uc?id=1VzOUEvIyhmOGQUBGzfI7M8GMW2NjIFeH)
 
 ## Dependencies for GPU
-```
-conda install -c anaconda cudatoolkit=10.1.243 cudnn=7.6.5 tensorflow-gpu
-```
+
+[dependencies](nvdia_env.txt)
+
 
 
 ## Contribution

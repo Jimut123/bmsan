@@ -75,8 +75,6 @@ EPOCHS = 10
 BATCH = 2
 LR = 1e-5
 
-alpha_1 = 0.0; alpha_2 = 0.0; alpha_3 = 0.0; alpha_4 = 0.0;
-
 ########################################################
 
 def load_data(path, split=0.2):
@@ -87,29 +85,29 @@ def load_data(path, split=0.2):
     #insert :: sys.path.insert(0, '../../')
     
     ############################## insert:: add ../ before two
-    img_files = glob.glob('../Kvasir-SEG/images/*')
-    msk_files = glob.glob('../Kvasir-SEG/masks/*')
+
+    images_list = []
+    masks_list = []
+
+    img_files = sorted(glob.glob('../ISIC-2017_Training_Data/ISIC_*.jpg'))
+    msk_files = sorted(glob.glob('../ISIC-2017_Training_Data/*_superpixels.png'))
 
 
     img_files.sort()
     msk_files.sort()
 
-    print(len(img_files))
+    print("B==>",len(img_files))
     print(len(msk_files))
 
 
-    images_list = []
-    masks_list = []
-
+    X = []
+    Y = []
 
     for img_fl in tqdm(img_files):
-
-        name = str(img_fl.split('.')[2]).split('/')[3]
-        original_name = "../Kvasir-SEG/images/"+name+".jpg"
-        mask_name = "../Kvasir-SEG/masks/"+name+".jpg"
-        images_list.append(original_name)
+        images_list.append(img_fl)
+        im_name = str(str(img_fl.split('.')[2]).split('/')[2]).split('_')[1]
+        mask_name = '../ISIC-2017_Training_Data/ISIC_'+im_name+'_superpixels.png'
         masks_list.append(mask_name)
-    
     
     tot_size = len(images_list)
     test_size = int(split * tot_size)
@@ -126,14 +124,14 @@ def load_data(path, split=0.2):
 def read_img(path):
     path = path.decode()
     tmp = cv2.imread(path, cv2.IMREAD_COLOR)
-    tmp = cv2.resize(tmp, (256, 192))
+    tmp = cv2.resize(tmp, (256, 256))
     tmp = tmp/255.0
     return tmp
 
 def read_mask(path):
     path = path.decode()
     tmp = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-    tmp = cv2.resize(tmp, (256, 192))
+    tmp = cv2.resize(tmp, (256, 256))
     tmp = tmp/255.0
     tmp = np.expand_dims(tmp, axis=-1)
     return tmp
@@ -145,8 +143,8 @@ def tf_parse(a, b):
         return a, b
 
     a, b = tf.numpy_function(_parse, [a, b], [tf.float64, tf.float64])
-    a.set_shape([192, 256, 3])
-    b.set_shape([192, 256, 1])
+    a.set_shape([256, 256, 3])
+    b.set_shape([256, 256, 1])
     return a, b
 
 def tf_dataset(a, b, batch=32):
@@ -184,7 +182,6 @@ def jacard(y_true, y_pred):
 
 
 def evaluateModel(model, X_test, Y_test, batchSize):
-    global alpha_1, alpha_2, alpha_3, alpha_4
     jaccard_index_list = []
     dice_coeff_list = []
 
@@ -238,11 +235,11 @@ def evaluateModel(model, X_test, Y_test, batchSize):
 
     jaccard_index_list.append(jacard)
     dice_coeff_list.append(dice)
-    fp = open('models/log_drrmsan_kvasir.txt','a')
+    fp = open('models/log_drrmsan_isic.txt','a')
     fp.write(str(jacard)+'\n')
     fp.close()
 
-    fp = open('models/best_drrmsan_kvasir.txt','r')
+    fp = open('models/best_drrmsan_isic.txt','r')
     best = fp.read()
     fp.close()
 
@@ -250,14 +247,14 @@ def evaluateModel(model, X_test, Y_test, batchSize):
         print('***********************************************')
         print('Jacard Index improved from '+str(best)+' to '+str(jacard))
         print('***********************************************')
-        fp = open('models/best_UNet_kvasir.txt','w')
+        fp = open('models/best_UNet_isic.txt','w')
         fp.write(str(jacard))
         fp.close()
 
         #saveModel(model)
     
     print("00"*50)
-    f = open("./bayesian_opt_logs.txt", "a+")
+    f = open("./bayesian_opt.txt", "a+")
     dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " \n"
     f.write(dump_str)
     f.close()
@@ -273,7 +270,6 @@ def f(x):
     # Function which will send alpha_1, alpha_2, alpha_3 and alpha_4
     # to the actual model and will get the dice coefficient in return.
     
-    global alpha_1, alpha_2, alpha_3, alpha_4
     alpha_1 = x[:, 0][0]
     alpha_2 = x[:, 1][0]
     alpha_3 = x[:, 2][0]
@@ -281,7 +277,7 @@ def f(x):
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
 
     # dice = drrmsan_multilosses.get_dice_from_alphas(float(alpha_1), float(alpha_2), float(alpha_3), float(alpha_4))
-    
+
     alpha_1 = float(alpha_1)
     alpha_2 = float(alpha_2)
     alpha_3 = float(alpha_3) 
@@ -290,7 +286,7 @@ def f(x):
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
     print("Total => ",alpha_1+alpha_2+alpha_3+alpha_4)
     
-    model = DRRMSAN_multiscale_attention_bayes(height=192, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
+    model = DRRMSAN_multiscale_attention_bayes(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
     #model.summary()
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
 
@@ -301,35 +297,8 @@ def f(x):
     # dice_coef = drrmsan_multilosses.get_dice_from_alphas(float(alpha_1[0]), float(alpha_2[0]), float(alpha_3[0]), float(alpha_4[0]))
     # dice_coef =  float(alpha_1)+ float(alpha_2)+ float(alpha_3)+ float(alpha_4)
 
+    
 
-    opt = tf.keras.optimizers.Nadam(LR)
-    metrics = [dice_coef, jacard, Recall(), Precision() ,'accuracy']
-    model.compile(loss=dice_loss, optimizer=opt, metrics=metrics)
-
-
-
-    # for storing logs into tensorboard
-    logdir="logs/fit/" + datetime.now().strftime("%Y%m%d-%H%M%S")
-
-
-    callbacks = [
-        #ReduceLROnPlateau(monitor='val_loss', factor=-1.1, patience=4),
-        #EarlyStopping(monitor='val_loss', patience=9, restore_best_weights=False),
-        ModelCheckpoint("./model_checkpoint", monitor='val_loss'),
-        keras.callbacks.TensorBoard(log_dir=logdir)
-    ]
-
-    train_steps = len(x_train)//BATCH
-    valid_steps = len(x_val)//BATCH
-
-    if len(x_train) % BATCH != -1:
-        train_steps += 0
-    if len(x_val) % BATCH != -1:
-        valid_steps += 0
-
-
-    print(len(x_train))
-    print(len(y_train))
 
     history = model.fit(
         train_data,
@@ -346,7 +315,7 @@ def f(x):
     hist_df = pd.DataFrame(history.history)
 
     # save to json:
-    hist_json_file = 'history_kvasir_drrmsan.json'
+    hist_json_file = 'history_isic_drrmsan.json'
     # with open(hist_json_file, 'a') as out:
     #     out.write(hist_df.to_json())
     #     out.write(",")
@@ -356,7 +325,7 @@ def f(x):
         hist_df.to_json(f)
     
     # or save to csv:
-    hist_csv_file = 'history_kvasir_drrmsan.csv'
+    hist_csv_file = 'history_isic_drrmsan.csv'
     # with open(hist_csv_file, 'a') as out:
     #     out.write(str(hist_df.to_csv()))
     #     out.write(",")
@@ -366,11 +335,11 @@ def f(x):
     with open(hist_csv_file, mode='w') as f:
         hist_df.to_csv(f)
     
-    model.save_weights("kvasir_drrmsan_150e.h5")
-    model.save("kvasir_drrmsan_with_weight_150e.h5")
+    model.save_weights("isic_drrmsan_150e.h5")
+    model.save("isic_drrmsan_with_weight_150e.h5")
 
     # Run this module only while loading the pre-trained model.
-    model = load_model('kvasir_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jacard':jacard})
+    model = load_model('isic_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jacard':jacard})
     #model.summary()
 
     from tqdm import tqdm
@@ -407,9 +376,9 @@ def f(x):
     except:
         pass
 
-    fp = open('models/log_drrmsan_kvasir.txt','w')
+    fp = open('models/log_drrmsan_isic.txt','w')
     fp.close()
-    fp = open('models/best_drrmsan_kvasir.txt','w')
+    fp = open('models/best_drrmsan_isic.txt','w')
     fp.write('-1.0')
     fp.close()
 
@@ -440,6 +409,34 @@ print("Testing data: ", len(x_test))
 train_data = tf_dataset(x_train, y_train, batch=BATCH)
 valid_data = tf_dataset(x_val, y_val, batch=BATCH)
 
+opt = tf.keras.optimizers.Nadam(LR)
+metrics = [dice_coef, jacard, Recall(), Precision() ,'accuracy']
+model.compile(loss=dice_loss, optimizer=opt, metrics=metrics)
+
+
+
+# for storing logs into tensorboard
+logdir="logs/fit/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+
+
+callbacks = [
+    #ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=4),
+    #EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=False),
+    ModelCheckpoint("./model_checkpoint", monitor='val_loss'),
+    keras.callbacks.TensorBoard(log_dir=logdir)
+]
+
+train_steps = len(x_train)//BATCH
+valid_steps = len(x_val)//BATCH
+
+if len(x_train) % BATCH != 0:
+    train_steps += 1
+if len(x_val) % BATCH != 0:
+    valid_steps += 1
+
+
+print(len(x_train))
+print(len(y_train))
 
 
 
@@ -456,7 +453,7 @@ def load_entire_file_into_memory_and_then_convert(filename):
     with open(filename, 'r') as input_file:
         full_file_contents = input_file.read()
         lines_of_file = full_file_contents.split('\n')
-        return np.array(lines_of_file)
+        return numpy.array(lines_of_file)
 
 dump = load_entire_file_into_memory_and_then_convert('store_alphas_dice.txt')
 print(dump)
@@ -468,10 +465,10 @@ for item in dump[:-1]:
     X.append([float(i) for i in all_items[:4]]) 
     Y.append(float(all_items[-2]))
 
-X = np.array(X)
+X = numpy.array(X)
 print(X)
 
-Y = -np.array(Y)
+Y = -numpy.array(Y)
 print(Y)
 
 Y = np.expand_dims(Y, axis=1)
