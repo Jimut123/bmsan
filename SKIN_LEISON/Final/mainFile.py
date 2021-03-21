@@ -445,25 +445,46 @@ constraints = [{'name': 'constr_1', 'constraint': '0.9999 - x[:,0] - x[:,1] - x[
                {'name': 'constr_1', 'constraint': '-1.00001 + x[:,0] + x[:,1] + x[:,2] + x[:,3]'}]
 
 
+def load_entire_file_into_memory_and_then_convert(filename):
+    with open(filename, 'r') as input_file:
+        full_file_contents = input_file.read()
+        lines_of_file = full_file_contents.split('\n')
+        return numpy.array(lines_of_file)
 
-maxiter = 20
+dump = load_entire_file_into_memory_and_then_convert('store_alphas_dice.txt')
+print(dump)
+
+X = []
+Y = []
+for item in dump[:-1]:
+    all_items = item.split(' ')
+    X.append([float(i) for i in all_items[:4]]) 
+    Y.append(float(all_items[-2]))
+
+X = numpy.array(X)
+print(X)
+
+Y = -numpy.array(Y)
+print(Y)
+
+Y = np.expand_dims(Y, axis=1)
+Y
+
+maxiter = 10
 
 kernel = GPy.kern.Matern52(input_dim=4, ARD=True, variance=1, lengthscale=[1,1,1,1]);
 
-
-
-
-myBopt_4d = GPyOpt.methods.BayesianOptimization(f, domain=domain, 
-                                                constraints = constraints, kernel=kernel,
-                                                acquisition_type ='EI', model_type='GP', verbosity=True,
-                                                acquisition_optimizer_type='lbfgs', cost_withGradients=None,
-                                                exact_feval=True)
+myBopt_4d = GPyOpt.methods.BayesianOptimization(f=f, X=X, Y=Y, domain=domain, constraints = constraints,
+                                                kernel=kernel, acquisition_type ='EI', model_type='GP', 
+                                                verbosity=True, acquisition_optimizer_type='lbfgs', 
+                                                cost_withGradients=None, exact_feval=True)
 
 myBopt_4d.run_optimization(max_iter = maxiter, verbosity=True)
 print("="*20)
-print("Value of (x,y) that minimises the objective:"+str(myBopt_4d.x_opt))
-print("Minimum value of the objective: "+str(myBopt_4d.fx_opt))
+print("Value of (x,y) that minimises the objective:"+str(myBopt_4d.x_opt))    
+print("Minimum value of the objective: "+str(myBopt_4d.fx_opt))     
 print("="*20)
+#myBopt_4d.plot_acquisition()
 
 f = open("./bayesian_opt.txt", "a+")
 dump_str = "Value of (x,y) that minimises the objective:"+str(myBopt_4d.x_opt)+"\n"
