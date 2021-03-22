@@ -346,7 +346,7 @@ def f(x):
     hist_df = pd.DataFrame(history.history)
 
     # save to json:
-    hist_json_file = 'history_skin_drrmsan.json'
+    hist_json_file = 'history_kvasir_drrmsan.json'
     # with open(hist_json_file, 'a') as out:
     #     out.write(hist_df.to_json())
     #     out.write(",")
@@ -356,7 +356,7 @@ def f(x):
         hist_df.to_json(f)
     
     # or save to csv:
-    hist_csv_file = 'history_skin_drrmsan.csv'
+    hist_csv_file = 'history_kvasir_drrmsan.csv'
     # with open(hist_csv_file, 'a') as out:
     #     out.write(str(hist_df.to_csv()))
     #     out.write(",")
@@ -366,11 +366,11 @@ def f(x):
     with open(hist_csv_file, mode='w') as f:
         hist_df.to_csv(f)
     
-    model.save_weights("skin_drrmsan_150e.h5")
-    model.save("skin_drrmsan_with_weight_150e.h5")
+    model.save_weights("kvasir_drrmsan_150e.h5")
+    model.save("kvasir_drrmsan_with_weight_150e.h5")
 
     # Run this module only while loading the pre-trained model.
-    model = load_model('skin_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jacard':jacard})
+    model = load_model('kvasir_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jacard':jacard})
     #model.summary()
 
     from tqdm import tqdm
