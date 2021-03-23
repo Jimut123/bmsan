@@ -327,8 +327,33 @@ def f(x):
     # dice_coef = drrmsan_multilosses.get_dice_from_alphas(float(alpha_1[0]), float(alpha_2[0]), float(alpha_3[0]), float(alpha_4[0]))
     # dice_coef =  float(alpha_1)+ float(alpha_2)+ float(alpha_3)+ float(alpha_4)
 
-    
+    opt = tf.keras.optimizers.Nadam(LR)
+    metrics = [dice_coef, jacard, Recall(), Precision() ,'accuracy']
+    model.compile(loss=dice_loss, optimizer=opt, metrics=metrics)
 
+
+
+    # for storing logs into tensorboard
+    logdir="logs/fit/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+
+
+    callbacks = [
+        #ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=4),
+        #EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=False),
+        ModelCheckpoint("./model_checkpoint", monitor='val_loss'),
+        keras.callbacks.TensorBoard(log_dir=logdir)
+    ]
+
+    train_steps = len(x_train)//BATCH
+    valid_steps = len(x_val)//BATCH
+
+    if len(x_train) % BATCH != 0:
+        train_steps += 1
+    if len(x_val) % BATCH != 0:
+        valid_steps += 1
+    
+    print(len(x_train))
+    print(len(y_train))
 
     history = model.fit(
         train_data,
@@ -439,30 +464,7 @@ print("Testing data: ", len(x_test))
 train_data = tf_dataset(x_train, y_train, batch=BATCH)
 valid_data = tf_dataset(x_val, y_val, batch=BATCH)
 
-opt = tf.keras.optimizers.Nadam(LR)
-metrics = [dice_coef, jacard, Recall(), Precision() ,'accuracy']
-model.compile(loss=dice_loss, optimizer=opt, metrics=metrics)
 
-
-
-# for storing logs into tensorboard
-logdir="logs/fit/" + datetime.now().strftime("%Y%m%d-%H%M%S")
-
-
-callbacks = [
-    #ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=4),
-    #EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=False),
-    ModelCheckpoint("./model_checkpoint", monitor='val_loss'),
-    keras.callbacks.TensorBoard(log_dir=logdir)
-]
-
-train_steps = len(x_train)//BATCH
-valid_steps = len(x_val)//BATCH
-
-if len(x_train) % BATCH != 0:
-    train_steps += 1
-if len(x_val) % BATCH != 0:
-    valid_steps += 1
 
 
 print(len(x_train))
@@ -483,7 +485,7 @@ def load_entire_file_into_memory_and_then_convert(filename):
     with open(filename, 'r') as input_file:
         full_file_contents = input_file.read()
         lines_of_file = full_file_contents.split('\n')
-        return numpy.array(lines_of_file)
+        return np.array(lines_of_file)
 
 dump = load_entire_file_into_memory_and_then_convert('store_alphas_dice.txt')
 print(dump)
@@ -495,10 +497,10 @@ for item in dump[:-1]:
     X.append([float(i) for i in all_items[:4]]) 
     Y.append(float(all_items[-2]))
 
-X = numpy.array(X)
+X = np.array(X)
 print(X)
 
-Y = -numpy.array(Y)
+Y = -np.array(Y)
 print(Y)
 
 Y = np.expand_dims(Y, axis=1)
