@@ -42,6 +42,7 @@ from tensorflow.keras.models import Model , load_model
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.metrics import Recall, Precision 
+from sklearn.metrics import average_precision_score, recall_score
 from tensorflow.keras import backend as K
 import sys
 sys.path.insert(0, '../../')
@@ -192,6 +193,7 @@ def evaluateModel(model, X_test, Y_test, batchSize):
     yp = model.predict(x=X_test, batch_size=batchSize, verbose=1)
 
     yp = np.round(yp,0)
+    yp = yp[4]
 
     for i in range(10):
         try:
@@ -251,9 +253,7 @@ def evaluateModel(model, X_test, Y_test, batchSize):
 
     with open("Output.txt", "w") as text_file:
         text_file.write("Jacard : {} Dice Coef : {} ".format(str(jacard), str(dice)))
-
-    jaccard_index_list.append(jacard)
-    dice_coeff_list.append(dice)
+    
     fp = open('models/log_drrmsan_nerve.txt','a')
     fp.write(str(jacard)+'\n')
     fp.close()

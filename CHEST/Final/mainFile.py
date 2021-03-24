@@ -42,6 +42,7 @@ from tensorflow.keras.models import Model , load_model
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.metrics import Recall, Precision 
+from sklearn.metrics import average_precision_score, recall_score
 from tensorflow.keras import backend as K
 import sys
 sys.path.insert(0, '../../')
@@ -172,10 +173,7 @@ def jacard(y_true, y_pred):
 
 def evaluateModel(model, X_test, Y_test, batchSize):
     global alpha_1, alpha_2, alpha_3, alpha_4
-
-    jaccard_index_list = []
-    dice_coeff_list = []
-
+    
     try:
         os.makedirs('results')
     except:
@@ -223,9 +221,7 @@ def evaluateModel(model, X_test, Y_test, batchSize):
 
     with open("Output.txt", "w") as text_file:
         text_file.write("Jacard : {} Dice Coef : {} ".format(str(jacard), str(dice)))
-
-    jaccard_index_list.append(jacard)
-    dice_coeff_list.append(dice)
+    
     fp = open('models/log_drrmsan_chest.txt','a')
     fp.write(str(jacard)+'\n')
     fp.close()
@@ -253,49 +249,6 @@ def evaluateModel(model, X_test, Y_test, batchSize):
     # del model
     print("Model deleted and dice value returned!!")
     return dice
-
-
-
-    jacard /= count
-    dice /= count
-    avg_precision /= count
-    # recall_score /= len(Y_test)
-    print('Jacard Index : '+str(jacard))
-    print('Dice Coefficient : '+str(dice))
-
-    with open("Output.txt", "w") as text_file:
-        text_file.write("Jacard : {} Dice Coef : {} ".format(str(jacard), str(dice)))
-
-    jaccard_index_list.append(jacard)
-    dice_coeff_list.append(dice)
-    fp = open('models/log_drrmsan_chest.txt','a')
-    fp.write(str(jacard)+'\n')
-    fp.close()
-
-    fp = open('models/best_drrmsan_chest.txt','r')
-    best = fp.read()
-    fp.close()
-
-    if(jacard>float(best)):
-        print('***********************************************')
-        print('Jacard Index improved from '+str(best)+' to '+str(jacard))
-        print('***********************************************')
-        fp = open('models/best_UNet_chest.txt','w')
-        fp.write(str(jacard))
-        fp.close()
-
-        #saveModel(model)
-    
-    print("00"*50)
-    f = open("./bayesian_opt.txt", "a+")
-    dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " \n"
-    f.write(dump_str)
-    f.close()
-    print("Dice Value Used = ", -float(dice))
-    # del model
-    print("Model deleted and dice value returned!!")
-    return dice
-
 
 
 def f(x):
