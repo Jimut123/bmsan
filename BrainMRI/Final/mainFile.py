@@ -72,7 +72,7 @@ tf.random.set_seed(42)
 ## Hyperparameters
 
 #IMG_SIZE = 256
-EPOCHS = 10
+EPOCHS = 150
 BATCH = 2
 LR = 1e-5
 
