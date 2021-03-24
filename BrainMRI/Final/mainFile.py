@@ -255,9 +255,7 @@ def evaluateModel(model, X_test, Y_test, batchSize):
 
     with open("Output.txt", "w") as text_file:
         text_file.write("Jacard : {} Dice Coef : {} ".format(str(jacard), str(dice)))
-
-    jaccard_index_list.append(jacard)
-    dice_coeff_list.append(dice)
+    
     fp = open('models/log_drrmsan_brain_mri.txt','a')
     fp.write(str(jacard)+'\n')
     fp.close()
