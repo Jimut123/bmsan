@@ -75,6 +75,8 @@ EPOCHS = 10
 BATCH = 2
 LR = 1e-5
 
+alpha_1 = 0.0; alpha_2 = 0.0; alpha_3 = 0.0; alpha_4 = 0.0;
+
 ########################################################
 
 def load_data(path, split=0.2):
@@ -176,6 +178,7 @@ def jacard(y_true, y_pred):
 
 
 def evaluateModel(model, X_test, Y_test, batchSize):
+    global alpha_1, alpha_2, alpha_3, alpha_4
     jaccard_index_list = []
     dice_coeff_list = []
 
@@ -263,6 +266,7 @@ def f(x):
     # x is a 4D vector.
     # Function which will send alpha_1, alpha_2, alpha_3 and alpha_4
     # to the actual model and will get the dice coefficient in return.
+    global alpha_1, alpha_2, alpha_3, alpha_4
     
     alpha_1 = x[:, 0][0]
     alpha_2 = x[:, 1][0]
