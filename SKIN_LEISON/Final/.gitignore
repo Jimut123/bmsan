@@ -1,0 +1,7 @@
+model_checkpoint
+logs
+skin_drrmsan_150e.h5
+models            
+results     
+skin_drrmsan_with_weight_150e.h5
+

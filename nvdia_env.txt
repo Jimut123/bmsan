@@ -1,0 +1,8 @@
+conda create --name jimut
+conda activate jimut
+
+conda install -c anaconda cudatoolkit=10.1.243 cudnn=7.6.5 tensorflow-gpu
+conda install keras
+conda install matplotlib
+conda install scikit-learn
+
