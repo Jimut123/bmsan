@@ -41,29 +41,29 @@ sys.path.insert(0, '../../')
 from models import DRRMSAN_multiscale_attention_bayes_022
 
 
-img_files = sorted(glob.glob('../ISIC-2017_Training_Data/ISIC_*.jpg'))
-msk_files = sorted(glob.glob('../ISIC-2017_Training_Data/*_superpixels.png'))
+img_files = next(os.walk('../2d_images/'))[2]
+msk_files = next(os.walk('../2d_masks/'))[2]
 
 img_files.sort()
 msk_files.sort()
 
-print("B==>",len(img_files))
+print(len(img_files))
 print(len(msk_files))
+
+
 
 
 X = []
 Y = []
 
 for img_fl in tqdm(img_files):
-    img = cv2.imread('{}'.format(img_fl), cv2.IMREAD_COLOR)
-    resized_img = cv2.resize(img,(256 ,256), interpolation = cv2.INTER_CUBIC)
-    X.append(resized_img)
-    im_name = str(str(img_fl.split('.')[2]).split('/')[2]).split('_')[1]
-    mask_name = '../ISIC-2017_Training_Data/ISIC_'+im_name+'_superpixels.png'
-    msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
-    resized_msk = cv2.resize(msk,(256 ,256), interpolation = cv2.INTER_CUBIC)
-    Y.append(resized_msk)
-
+    if(img_fl.split('.')[-1]=='tif'):
+        img = cv2.imread('../2d_images/{}'.format(img_fl), cv2.IMREAD_COLOR)
+        resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
+        X.append(resized_img)
+        msk = cv2.imread('../2d_masks/{}'.format(img_fl), cv2.IMREAD_GRAYSCALE)
+        resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
+        Y.append(resized_msk)
 
 
 print(len(X))
@@ -77,7 +77,9 @@ kf.get_n_splits(X)
 
 fold_no = 0
 
+
 for train_index, test_index in kf.split(X):
+    
     fold_no += 1
     # print("TRAIN:", train_index, "TEST:", test_index)
     X_train, X_test = X[train_index], X[test_index]
@@ -121,19 +123,6 @@ for train_index, test_index in kf.split(X):
 
         return intersection/union
 
-    def saveModel(model):
-
-        model_json = model.to_json()
-
-        try:
-            os.makedirs('models')
-        except:
-            pass
-
-        fp = open('models/modelP_drrmsan_isic.json','w')
-        fp.write(model_json)
-        model.save_weights('models/modelW_drrmsan_isic.h5')
-
 
     jaccard_index_list = []
     dice_coeff_list = []
@@ -141,7 +130,7 @@ for train_index, test_index in kf.split(X):
     def evaluateModel(model, X_test, Y_test, batchSize):
 
         try:
-            os.makedirs('results_{}'.format(fold_no))
+            os.makedirs('images_attention')
         except:
             pass
 
@@ -151,17 +140,14 @@ for train_index, test_index in kf.split(X):
         yp = np.round(yp,0)
         yp = yp[4]
 
-        for i in range(10):
-            plt.figure(figsize=(20,10))
-            plt.subplot(1,3,1)
-            plt.imshow(X_test[i])
-            plt.title('Input')
-            plt.subplot(1,3,2)
-            plt.imshow(Y_test[i].reshape(Y_test[i].shape[0],Y_test[i].shape[1]))
-            plt.title('Ground Truth')
-            plt.subplot(1,3,3)
-            plt.imshow(yp[i].reshape(yp[i].shape[0],yp[i].shape[1]))
-            plt.title('Prediction')
+        for i in range(30):
+            str_img = 'images_attention/img_'+str(i)+'.png'
+            cv2.imwrite(str_img, X_test[i]*255)
+            str_gt = 'images_attention/gt_'+str(i)+'.png'
+            cv2.imwrite(str_gt, Y_test[i].reshape(Y_test[i].shape[0],Y_test[i].shape[1])*255)
+            str_pred = 'images_attention/pred_'+str(i)+'.png'
+            cv2.imwrite(str_pred, yp[i].reshape(yp[i].shape[0],yp[i].shape[1])*255)
+            
 
             intersection = yp[i].ravel() * Y_test[i].ravel()
             union = yp[i].ravel() + Y_test[i].ravel() - intersection
@@ -170,11 +156,7 @@ for train_index, test_index in kf.split(X):
             dice = (2. * np.sum(intersection)) / (np.sum(yp[i].ravel()) + np.sum(Y_test[i].ravel()))
 
             jacard = (np.sum(intersection)/np.sum(union))
-            plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard)
-            +" Dice : "+str(dice)+ " Precision : "+str(avg_precision))
-
-            plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
-            plt.close()
+            
         
         jacard = 0
         dice = 0
@@ -202,83 +184,31 @@ for train_index, test_index in kf.split(X):
 
         print('Jacard Index : '+str(jacard))
         print('Dice Coefficient : '+str(dice))
-        with open("Output.txt", "a") as text_file:
+        with open("Output_attn.txt", "a") as text_file:
             text_file.write("Fold = {} Jacard : {} Dice Coef : {} Avg. Precision : {}  \n".format(str(fold_no), 
             str(jacard), str(dice), str(avg_precision)))
         
 
         jaccard_index_list.append(jacard)
         dice_coeff_list.append(dice)
-        fp = open('models/log_drrmsan_isic.txt','a')
-        fp.write(str(jacard)+'\n')
-        fp.close()
+        
 
-        fp = open('models/best_drrmsan_isic.txt','r')
-        best = fp.read()
-        fp.close()
-
-        if(jacard>float(best)):
-            print('***********************************************')
-            print('Jacard Index improved from '+str(best)+' to '+str(jacard))
-            print('***********************************************')
-            fp = open('models/best_drrmsan_isic.txt','w')
-            fp.write(str(jacard))
-            fp.close()
-
-            saveModel(model)
 
     def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
-
-        history = model.fit(x=X_train, y=Y_train, batch_size=batchSize, epochs=epochs, verbose=1)
-
-        # convert the history.history dict to a pandas DataFrame:
-        hist_df = pd.DataFrame(history.history)
-
-
-
-        # save to json:
-        hist_json_file = 'history_drrmsan_isic_fold_{}.json'.format(fold_no)
-        # with open(hist_json_file, 'a') as out:
-        #     out.write(hist_df.to_json())
-        #     out.write(",")
-        #     out.close()
-
-        with open(hist_json_file, mode='w') as f:
-            hist_df.to_json(f)
-
-        # or save to csv:
-        hist_csv_file = 'history_drrmsan_isic_fold_{}.csv'.format(fold_no)
-        # with open(hist_csv_file, 'a') as out:
-        #     out.write(str(hist_df.to_csv()))
-        #     out.write(",")
-        #     out.close()
-
-
-        with open(hist_csv_file, mode='w') as f:
-            hist_df.to_csv(f)
-
         evaluateModel(model,X_test, Y_test,batchSize)
-
         return model
+        
     # img_w, img_h, n_label, data_format='channels_first'
     alpha_1 = 0.25
     alpha_2 = 0.25
     alpha_3 = 0.25
     alpha_4 = 0.25
-    model = DRRMSAN_multiscale_attention_bayes_022(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
-    
 
-
+    model = DRRMSAN_multiscale_attention_bayes_022(height=192, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
     #model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
     model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
-
-    saveModel(model)
-
-    fp = open('models/log_drrmsan_isic.txt','w')
-    fp.close()
-    fp = open('models/best_drrmsan_isic.txt','w')
-    fp.write('-1.0')
-    fp.close()
-
+    model.load_weights('modelW_drrmsan_lungs.h5')
+    
     trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
+    break
 

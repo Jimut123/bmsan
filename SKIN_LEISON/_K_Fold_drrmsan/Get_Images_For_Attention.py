@@ -76,6 +76,7 @@ kf.get_n_splits(X)
 fold_no = 0
 
 for train_index, test_index in kf.split(X):
+    
     fold_no += 1
     # print("TRAIN:", train_index, "TEST:", test_index)
     X_train, X_test = X[train_index], X[test_index]
@@ -119,19 +120,6 @@ for train_index, test_index in kf.split(X):
 
         return intersection/union
 
-    def saveModel(model):
-
-        model_json = model.to_json()
-
-        try:
-            os.makedirs('models')
-        except:
-            pass
-
-        fp = open('models/modelP_drrmsan_skinLesion.json','w')
-        fp.write(model_json)
-        model.save_weights('models/modelW_drrmsan_skinLesion.h5')
-
 
     jaccard_index_list = []
     dice_coeff_list = []
@@ -139,7 +127,7 @@ for train_index, test_index in kf.split(X):
     def evaluateModel(model, X_test, Y_test, batchSize):
 
         try:
-            os.makedirs('results_{}'.format(fold_no))
+            os.makedirs('images_attention')
         except:
             pass
 
@@ -150,16 +138,13 @@ for train_index, test_index in kf.split(X):
         yp = yp[4]
 
         for i in range(10):
-            plt.figure(figsize=(20,10))
-            plt.subplot(1,3,1)
-            plt.imshow(X_test[i])
-            plt.title('Input')
-            plt.subplot(1,3,2)
-            plt.imshow(Y_test[i].reshape(Y_test[i].shape[0],Y_test[i].shape[1]))
-            plt.title('Ground Truth')
-            plt.subplot(1,3,3)
-            plt.imshow(yp[i].reshape(yp[i].shape[0],yp[i].shape[1]))
-            plt.title('Prediction')
+            str_img = 'images_attention/img_'+str(i)+'.png'
+            cv2.imwrite(str_img, X_test[i])
+            str_gt = 'images_attention/gt_'+str(i)+'.png'
+            cv2.imwrite(str_gt, Y_test[i].reshape(Y_test[i].shape[0],Y_test[i].shape[1]))
+            str_pred = 'images_attention/pred_'+str(i)+'.png'
+            cv2.imwrite(str_pred, yp[i].reshape(yp[i].shape[0],yp[i].shape[1]))
+            
 
             intersection = yp[i].ravel() * Y_test[i].ravel()
             union = yp[i].ravel() + Y_test[i].ravel() - intersection
@@ -168,11 +153,7 @@ for train_index, test_index in kf.split(X):
             dice = (2. * np.sum(intersection)) / (np.sum(yp[i].ravel()) + np.sum(Y_test[i].ravel()))
 
             jacard = (np.sum(intersection)/np.sum(union))
-            plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard)
-            +" Dice : "+str(dice)+ " Precision : "+str(avg_precision))
-
-            plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
-            plt.close()
+            
         
         jacard = 0
         dice = 0
@@ -200,18 +181,18 @@ for train_index, test_index in kf.split(X):
 
         print('Jacard Index : '+str(jacard))
         print('Dice Coefficient : '+str(dice))
-        with open("Output.txt", "a") as text_file:
+        with open("Output_attn.txt", "a") as text_file:
             text_file.write("Fold = {} Jacard : {} Dice Coef : {} Avg. Precision : {}  \n".format(str(fold_no), 
             str(jacard), str(dice), str(avg_precision)))
         
 
         jaccard_index_list.append(jacard)
         dice_coeff_list.append(dice)
-        fp = open('models/log_drrmsan_skinLesion.txt','a')
+        fp = open('models/log_drrmsan_skinLesion_attn.txt','a')
         fp.write(str(jacard)+'\n')
         fp.close()
 
-        fp = open('models/best_drrmsan_skinLesion.txt','r')
+        fp = open('models/best_drrmsan_skinLesion_attn.txt','r')
         best = fp.read()
         fp.close()
 
@@ -219,37 +200,33 @@ for train_index, test_index in kf.split(X):
             print('***********************************************')
             print('Jacard Index improved from '+str(best)+' to '+str(jacard))
             print('***********************************************')
-            fp = open('models/best_drrmsan_skinLesion.txt','w')
+            fp = open('models/best_drrmsan_skinLesion_attn.txt','w')
             fp.write(str(jacard))
             fp.close()
 
             saveModel(model)
 
     def trainStep(model, X_train, Y_train, X_test, Y_test, epochs, batchSize):
-
         evaluateModel(model,X_test, Y_test,batchSize)
-
         return model
+        
     # img_w, img_h, n_label, data_format='channels_first'
     alpha_1 = 0.25
     alpha_2 = 0.25
     alpha_3 = 0.25
     alpha_4 = 0.25
+
     model = DRRMSAN_multiscale_attention_bayes_022(height=192, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
-    
-
-
     #model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
     model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
+    model.load_weights('modelW_drrmsan_skinLesion.h5')
 
-    saveModel(model)
-
-    fp = open('models/log_drrmsan_skinLesion.txt','w')
+    fp = open('models/log_drrmsan_skinLesion_attn.txt','w')
     fp.close()
-    fp = open('models/best_drrmsan_skinLesion.txt','w')
+    fp = open('models/best_drrmsan_skinLesion_attn.txt','w')
     fp.write('-1.0')
     fp.close()
 
-    # trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
+    trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
     break
 

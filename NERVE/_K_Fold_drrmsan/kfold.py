@@ -41,30 +41,35 @@ sys.path.insert(0, '../../')
 from models import DRRMSAN_multiscale_attention_bayes_022
 
 
-img_files = sorted(glob.glob('../ISIC-2017_Training_Data/ISIC_*.jpg'))
-msk_files = sorted(glob.glob('../ISIC-2017_Training_Data/*_superpixels.png'))
+all_names = glob.glob('../train/*.tif')
+len(all_names)
 
-img_files.sort()
-msk_files.sort()
+img_files = []
+msk_files = []
 
-print("B==>",len(img_files))
+for name in all_names:
+    split_name = name.split('_')
+    if len(split_name) == 2:
+        img_files.append(name)
+        mask_name = split_name[0]+"_"+str(split_name[1]).split('.')[0]+"_mask.tif"
+        msk_files.append(mask_name)
+
+print(img_files[:10])
+print(msk_files[:10])
+print(len(img_files))
 print(len(msk_files))
 
 
 X = []
 Y = []
 
-for img_fl in tqdm(img_files):
+for img_fl, msk_fl in tqdm(zip(img_files, msk_files)):
     img = cv2.imread('{}'.format(img_fl), cv2.IMREAD_COLOR)
-    resized_img = cv2.resize(img,(256 ,256), interpolation = cv2.INTER_CUBIC)
-    X.append(resized_img)
-    im_name = str(str(img_fl.split('.')[2]).split('/')[2]).split('_')[1]
-    mask_name = '../ISIC-2017_Training_Data/ISIC_'+im_name+'_superpixels.png'
-    msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
-    resized_msk = cv2.resize(msk,(256 ,256), interpolation = cv2.INTER_CUBIC)
-    Y.append(resized_msk)
-
-
+    resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
+    X.append(resized_img) 
+    mask = cv2.imread('{}'.format(msk_fl), cv2.IMREAD_GRAYSCALE)
+    resized_mask = cv2.resize(mask,(256, 256), interpolation = cv2.INTER_CUBIC)
+    Y.append(resized_mask)
 
 print(len(X))
 print(len(Y))
@@ -130,9 +135,9 @@ for train_index, test_index in kf.split(X):
         except:
             pass
 
-        fp = open('models/modelP_drrmsan_isic.json','w')
+        fp = open('models/modelP_drrmsan_nerve.json','w')
         fp.write(model_json)
-        model.save_weights('models/modelW_drrmsan_isic.h5')
+        model.save_weights('models/modelW_drrmsan_nerve.h5')
 
 
     jaccard_index_list = []
@@ -152,53 +157,64 @@ for train_index, test_index in kf.split(X):
         yp = yp[4]
 
         for i in range(10):
-            plt.figure(figsize=(20,10))
-            plt.subplot(1,3,1)
-            plt.imshow(X_test[i])
-            plt.title('Input')
-            plt.subplot(1,3,2)
-            plt.imshow(Y_test[i].reshape(Y_test[i].shape[0],Y_test[i].shape[1]))
-            plt.title('Ground Truth')
-            plt.subplot(1,3,3)
-            plt.imshow(yp[i].reshape(yp[i].shape[0],yp[i].shape[1]))
-            plt.title('Prediction')
 
-            intersection = yp[i].ravel() * Y_test[i].ravel()
-            union = yp[i].ravel() + Y_test[i].ravel() - intersection
+            try:
 
-            avg_precision = average_precision_score(yp[i].ravel(), Y_test[i].ravel())
-            dice = (2. * np.sum(intersection)) / (np.sum(yp[i].ravel()) + np.sum(Y_test[i].ravel()))
+                plt.figure(figsize=(20,10))
+                plt.subplot(1,3,1)
+                plt.imshow(X_test[i])
+                plt.title('Input')
+                plt.subplot(1,3,2)
+                plt.imshow(Y_test[i].reshape(Y_test[i].shape[0],Y_test[i].shape[1]))
+                plt.title('Ground Truth')
+                plt.subplot(1,3,3)
+                plt.imshow(yp[i].reshape(yp[i].shape[0],yp[i].shape[1]))
+                plt.title('Prediction')
 
-            jacard = (np.sum(intersection)/np.sum(union))
-            plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard)
-            +" Dice : "+str(dice)+ " Precision : "+str(avg_precision))
+                intersection = yp[i].ravel() * Y_test[i].ravel()
+                union = yp[i].ravel() + Y_test[i].ravel() - intersection
 
-            plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
-            plt.close()
+                avg_precision = average_precision_score(yp[i].ravel(), Y_test[i].ravel())
+                dice = (2. * np.sum(intersection)) / (np.sum(yp[i].ravel()) + np.sum(Y_test[i].ravel()))
+
+                jacard = (np.sum(intersection)/np.sum(union))
+                plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard)
+                +" Dice : "+str(dice)+ " Precision : "+str(avg_precision))
+
+                plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
+                plt.close()
+            except:
+                pass
         
         jacard = 0
         dice = 0
         avg_precision = 0
         recall_score = 0
+        count = 0
 
         for i in range(len(Y_test)):
+
             yp_2 = yp[i].ravel()
-            y2 = Y_test[i].ravel()
+            if np.sum(yp_2) > 0:
 
-            intersection = yp_2 * y2
-            union = yp_2 + y2 - intersection
-            avg_precision += average_precision_score(yp_2, y2)
-            # recall_score += recall_score(yp_2, y2)
+                count += 1
+                y2 = Y_test[i].ravel()
 
-            jacard += (np.sum(intersection)/np.sum(union))
+                intersection = yp_2 * y2
+                union = yp_2 + y2 - intersection
+                avg_precision += average_precision_score(yp_2, y2)
+                # recall_score += recall_score(yp_2, y2)
 
-            dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
+                jacard += (np.sum(intersection)/np.sum(union))
+
+                dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
 
 
-        jacard /= len(Y_test)
-        dice /= len(Y_test)
-        avg_precision /= len(Y_test)
+        jacard /= count
+        dice /= count
+        avg_precision /= count
         # recall_score /= len(Y_test)
+        
 
         print('Jacard Index : '+str(jacard))
         print('Dice Coefficient : '+str(dice))
@@ -209,11 +225,11 @@ for train_index, test_index in kf.split(X):
 
         jaccard_index_list.append(jacard)
         dice_coeff_list.append(dice)
-        fp = open('models/log_drrmsan_isic.txt','a')
+        fp = open('models/log_drrmsan_nerve.txt','a')
         fp.write(str(jacard)+'\n')
         fp.close()
 
-        fp = open('models/best_drrmsan_isic.txt','r')
+        fp = open('models/best_drrmsan_nerve.txt','r')
         best = fp.read()
         fp.close()
 
@@ -221,7 +237,7 @@ for train_index, test_index in kf.split(X):
             print('***********************************************')
             print('Jacard Index improved from '+str(best)+' to '+str(jacard))
             print('***********************************************')
-            fp = open('models/best_drrmsan_isic.txt','w')
+            fp = open('models/best_drrmsan_nerve.txt','w')
             fp.write(str(jacard))
             fp.close()
 
@@ -237,7 +253,7 @@ for train_index, test_index in kf.split(X):
 
 
         # save to json:
-        hist_json_file = 'history_drrmsan_isic_fold_{}.json'.format(fold_no)
+        hist_json_file = 'history_drrmsan_nerve_fold_{}.json'.format(fold_no)
         # with open(hist_json_file, 'a') as out:
         #     out.write(hist_df.to_json())
         #     out.write(",")
@@ -247,7 +263,7 @@ for train_index, test_index in kf.split(X):
             hist_df.to_json(f)
 
         # or save to csv:
-        hist_csv_file = 'history_drrmsan_isic_fold_{}.csv'.format(fold_no)
+        hist_csv_file = 'history_drrmsan_nerve_fold_{}.csv'.format(fold_no)
         # with open(hist_csv_file, 'a') as out:
         #     out.write(str(hist_df.to_csv()))
         #     out.write(",")
@@ -268,17 +284,16 @@ for train_index, test_index in kf.split(X):
     model = DRRMSAN_multiscale_attention_bayes_022(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
     
 
-
     #model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
     model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
 
     saveModel(model)
 
-    fp = open('models/log_drrmsan_isic.txt','w')
+    fp = open('models/log_drrmsan_nerve.txt','w')
     fp.close()
-    fp = open('models/best_drrmsan_isic.txt','w')
+    fp = open('models/best_drrmsan_nerve.txt','w')
     fp.write('-1.0')
     fp.close()
 
-    trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
+    trainStep(model, X_train, Y_train, X_test, Y_test, epochs=1, batchSize=2)
 
