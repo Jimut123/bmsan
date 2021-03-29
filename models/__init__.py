@@ -12,4 +12,5 @@ from .UNet_AttnUNet_R2UNet_AttnR2UNet import unet, att_unet, r2_unet, att_r2_une
 from .ModifiedUnet import ModifiedUNet
 from .drrmsan_001 import DRRMSAN_multiscale_attention_bayes_001
 from .drrmsan_022 import DRRMSAN_multiscale_attention_bayes_022
+from .drrmsan_022_conc import DRRMSAN_multiscale_attention_bayes_022_conc
 
