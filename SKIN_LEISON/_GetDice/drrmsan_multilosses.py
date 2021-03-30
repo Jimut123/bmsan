@@ -2,6 +2,7 @@
 
 #def get_dice_from_alphas(x):
 dice = 0
+jaccard = 0
 def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     """
     from numba import cuda
@@ -64,7 +65,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     ## Hyperparameters
 
     #IMG_SIZE = 256
-    EPOCHS = 100
+    EPOCHS = 2
     BATCH = 2
     LR = 1e-5
 
@@ -259,7 +260,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     model.save("skin_drrmsan_with_weight_150e.h5")
 
     # Run this module only while loading the pre-trained model.
-    model = load_model('skin_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jacard':jacard})
+    model = load_model('skin_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jacard':jaccard})
     #model.summary()
 
 
@@ -282,6 +283,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
         # get the actual 4rth output
         yp = yp[4]
         
+        global dice, jaccard
 
         for i in range(10):
 
@@ -299,15 +301,15 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
             intersection = yp[i].ravel() * Y_test[i].ravel()
             union = yp[i].ravel() + Y_test[i].ravel() - intersection
 
-            jacard = (np.sum(intersection)/np.sum(union))
-            plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard))
+            jaccard = (np.sum(intersection)/np.sum(union))
+            plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jaccard))
 
             plt.savefig('results/'+str(i)+'.png',format='png')
             plt.close()
 
 
-        jacard = 0
-        global dice 
+
+        jaccard = 0
         dice = 0
         for i in range(len(Y_test)):
             yp_2 = yp[i].ravel()
@@ -316,46 +318,46 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
             intersection = yp_2 * y2
             union = yp_2 + y2 - intersection
 
-            jacard += (np.sum(intersection)/np.sum(union))
+            jaccard += (np.sum(intersection)/np.sum(union))
 
             dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
 
 
-        jacard /= len(Y_test)
+        jaccard /= len(Y_test)
         
         dice /= len(Y_test)
 
 
 
-        print('Jacard Index : '+str(jacard))
+        print('Jacard Index : '+str(jaccard))
         print('Dice Coefficient : '+str(dice))
 
         with open("Output.txt", "w") as text_file:
-            text_file.write("Jacard : {} Dice Coef : {} ".format(str(jacard), str(dice)))
+            text_file.write("Jacard : {} Dice Coef : {} ".format(str(jaccard), str(dice)))
 
-        jaccard_index_list.append(jacard)
+        jaccard_index_list.append(jaccard)
         dice_coeff_list.append(dice)
         fp = open('models/log_drrmsan_skinleison.txt','a')
-        fp.write(str(jacard)+'\n')
+        fp.write(str(jaccard)+'\n')
         fp.close()
 
         fp = open('models/best_drrmsan_skinleison.txt','r')
         best = fp.read()
         fp.close()
 
-        if(jacard>float(best)):
+        if(jaccard>float(best)):
             print('***********************************************')
-            print('Jacard Index improved from '+str(best)+' to '+str(jacard))
+            print('Jacard Index improved from '+str(best)+' to '+str(jaccard))
             print('***********************************************')
             fp = open('models/best_UNet_skinleison.txt','w')
-            fp.write(str(jacard))
+            fp.write(str(jaccard))
             fp.close()
 
             #saveModel(model)
 
         print("00"*50)
         f = open("./bayesian_opt.txt", "a+")
-        dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " \n"
+        dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " " + str(jaccard) + " " + str(dice*jaccard) + " \n"
         f.write(dump_str)
         f.close()
         print("Dice Value Used = ", -float(dice))
@@ -421,8 +423,10 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     #        val = array[item]['9']
     #        print("Dice Value got = ",val)
     # return the -ve of dice value
-    global dice
-    return -float(dice)
+    print(type(dice), type(jaccard))
+    res = float(dice*jaccard)
+    print("Dice = {} Jaccard = {} Res = {}".format(dice,jaccard,-res))
+    return -float(res)
 
 
 
