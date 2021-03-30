@@ -311,7 +311,7 @@ def DRRMSAN_multiscale_attention_bayes_022_conc(height, width, n_channels, alpha
         n_channels {int} -- number of channels in image
 
     Returns:
-        [keras model] -- MultiResUNet model
+        [keras model] -- DRRMSAN model
     '''
     print("DRRMSAN Bayes")
 
@@ -474,9 +474,9 @@ def DRRMSAN_multiscale_attention_bayes_022_conc(height, width, n_channels, alpha
 
     # the conv blocks on the right sides
 
-    out6 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_6')(side6) # conv2d_bn(side6, 1, 1, 1, activation='none') #
-    out7 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_7')(side7) # conv2d_bn(side7, 1, 1, 1, activation='none') #
-    out8 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_8')(side8) # conv2d_bn(side8, 1, 1, 1, activation='none') #
+    out6 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', kernel_initializer = 'he_normal', kernel_regularizer=l2(1e-4), name='side_6')(side6) 
+    out7 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', kernel_initializer = 'he_normal', kernel_regularizer=l2(1e-4), name='side_7')(side7) 
+    out8 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', kernel_initializer = 'he_normal', kernel_regularizer=l2(1e-4), name='side_8')(side8) 
 
     out9 = conv2d_bn(mresblock9, 1, 3, 3, activation='sigmoid', padding='same')
 
