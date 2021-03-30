@@ -38,10 +38,13 @@ from sklearn.metrics import average_precision_score, recall_score
 
 import sys
 sys.path.insert(0, '../../')
-from models import att_r2_unet
+from models import r2_unet
 
 img_files = glob.glob('../Kvasir-SEG/images/*')
 msk_files = glob.glob('../Kvasir-SEG/masks/*')
+
+from tqdm import tqdm
+
 
 img_files.sort()
 msk_files.sort()
@@ -49,23 +52,22 @@ msk_files.sort()
 print(len(img_files))
 print(len(msk_files))
 
+
 X = []
 Y = []
 
-
 for img_fl in tqdm(img_files):
-    name = str(img_fl.split('.')[2]).split('/')[3]
-    original_name = "../Kvasir-SEG/images/"+name+".jpg"
-    mask_name = "../Kvasir-SEG/masks/"+name+".jpg"
-    if(img_fl.split('.')[-1]=='jpg'):
-        img = cv2.imread('{}'.format(original_name), cv2.IMREAD_COLOR)
-        resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
-        X.append(resized_img) #resized_img)
-        msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
-        resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
-        resized_mask = np.expand_dims(resized_msk, axis=2)
-        Y.append(resized_mask)#resized_msk)
-
+  name = str(img_fl.split('.')[2]).split('/')[3]
+  original_name = "../Kvasir-SEG/images/"+name+".jpg"
+  mask_name = "../Kvasir-SEG/masks/"+name+".jpg"
+  if(img_fl.split('.')[-1]=='jpg'):
+    img = cv2.imread('{}'.format(original_name), cv2.IMREAD_COLOR)
+    resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
+    X.append(resized_img) #resized_img)
+    msk = cv2.imread('{}'.format(mask_name), cv2.IMREAD_GRAYSCALE)
+    resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
+    resized_mask = np.expand_dims(resized_msk, axis=2)
+    Y.append(resized_mask)#resized_msk)
 
 print(len(X))
 print(len(Y))
@@ -161,9 +163,9 @@ for train_index, test_index in kf.split(X):
         except:
             pass
 
-        fp = open('models/modelP_attnR2Unet_kvasir.json','w')
+        fp = open('models/modelP_r2unet_kvasir.json','w')
         fp.write(model_json)
-        model.save_weights('models/modelW_attnR2Unet_kvasir.h5')
+        model.save_weights('models/modelW_r2unet_kvasir.h5')
 
 
     jaccard_index_list = []
@@ -182,7 +184,6 @@ for train_index, test_index in kf.split(X):
         yp = np.round(yp,0)
 
         for i in range(10):
-
             plt.figure(figsize=(20,10))
             plt.subplot(1,3,1)
             plt.imshow(np.moveaxis(X_test[i],0,-1))
@@ -206,7 +207,7 @@ for train_index, test_index in kf.split(X):
 
             plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
             plt.close()
-
+        
         jacard = 0
         dice = 0
         avg_precision = 0
@@ -240,11 +241,11 @@ for train_index, test_index in kf.split(X):
 
         jaccard_index_list.append(jacard)
         dice_coeff_list.append(dice)
-        fp = open('models/log_attnR2Unet_kvasir.txt','a')
+        fp = open('models/log_r2unet_kvasir.txt','a')
         fp.write(str(jacard)+'\n')
         fp.close()
 
-        fp = open('models/best_attnR2Unet_kvasir.txt','r')
+        fp = open('models/best_r2unet_kvasir.txt','r')
         best = fp.read()
         fp.close()
 
@@ -252,7 +253,7 @@ for train_index, test_index in kf.split(X):
             print('***********************************************')
             print('Jacard Index improved from '+str(best)+' to '+str(jacard))
             print('***********************************************')
-            fp = open('models/best_attnR2Unet_kvasir.txt','w')
+            fp = open('models/best_r2unet_kvasir.txt','w')
             fp.write(str(jacard))
             fp.close()
 
@@ -268,7 +269,7 @@ for train_index, test_index in kf.split(X):
 
 
         # save to json:
-        hist_json_file = 'history_attnR2Unet_kvasir_fold_{}.json'.format(fold_no)
+        hist_json_file = 'history_r2unet_kvasir_fold_{}.json'.format(fold_no)
         # with open(hist_json_file, 'a') as out:
         #     out.write(hist_df.to_json())
         #     out.write(",")
@@ -278,7 +279,7 @@ for train_index, test_index in kf.split(X):
             hist_df.to_json(f)
 
         # or save to csv:
-        hist_csv_file = 'history_attnR2Unet_kvasir_fold_{}.csv'.format(fold_no)
+        hist_csv_file = 'history_r2unet_kvasir_fold_{}.csv'.format(fold_no)
         # with open(hist_csv_file, 'a') as out:
         #     out.write(str(hist_df.to_csv()))
         #     out.write(",")
@@ -292,16 +293,16 @@ for train_index, test_index in kf.split(X):
 
         return model
     # img_w, img_h, n_label, data_format='channels_first'
-    model = att_r2_unet(img_h=256, img_w=256, n_label=3)
+    model = r2_unet(img_h=256, img_w=256, n_label=3)
 
     #model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, jacard, 'accuracy'])
     model.compile(optimizer=Adam(learning_rate=1e-5),loss='binary_crossentropy',metrics=[dice_coef, jacard, Recall(), Precision(), 'accuracy'])
 
     saveModel(model)
 
-    fp = open('models/log_attnR2Unet_kvasir.txt','w')
+    fp = open('models/log_r2unet_kvasir.txt','w')
     fp.close()
-    fp = open('models/best_attnR2Unet_kvasir.txt','w')
+    fp = open('models/best_r2unet_kvasir.txt','w')
     fp.write('-1.0')
     fp.close()
 
