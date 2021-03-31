@@ -474,9 +474,9 @@ def DRRMSAN_multiscale_attention_bayes_022_conc(height, width, n_channels, alpha
 
     # the conv blocks on the right sides
 
-    out6 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', kernel_initializer = 'he_normal', kernel_regularizer=l2(1e-4), name='side_6')(side6) 
-    out7 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', kernel_initializer = 'he_normal', kernel_regularizer=l2(1e-4), name='side_7')(side7) 
-    out8 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', kernel_initializer = 'he_normal', kernel_regularizer=l2(1e-4), name='side_8')(side8) 
+    out6 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_6')(side6) 
+    out7 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_7')(side7) 
+    out8 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_8')(side8) 
 
     out9 = conv2d_bn(mresblock9, 1, 3, 3, activation='sigmoid', padding='same')
 
