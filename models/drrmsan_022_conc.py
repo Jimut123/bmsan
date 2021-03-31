@@ -228,7 +228,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     add_3x3_5x5_7x7_rb = Activation('relu')(add([add_3x3_5x5_rb, conv_7x7_rb]))
     mul_3x3_5x5_7x7_rb = Activation('relu')(multiply([mult_3x3_5x5_rb, conv_7x7_rb]))#multiply([mult_3x3_5x5_rb, conv_7x7_rb]))) # Subtract()([mult_3x3_5x5_rb, conv_7x7_rb])
     add_1x1_upper_rb = Activation('relu')(Conv2D(filters, [2,  2], strides=[1, 1], padding='same')(add_3x3_5x5_7x7_rb))
-    mult_1x1_lower_rb = Activation('relu')(Conv2D(filters, [2, 2], strides=[1, 1], padding='same', )(mul_3x3_5x5_7x7_rb))
+    mult_1x1_lower_rb = Activation('relu')(Conv2D(filters, [2, 2], strides=[1, 1], padding='same')(mul_3x3_5x5_7x7_rb))
     resampler_down_upper_rb = MaxPooling2D(pool_size=(12, 12), strides=(2, 2))(add_1x1_upper_rb)
     resampler_down_lower_rb = MaxPooling2D(pool_size=(12, 12), strides=(2, 2))(mult_1x1_lower_rb)
     output_ms_conv_res_block_rb = multiply([resampler_down_upper_rb, resampler_down_lower_rb])
@@ -311,7 +311,7 @@ def DRRMSAN_multiscale_attention_bayes_022_conc(height, width, n_channels, alpha
         n_channels {int} -- number of channels in image
 
     Returns:
-        [keras model] -- MultiResUNet model
+        [keras model] -- DRRMSAN model
     '''
     print("DRRMSAN Bayes")
 
@@ -474,9 +474,9 @@ def DRRMSAN_multiscale_attention_bayes_022_conc(height, width, n_channels, alpha
 
     # the conv blocks on the right sides
 
-    out6 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_6')(side6) # conv2d_bn(side6, 1, 1, 1, activation='none') #
-    out7 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_7')(side7) # conv2d_bn(side7, 1, 1, 1, activation='none') #
-    out8 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_8')(side8) # conv2d_bn(side8, 1, 1, 1, activation='none') #
+    out6 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_6')(side6) 
+    out7 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_7')(side7) 
+    out8 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_8')(side8) 
 
     out9 = conv2d_bn(mresblock9, 1, 3, 3, activation='sigmoid', padding='same')
 
