@@ -38,7 +38,7 @@ from sklearn.metrics import average_precision_score, recall_score
 
 import sys
 sys.path.insert(0, '../../')
-from models import DRRMSAN_multiscale_attention_bayes_022_conc
+from models import DRRMSAN_multiscale_attention_bayes_3
 
 
 img_files = glob.glob('../trainx/*.bmp')
@@ -263,7 +263,7 @@ for train_index, test_index in kf.split(X):
     alpha_2 = 0.33
     alpha_3 = 0.33
     
-    model = DRRMSAN_multiscale_attention_bayes_022_conc(height=192, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3)
+    model = DRRMSAN_multiscale_attention_bayes_3(height=192, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3)
     
 
 

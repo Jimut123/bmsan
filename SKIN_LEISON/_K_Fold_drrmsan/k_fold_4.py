@@ -38,7 +38,7 @@ from sklearn.metrics import average_precision_score, recall_score
 
 import sys
 sys.path.insert(0, '../../')
-from models import DRRMSAN_multiscale_attention_bayes_022_conc
+from models import DRRMSAN_multiscale_attention_bayes_4
 
 
 img_files = glob.glob('../trainx/*.bmp')
