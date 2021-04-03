@@ -424,7 +424,7 @@ def DRRMSAN_multiscale_attention_bayes_4(height, width, n_channels, alpha_1, alp
 
 
     mresblock5 = MultiResBlock(32*16, pool4)
-    conv_5_up = Conv2D(32*16, (3, 3), padding='same', activation='relu', name='conv_5_up')(mresblock5)
+    #conv_5_up = Conv2D(, (3, 3), padding='same', activation='relu', name='conv_5_up')(mresblock5)
     #mresblock5 = rec_res_block(mresblock5, 853)
 
     #up6_add =  add([Conv2DTranspose(32*8, (2, 2), strides=(2, 2), padding='same')(mresblock5), mresblock4])
@@ -468,7 +468,7 @@ def DRRMSAN_multiscale_attention_bayes_4(height, width, n_channels, alpha_1, alp
     conv_9_up = Conv2D(32, (3, 3), padding='same', activation='relu', name='conv_8_up')(mresblock9)
     #conv_9_up = rec_res_block(conv_9_up, 32)
 
-    side5 = UpSampling2D(size=(16, 16))(conv_5_up)
+    side5 = UpSampling2D(size=(16, 16))(mresblock5)
     side6 = UpSampling2D(size=(8, 8))(conv_6_up)
     side7 = UpSampling2D(size=(4, 4))(conv_7_up)
     side8 = UpSampling2D(size=(2, 2))(conv_8_up)
@@ -485,10 +485,10 @@ def DRRMSAN_multiscale_attention_bayes_4(height, width, n_channels, alpha_1, alp
     # alpha_1 = least scale, alpha_4 = same scale as I
 
     #out10 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', kernel_initializer = 'he_normal', kernel_regularizer=l2(1e-4), name='out_10')(add([alpha_1 * out6, alpha_2 * out7, alpha_3 * out8, alpha_4 * out9]))
-    out10 = add([alpha_1 * out5, alpha_2 * out6, alpha_3 * out7, alpha_4 * out8, alpha_5 * out9])
+    out10 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_9')(add([out5, out6, out7, out8, out9]))
 
     #conv10 = conv2d_bn(out10, 1, 1, 1, activation='sigmoid')
 
-    model = Model(inputs=[inputs], outputs=[out6, out7, out8, out9, out10])
+    model = Model(inputs=[inputs], outputs=[out5, out6, out7, out8, out9, out10])
 
     return model
