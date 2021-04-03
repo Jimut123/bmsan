@@ -65,11 +65,16 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     ## Hyperparameters
 
     #IMG_SIZE = 256
-    EPOCHS = 2
+    EPOCHS = 5
     BATCH = 2
     LR = 1e-5
 
     def load_data(path, split=0.2):
+        """
+        from glob import glob
+        images_list = sorted(glob(os.path.join(path, "trainx/*.bmp")))
+        masks_list = sorted(glob(os.path.join(path, "trainy/*.bmp")))
+        """
 
         import sys
         import glob
@@ -182,7 +187,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     valid_data = tf_dataset(x_val, y_val, batch=BATCH)
 
     opt = tf.keras.optimizers.Nadam(LR)
-    metrics = [dice_coef, jaccard, Recall(), Precision() ,'accuracy']
+    metrics = [dice_coef, jacard, Recall(), Precision() ,'accuracy']
     model.compile(loss=dice_loss, optimizer=opt, metrics=metrics)
 
     from datetime import datetime
@@ -298,7 +303,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
             union = yp[i].ravel() + Y_test[i].ravel() - intersection
 
             jaccard = (np.sum(intersection)/np.sum(union))
-            plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jaccard))
+            plt.suptitle('jaccard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jaccard))
 
             plt.savefig('results/'+str(i)+'.png',format='png')
             plt.close()
@@ -324,11 +329,11 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
 
 
 
-        print('Jaccard Index : '+str(jaccard))
+        print('jaccard Index : '+str(jaccard))
         print('Dice Coefficient : '+str(dice))
 
         with open("Output.txt", "w") as text_file:
-            text_file.write("Jaccard : {} Dice Coef : {} ".format(str(jaccard), str(dice)))
+            text_file.write("jaccard : {} Dice Coef : {} ".format(str(jaccard), str(dice)))
 
         jaccard_index_list.append(jaccard)
         dice_coeff_list.append(dice)
@@ -342,7 +347,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
 
         if(jaccard>float(best)):
             print('***********************************************')
-            print('Jacard Index improved from '+str(best)+' to '+str(jaccard))
+            print('jaccard Index improved from '+str(best)+' to '+str(jaccard))
             print('***********************************************')
             fp = open('models/best_UNet_lungs.txt','w')
             fp.write(str(jaccard))
@@ -358,6 +363,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
         print("Dice Value Used = ", -float(dice))
         del model
         print("Model deleted and dice value returned!!")
+
 
 
     from tqdm import tqdm
@@ -407,7 +413,20 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     del model, history, X_test, train_data, valid_data, Y_test
 
     print("Model deleted!!")
-    
+
+    #import json
+    #import matplotlib.pyplot as plt
+
+    #with open('history_skin_drrmsan.json', 'r') as f:
+    #    array = json.load(f)
+    #print (array)
+    #print(json.dumps(array, indent=4, sort_keys=True))
+
+    #for item in array:
+    #    if 'val' in item and 'dice' in item and 'add' in item: # and 'activation' in item:#
+    #        val = array[item]['9']
+    #        print("Dice Value got = ",val)
+    # return the -ve of dice value
     print(type(dice), type(jaccard))
     res = float(dice*jaccard)
     print("Dice = {} Jaccard = {} Res = {}".format(dice,jaccard,-res))
