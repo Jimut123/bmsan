@@ -474,10 +474,10 @@ def DRRMSAN_multiscale_attention_bayes_022_conc_concat(height, width, n_channels
 
     # the conv blocks on the right sides
 
-    out6 = Conv2D(1, (3, 3), activation='relu', padding='same', name='side_6')(side6) 
-    out7 = Conv2D(1, (3, 3), activation='relu', padding='same', name='side_7')(side7) 
-    out8 = Conv2D(1, (3, 3), activation='relu', padding='same', name='side_8')(side8) 
-    out9 = Conv2D(1, (3, 3), activation='relu', padding='same', name='side_9')(mresblock9) 
+    out6 = Conv2D(32, (3, 3), activation='relu', padding='same', name='side_6')(side6) 
+    out7 = Conv2D(32, (3, 3), activation='relu', padding='same', name='side_7')(side7) 
+    out8 = Conv2D(32, (3, 3), activation='relu', padding='same', name='side_8')(side8) 
+    out9 = Conv2D(32, (3, 3), activation='relu', padding='same', name='side_9')(mresblock9) 
     #conv2d_bn(mresblock9, 1, 3, 3, activation='sigmoid', padding='same')
 
     # weighted averaging all the output masks obtained at different scales
