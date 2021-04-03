@@ -265,7 +265,7 @@ for train_index, test_index in kf.split(X):
     alpha_4 = 0.2
     alpha_5 = 0.2
     
-    model = DRRMSAN_multiscale_attention_bayes_022_conc_concat(height=192, width=256, n_channels=3, alpha_1=0.20, alpha_2=0.20, alpha_3=0.20, alpha_4=0.20, alpha_5=0.20)
+    model = DRRMSAN_multiscale_attention_bayes_022_conc_concat(height=192, width=256, n_channels=3)
     
 
 
