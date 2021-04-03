@@ -260,7 +260,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     model.save("lungs_drrmsan_with_weight_150e.h5")
 
     # Run this module only while loading the pre-trained model.
-    model = load_model('lungs_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jaccard':jacard})
+    model = load_model('lungs_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jacard':jacard})
     #model.summary()
 
 
