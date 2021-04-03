@@ -70,11 +70,6 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     LR = 1e-5
 
     def load_data(path, split=0.2):
-        """
-        from glob import glob
-        images_list = sorted(glob(os.path.join(path, "trainx/*.bmp")))
-        masks_list = sorted(glob(os.path.join(path, "trainy/*.bmp")))
-        """
 
         import sys
         import glob
@@ -412,20 +407,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     del model, history, X_test, train_data, valid_data, Y_test
 
     print("Model deleted!!")
-
-    #import json
-    #import matplotlib.pyplot as plt
-
-    #with open('history_skin_drrmsan.json', 'r') as f:
-    #    array = json.load(f)
-    #print (array)
-    #print(json.dumps(array, indent=4, sort_keys=True))
-
-    #for item in array:
-    #    if 'val' in item and 'dice' in item and 'add' in item: # and 'activation' in item:#
-    #        val = array[item]['9']
-    #        print("Dice Value got = ",val)
-    # return the -ve of dice value
+    
     print(type(dice), type(jaccard))
     res = float(dice*jaccard)
     print("Dice = {} Jaccard = {} Res = {}".format(dice,jaccard,-res))
