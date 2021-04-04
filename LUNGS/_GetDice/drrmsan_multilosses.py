@@ -65,7 +65,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     ## Hyperparameters
 
     #IMG_SIZE = 256
-    EPOCHS = 2
+    EPOCHS = 5
     BATCH = 2
     LR = 1e-5
 
@@ -187,7 +187,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     valid_data = tf_dataset(x_val, y_val, batch=BATCH)
 
     opt = tf.keras.optimizers.Nadam(LR)
-    metrics = [dice_coef, jaccard, Recall(), Precision() ,'accuracy']
+    metrics = [dice_coef, jacard, Recall(), Precision() ,'accuracy']
     model.compile(loss=dice_loss, optimizer=opt, metrics=metrics)
 
     from datetime import datetime
@@ -260,7 +260,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     model.save("lungs_drrmsan_with_weight_150e.h5")
 
     # Run this module only while loading the pre-trained model.
-    model = load_model('lungs_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jaccard':jaccard})
+    model = load_model('lungs_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jacard':jacard})
     #model.summary()
 
 
@@ -303,7 +303,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
             union = yp[i].ravel() + Y_test[i].ravel() - intersection
 
             jaccard = (np.sum(intersection)/np.sum(union))
-            plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jaccard))
+            plt.suptitle('jaccard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jaccard))
 
             plt.savefig('results/'+str(i)+'.png',format='png')
             plt.close()
@@ -329,11 +329,11 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
 
 
 
-        print('Jaccard Index : '+str(jaccard))
+        print('jaccard Index : '+str(jaccard))
         print('Dice Coefficient : '+str(dice))
 
         with open("Output.txt", "w") as text_file:
-            text_file.write("Jaccard : {} Dice Coef : {} ".format(str(jaccard), str(dice)))
+            text_file.write("jaccard : {} Dice Coef : {} ".format(str(jaccard), str(dice)))
 
         jaccard_index_list.append(jaccard)
         dice_coeff_list.append(dice)
@@ -347,7 +347,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
 
         if(jaccard>float(best)):
             print('***********************************************')
-            print('Jacard Index improved from '+str(best)+' to '+str(jaccard))
+            print('jaccard Index improved from '+str(best)+' to '+str(jaccard))
             print('***********************************************')
             fp = open('models/best_UNet_lungs.txt','w')
             fp.write(str(jaccard))
@@ -363,6 +363,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
         print("Dice Value Used = ", -float(dice))
         del model
         print("Model deleted and dice value returned!!")
+
 
 
     from tqdm import tqdm
