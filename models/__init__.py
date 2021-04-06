@@ -13,4 +13,6 @@ from .ModifiedUnet import ModifiedUNet
 from .drrmsan_001 import DRRMSAN_multiscale_attention_bayes_001
 from .drrmsan_022 import DRRMSAN_multiscale_attention_bayes_022
 from .drrmsan_022_conc import DRRMSAN_multiscale_attention_bayes_022_conc
-
+from .drrmsan_3 import DRRMSAN_multiscale_attention_bayes_3
+from .drrmsan_4 import DRRMSAN_multiscale_attention_bayes_4
+from .drrmsan_022_conc_concat import DRRMSAN_multiscale_attention_bayes_022_conc_concat
