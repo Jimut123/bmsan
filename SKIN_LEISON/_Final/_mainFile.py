@@ -35,7 +35,7 @@ from glob import glob
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-
+from keras.optimizers import Adam
 from tensorflow.keras.layers import Conv2D, Activation, BatchNormalization
 from tensorflow.keras.layers import UpSampling2D, Input, Concatenate
 from tensorflow.keras.models import Model , load_model
@@ -71,7 +71,7 @@ tf.random.set_seed(42)
 ## Hyperparameters
 
 #IMG_SIZE = 256
-EPOCHS = 3
+EPOCHS = 100
 BATCH = 2
 LR = 1e-5
 
@@ -472,7 +472,7 @@ print(Y)
 Y = np.expand_dims(Y, axis=1)
 Y
 
-maxiter = 20
+maxiter = 70
 
 kernel = GPy.kern.Matern52(input_dim=4, ARD=True, variance=1, lengthscale=[1,1,1,1]);
 
