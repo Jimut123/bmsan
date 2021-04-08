@@ -219,7 +219,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
-    Proposed Attention block - Version 2.1 <|dream-7|>
+    Proposed Attention block - Version 2.1 <|dream-008|>
 
     Arguments:
         ms_conv {keras layer} -- layer coming from the multi resolution convolution
@@ -237,6 +237,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     up_5 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_4))
     up_6 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_5))
     up_7 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_6))
+    up_8 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_7))
 
     down_1 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_1)
     down_2 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_2)
@@ -245,8 +246,9 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     down_5 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_5)
     down_6 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_6)
     down_7 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_7)
+    down_8 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_8)
 
-    mult_block = Activation('sigmoid')(multiply([down_1, down_2, down_3, down_4, down_5, down_6, down_7]))
+    mult_block = Activation('sigmoid')(multiply([down_1, down_2, down_3, down_4, down_5, down_6, down_7, down_8]))
 
     up_attn = UpSampling2D(size=(2, 2))(mult_block)
 
