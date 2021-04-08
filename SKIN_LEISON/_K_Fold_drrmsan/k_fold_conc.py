@@ -147,7 +147,7 @@ for train_index, test_index in kf.split(X):
         yp = model.predict(x=X_test, batch_size=batchSize, verbose=1)
 
         yp = np.round(yp,0)
-        # yp = yp[4]
+        yp = yp[4]
 
         for i in range(10):
             plt.figure(figsize=(20,10))
@@ -200,7 +200,7 @@ for train_index, test_index in kf.split(X):
 
         print('Jacard Index : '+str(jacard))
         print('Dice Coefficient : '+str(dice))
-        with open("Output_4.txt", "a") as text_file:
+        with open("Output_conc_concat.txt", "a") as text_file:
             text_file.write("Fold = {} Jacard : {} Dice Coef : {} Avg. Precision : {}  \n".format(str(fold_no), 
             str(jacard), str(dice), str(avg_precision)))
         
