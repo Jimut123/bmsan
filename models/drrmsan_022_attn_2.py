@@ -80,7 +80,7 @@ def conv2d_bn(x, filters, num_row, num_col, padding='same', strides=(1, 1), acti
     '''
 
     x = Conv2D(filters, (num_row, num_col), strides=strides, padding=padding, use_bias=False)(x)
-    x = BatchNormalization(axis=3, scale=False)(x)
+    # x = BatchNormalization(axis=3, scale=False)(x)
 
     if(activation == None):
         return x
@@ -110,7 +110,7 @@ def trans_conv2d_bn(x, filters, num_row, num_col, padding='same', strides=(2, 2)
     '''
 
     x = Conv2DTranspose(filters, (num_row, num_col), strides=strides, padding=padding)(x)
-    x = BatchNormalization(axis=3, scale=False)(x)
+    # x = BatchNormalization(axis=3, scale=False)(x)
 
     return x
 
@@ -144,11 +144,11 @@ def MultiResBlock(U, inp, alpha = 1.67):
                         activation='relu', padding='same')
 
     out = concatenate([conv3x3, conv5x5, conv7x7], axis=3)
-    out = BatchNormalization(axis=3)(out)
+    # out = BatchNormalization(axis=3)(out)
 
     out = add([shortcut, out])
     out = Activation('relu')(out)
-    out = BatchNormalization(axis=3)(out)
+    # out = BatchNormalization(axis=3)(out)
 
     return out
 
@@ -240,7 +240,7 @@ def ResPath(filters, length, inp):
 
     out = add([shortcut, out])
     out = Activation('relu')(out)
-    out = BatchNormalization(axis=3)(out)
+    # out = BatchNormalization(axis=3)(out)
 
     for i in range(length-1):
 
@@ -252,7 +252,7 @@ def ResPath(filters, length, inp):
 
         out = add([shortcut, out])
         out = Activation('relu')(out)
-        out = BatchNormalization(axis=3)(out)
+        # out = BatchNormalization(axis=3)(out)
 
     return out
 
