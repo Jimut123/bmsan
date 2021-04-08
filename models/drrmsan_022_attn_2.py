@@ -181,8 +181,7 @@ def attention_up_and_concate(down_layer, layer, filters):
 
 
 
-
-
+"""
 
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
@@ -208,6 +207,46 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     down_4 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_4)
 
     mult_block = Activation('sigmoid')(multiply([down_1, down_2, down_3, down_4]))
+
+    up_attn = UpSampling2D(size=(2, 2))(mult_block)
+
+    attn_output_1 = multiply([up_attn, res_block])
+    
+    return attn_output_1
+
+"""
+
+
+def proposed_attention_block_2d(ms_conv, res_block, filters):
+    '''
+    Proposed Attention block - Version 2.1 <|dream-7|>
+
+    Arguments:
+        ms_conv {keras layer} -- layer coming from the multi resolution convolution
+        res_block {keras layer} -- layer coming from the residual block
+        filters {int} -- number of channels in image
+
+    Returns:
+        [keras layer] -- [output layer]
+    '''
+
+    up_1 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(ms_conv))
+    up_2 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_1))
+    up_3 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_2))
+    up_4 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_3))
+    up_5 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_4))
+    up_6 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_5))
+    up_7 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_6))
+
+    down_1 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_1)
+    down_2 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_2)
+    down_3 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_3)
+    down_4 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_4)
+    down_5 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_5)
+    down_6 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_6)
+    down_7 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_7)
+
+    mult_block = Activation('sigmoid')(multiply([down_1, down_2, down_3, down_4, down_5, down_6, down_7]))
 
     up_attn = UpSampling2D(size=(2, 2))(mult_block)
 
