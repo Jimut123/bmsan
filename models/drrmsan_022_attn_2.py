@@ -209,7 +209,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 
     mult_block = multiply([down_1, down_2, down_3, down_4])
 
-    up_attn = UpSampling2D(size=(5, 5))(mult_block)
+    up_attn = UpSampling2D(size=(2, 2))(mult_block)
 
     attn_output_1 = multiply([up_attn, res_block])
     
