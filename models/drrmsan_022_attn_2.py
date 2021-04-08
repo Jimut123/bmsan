@@ -248,7 +248,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     down_7 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_7)
     down_8 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_8)
 
-    mult_block = Activation('sigmoid')(multiply([down_1, down_2, down_3, down_4, down_5, down_6, down_7, down_8]))
+    mult_block = Activation('sigmoid')(add([down_1, down_2, down_3, down_4, down_5, down_6, down_7, down_8]))
 
     up_attn = UpSampling2D(size=(2, 2))(mult_block)
 
