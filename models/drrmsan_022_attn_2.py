@@ -181,7 +181,7 @@ def attention_up_and_concate(down_layer, layer, filters):
 
 
 
-"""
+
 
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
@@ -206,7 +206,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     down_3 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_3)
     down_4 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_4)
 
-    mult_block = Activation('sigmoid')(multiply([down_1, down_2, down_3, down_4]))
+    mult_block = Activation('sigmoid')(add([down_1, down_2, down_3, down_4]))
 
     up_attn = UpSampling2D(size=(2, 2))(mult_block)
 
@@ -214,9 +214,9 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     
     return attn_output_1
 
+
+
 """
-
-
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 2.1 <|dream-008|>
@@ -256,7 +256,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     
     return attn_output_1
 
-
+"""
 
 
 def ResPath(filters, length, inp):
