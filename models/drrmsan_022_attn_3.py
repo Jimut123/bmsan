@@ -260,8 +260,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     mult_block_11 = multiply([up_1111, down_1111])
     mult_block_12 = multiply([up_1212, down_1212])
 
-    attn_map = add([mult_block_1, mult_block_2, mult_block_3, mult_block_4, mult_block_5, mult_block_6, \
-                            mult_block_7, mult_block_8, mult_block_9, mult_block_10, mult_block_11, mult_block_12])
+    attn_map = add([mult_block_1, mult_block_2, mult_block_3, mult_block_4, mult_block_5, mult_block_6, mult_block_7, mult_block_8, mult_block_9, mult_block_10, mult_block_11, mult_block_12])
 
     attn_upsampled =  UpSampling2D(size=(2, 2))(attn_map)
 
