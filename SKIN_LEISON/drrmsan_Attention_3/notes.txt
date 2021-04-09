@@ -1,4 +1,4 @@
-output_2_standard.txt
+output_2_standard.txt - smash-2
 
 Just 2, with standard 2x2 maxpooling
 
