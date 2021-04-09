@@ -207,7 +207,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 
     mult_block = Activation('sigmoid')(multiply([down_1, down_2, down_3]))
 
-    up_attn = UpSampling2D(size=(3, 3))(mult_block)
+    up_attn = ZeroPadding2D(padding=(1,1))(UpSampling2D(size=(2, 2))(mult_block))
 
     attn_output_1 = multiply([up_attn, res_block])
     
