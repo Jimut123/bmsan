@@ -2,7 +2,7 @@ import numpy as np
 import math
 
 
-with open('Output.txt') as f:
+with open('output_dream_4_wobn.txt') as f:
     lines = [line.rstrip() for line in f]
 jacard = []
 dice = []
