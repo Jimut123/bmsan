@@ -182,7 +182,7 @@ def attention_up_and_concate(down_layer, layer, filters):
 
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
-    Proposed Attention block - Version 3 <|smash-12|> 
+    Proposed Attention block - Version 3 <|smash-10|> 
 
     Arguments:
         ms_conv {keras layer} -- layer coming from the multi resolution convolution
@@ -204,8 +204,8 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     up_8 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_7))
     up_9 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_8))
     up_10 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_9))
-    up_11 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_10))
-    up_12 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_11))
+    # up_11 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_10))
+    # up_12 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_11))
 
     up_11 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_1)
     up_22 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_2)
@@ -217,8 +217,8 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     up_88 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_8)
     up_99 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_9)
     up_1010 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_10)
-    up_1111 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_11)
-    up_1212 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_12)
+    # up_1111 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_11)
+    # up_1212 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_12)
 
     down_1 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(res_block))
     down_2 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(down_1))
@@ -230,8 +230,8 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     down_8 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(down_7))
     down_9 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(down_8))
     down_10 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(down_9))
-    down_11 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(down_10))
-    down_12 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(down_11))
+    # down_11 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(down_10))
+    # down_12 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(down_11))
 
     down_11 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_1)
     down_22 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_2)
@@ -243,8 +243,8 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     down_88 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_8)
     down_99 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_9)
     down_1010 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_10)
-    down_1111 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_11)
-    down_1212 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_12)
+    # down_1111 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_11)
+    # down_1212 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_12)
 
 
     mult_block_1 = multiply([up_11, down_11])
@@ -257,10 +257,10 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     mult_block_8 = multiply([up_88, down_88])
     mult_block_9 = multiply([up_99, down_99])
     mult_block_10 = multiply([up_1010, down_1010])
-    mult_block_11 = multiply([up_1111, down_1111])
-    mult_block_12 = multiply([up_1212, down_1212])
+    # mult_block_11 = multiply([up_1111, down_1111])
+    # mult_block_12 = multiply([up_1212, down_1212])
 
-    attn_map = add([mult_block_1, mult_block_2, mult_block_3, mult_block_4, mult_block_5, mult_block_6, mult_block_7, mult_block_8, mult_block_9, mult_block_10, mult_block_11, mult_block_12])
+    attn_map = add([mult_block_1, mult_block_2, mult_block_3, mult_block_4, mult_block_5, mult_block_6, mult_block_7, mult_block_8, mult_block_9, mult_block_10]) #, mult_block_11, mult_block_12])
 
     attn_upsampled =  UpSampling2D(size=(2, 2))(attn_map)
 
