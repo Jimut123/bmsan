@@ -196,13 +196,20 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 
     up_1 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(ms_conv))
     up_2 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_1))
-        
-
-    mult_block = Activation('sigmoid')(multiply([up_1, up_2]))
-
+    up_3 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_2))
     
 
-    attn_output_1 = multiply([mult_block, res_block])
+    down_1 = AveragePooling2D(pool_size=(3, 3), strides=(2, 2))(up_1)
+    down_2 = AveragePooling2D(pool_size=(3, 3), strides=(2, 2))(up_2)
+    down_3 = AveragePooling2D(pool_size=(3, 3), strides=(2, 2))(up_3)
+    
+    
+
+    mult_block = Activation('sigmoid')(multiply([down_1, down_2, down_3]))
+
+    up_attn = UpSampling2D(size=(3, 3))(mult_block)
+
+    attn_output_1 = multiply([up_attn, res_block])
     
     return attn_output_1
 
