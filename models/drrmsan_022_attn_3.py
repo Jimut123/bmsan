@@ -179,7 +179,7 @@ def attention_up_and_concate(down_layer, layer, filters):
     #concate = my_concat([down_layer, layer])
     return layer
 
-
+"""
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 3 <|smash-10|> 
@@ -267,7 +267,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([attn_upsampled, res_block])
 
     return attn_output_1
-
+"""
 
 """
 def proposed_attention_block_2d(ms_conv, res_block, filters):
@@ -309,7 +309,8 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     return attn_output_1
 """
 
-"""
+
+
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 3 <|smash-6|> 
@@ -359,14 +360,14 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     mult_block_5 = multiply([up_55, down_55])
     mult_block_6 = multiply([up_66, down_66])
 
-    attn_map = add([mult_block_1, mult_block_2, mult_block_3, mult_block_4, mult_block_5, mult_block_6])
+    attn_map = Activation('sigmoid')(add([mult_block_1, mult_block_2, mult_block_3, mult_block_4, mult_block_5, mult_block_6]))
 
     attn_upsampled =  UpSampling2D(size=(2, 2))(attn_map)
 
     attn_output_1 = multiply([attn_upsampled, res_block])
 
     return attn_output_1
-"""
+
 
 """
 def proposed_attention_block_2d(ms_conv, res_block, filters):

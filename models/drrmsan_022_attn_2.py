@@ -179,7 +179,7 @@ def attention_up_and_concate(down_layer, layer, filters):
     #concate = my_concat([down_layer, layer])
     return layer
 
-"""
+
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 2 <|dream|> - 
@@ -206,7 +206,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([up_attn, res_block])
     
     return attn_output_1
-"""
+
 
 
 
@@ -317,8 +317,8 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([up_attn, res_block])
     
     return attn_output_1
-
 """
+
 
 
 def ResPath(filters, length, inp):
