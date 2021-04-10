@@ -269,7 +269,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     return attn_output_1
 """
 
-
+"""
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 3 <|smash-2|> 
@@ -307,7 +307,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 
 
     return attn_output_1
-
+"""
 
 """
 def proposed_attention_block_2d(ms_conv, res_block, filters):
@@ -439,7 +439,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 """
 
 
-"""
+
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 3 <|smash-4|> 
@@ -474,12 +474,12 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     down_33 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_3)
     down_44 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_4)
 
-    mult_block_1 = multiply([up_11, down_11])
-    mult_block_2 = multiply([up_22, down_22])
-    mult_block_3 = multiply([up_33, down_33])
-    mult_block_4 = multiply([up_44, down_44])
+    mult_block_1 = add([up_11, down_11])
+    mult_block_2 = add([up_22, down_22])
+    mult_block_3 = add([up_33, down_33])
+    mult_block_4 = add([up_44, down_44])
 
-    attn_map = add([mult_block_1, mult_block_2, mult_block_3, mult_block_4])
+    attn_map = multiply([mult_block_1, mult_block_2, mult_block_3, mult_block_4])
 
     attn_upsampled =  UpSampling2D(size=(2, 2))(attn_map)
 
@@ -487,7 +487,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 
 
     return attn_output_1
-"""
+
 
 def ResPath(filters, length, inp):
     '''
