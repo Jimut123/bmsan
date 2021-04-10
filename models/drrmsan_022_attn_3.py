@@ -180,6 +180,7 @@ def attention_up_and_concate(down_layer, layer, filters):
     return layer
 
 
+
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 3 <|smash-4-with-3,3-maxpool|> 
