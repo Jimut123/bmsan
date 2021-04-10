@@ -212,7 +212,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 
 
 
-"""
+
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 2 <|dream|>
@@ -231,9 +231,9 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     up_3 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_2))
     
 
-    down_1 = AveragePooling2D(pool_size=(3, 3), strides=(2, 2))(up_1)
-    down_2 = AveragePooling2D(pool_size=(3, 3), strides=(2, 2))(up_2)
-    down_3 = AveragePooling2D(pool_size=(3, 3), strides=(2, 2))(up_3)
+    down_1 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_1)
+    down_2 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_2)
+    down_3 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_3)
     
     
 
@@ -244,6 +244,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([up_attn, res_block])
     
     return attn_output_1
+
 
 """
 
@@ -273,7 +274,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([up_attn, res_block])
     
     return attn_output_1
-
+"""
 
 """
 def proposed_attention_block_2d(ms_conv, res_block, filters):
