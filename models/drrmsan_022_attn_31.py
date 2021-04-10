@@ -299,7 +299,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     mult_block_1 = add([up_11, down_11])
     mult_block_2 = add([up_22, down_22])
 
-    attn_map = multiply([mult_block_1, mult_block_2])
+    attn_map = Activation('sigmoid')(multiply([mult_block_1, mult_block_2]))
 
     attn_upsampled =  UpSampling2D(size=(2, 2))(attn_map)
 

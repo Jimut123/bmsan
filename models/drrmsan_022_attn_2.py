@@ -212,7 +212,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 
 
 
-
+"""
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 2 <|dream|>
@@ -245,9 +245,10 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     
     return attn_output_1
 
-
 """
 
+
+"""
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 2 <|dream|> - (Best till Now  92.57 Dice SL)
@@ -275,6 +276,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     
     return attn_output_1
 """
+
 
 """
 def proposed_attention_block_2d(ms_conv, res_block, filters):

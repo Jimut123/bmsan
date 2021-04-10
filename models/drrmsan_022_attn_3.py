@@ -269,7 +269,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     return attn_output_1
 """
 
-"""
+
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 3 <|smash-2|> 
@@ -307,7 +307,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 
 
     return attn_output_1
-"""
+
 
 """
 def proposed_attention_block_2d(ms_conv, res_block, filters):
@@ -428,15 +428,15 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     mult_block_7 = multiply([up_55, down_77])
     mult_block_8 = multiply([up_66, down_88])
 
-    attn_map = add([mult_block_1, mult_block_2, mult_block_3, mult_block_4, mult_block_5, mult_block_6, mult_block_7, mult_block_8])
+    attn_map = Activation('sigmoid')(add([mult_block_1, mult_block_2, mult_block_3, mult_block_4, mult_block_5, mult_block_6, mult_block_7, mult_block_8]))
 
     attn_upsampled =  UpSampling2D(size=(2, 2))(attn_map)
 
     attn_output_1 = multiply([attn_upsampled, res_block])
 
     return attn_output_1
-"""
 
+"""
 
 
 """
@@ -479,7 +479,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     mult_block_3 = multiply([up_33, down_33])
     mult_block_4 = multiply([up_44, down_44])
 
-    attn_map = add([mult_block_1, mult_block_2, mult_block_3, mult_block_4])
+    attn_map = Activation('sigmoid')(add([mult_block_1, mult_block_2, mult_block_3, mult_block_4]))
 
     attn_upsampled =  UpSampling2D(size=(2, 2))(attn_map)
 
@@ -487,8 +487,8 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 
 
     return attn_output_1
-"""
 
+"""
 def ResPath(filters, length, inp):
     '''
     ResPath
