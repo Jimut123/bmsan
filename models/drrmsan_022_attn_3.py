@@ -179,7 +179,7 @@ def attention_up_and_concate(down_layer, layer, filters):
     #concate = my_concat([down_layer, layer])
     return layer
 
-"""
+
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 3 <|smash-10|> 
@@ -267,7 +267,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([attn_upsampled, res_block])
 
     return attn_output_1
-"""
+
 
 """
 def proposed_attention_block_2d(ms_conv, res_block, filters):
@@ -439,7 +439,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 
 
 
-
+"""
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 3 <|smash-4|> 
@@ -483,9 +483,9 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_upsampled =  UpSampling2D(size=(2, 2))(attn_map)
 
     attn_output_1 = multiply([attn_upsampled, res_block])
-    
-    return attn_output_1
 
+    return attn_output_1
+"""
 
 
 def ResPath(filters, length, inp):
