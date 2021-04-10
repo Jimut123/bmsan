@@ -208,7 +208,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     return attn_output_1
 """
 
-
+"""
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 2 <|dream-No-maxpool|> - 
@@ -230,9 +230,9 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([mult_block, res_block])
     
     return attn_output_1
-
-
 """
+
+
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 2 <|dream-2,2-maxpool|> - 
@@ -260,7 +260,6 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     
     return attn_output_1
 
-"""
 
 
 
