@@ -179,6 +179,47 @@ def attention_up_and_concate(down_layer, layer, filters):
     #concate = my_concat([down_layer, layer])
     return layer
 
+
+def proposed_attention_block_2d(ms_conv, res_block, filters):
+    '''
+    Proposed Attention block - Version 3 <|smash-4-without-maxpool|> 
+
+    Arguments:
+        ms_conv {keras layer} -- layer coming from the multi resolution convolution
+        res_block {keras layer} -- layer coming from the residual block
+        filters {int} -- number of channels in image
+
+    Returns:
+        [keras layer] -- [output layer]
+    '''
+
+    up_1 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(ms_conv))
+    up_2 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_1))
+    up_3 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_2))
+    up_4 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_3))
+
+    
+    down_1 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(res_block))
+    down_2 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(down_1))
+    down_3 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(down_2))
+    down_4 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(down_3))
+
+    
+
+    mult_block_1 = multiply([up_1, down_1])
+    mult_block_2 = multiply([up_2, down_2])
+    mult_block_3 = multiply([up_3, down_3])
+    mult_block_4 = multiply([up_4, down_4])
+
+    attn_map = Activation('sigmoid')(add([mult_block_1, mult_block_2, mult_block_3, mult_block_4]))
+
+
+    attn_output_1 = multiply([attn_map, res_block])
+
+    return attn_output_1
+
+
+
 """
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
@@ -310,7 +351,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 """
 
 
-
+"""
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 3 <|smash-6|> 
@@ -367,7 +408,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([attn_upsampled, res_block])
 
     return attn_output_1
-
+"""
 
 """
 def proposed_attention_block_2d(ms_conv, res_block, filters):
