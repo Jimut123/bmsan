@@ -269,7 +269,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     return attn_output_1
 """
 
-
+"""
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 3 <|smash-2|> 
@@ -307,7 +307,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 
 
     return attn_output_1
-
+"""
 
 """
 def proposed_attention_block_2d(ms_conv, res_block, filters):
@@ -368,7 +368,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     return attn_output_1
 """
 
-"""
+
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 3 <|smash-8|> 
@@ -436,7 +436,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 
     return attn_output_1
 
-"""
+
 
 
 """
