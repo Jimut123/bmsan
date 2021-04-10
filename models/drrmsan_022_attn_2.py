@@ -179,10 +179,10 @@ def attention_up_and_concate(down_layer, layer, filters):
     #concate = my_concat([down_layer, layer])
     return layer
 
-
+"""
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
-    Proposed Attention block - Version 2 <|dream|> - (Best till Now  92.57 Dice SL)
+    Proposed Attention block - Version 2 <|dream|> - 
 
     Arguments:
         ms_conv {keras layer} -- layer coming from the multi resolution convolution
@@ -206,7 +206,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([up_attn, res_block])
     
     return attn_output_1
-
+"""
 
 
 
@@ -246,7 +246,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     return attn_output_1
 
 """
-"""
+
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 2 <|dream|> - (Best till Now  92.57 Dice SL)
@@ -273,7 +273,6 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([up_attn, res_block])
     
     return attn_output_1
-"""
 
 
 """
