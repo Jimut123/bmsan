@@ -18,3 +18,4 @@ from .drrmsan_4 import DRRMSAN_multiscale_attention_bayes_4
 from .drrmsan_022_conc_concat import DRRMSAN_multiscale_attention_bayes_022_conc_concat
 from .drrmsan_022_attn_2 import DRRMSAN_multiscale_attention_bayes_022_attn_2
 from .drrmsan_022_attn_3 import DRRMSAN_multiscale_attention_bayes_022_attn_3
+from .drrmsan_022_attn_31 import DRRMSAN_multiscale_attention_bayes_022_attn_31

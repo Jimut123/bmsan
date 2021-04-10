@@ -269,7 +269,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     return attn_output_1
 """
 
-"""
+
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 3 <|smash-2|> 
@@ -296,10 +296,10 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     down_11 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_1)
     down_22 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_2)
 
-    mult_block_1 = multiply([up_11, down_11])
-    mult_block_2 = multiply([up_22, down_22])
+    mult_block_1 = add([up_11, down_11])
+    mult_block_2 = add([up_22, down_22])
 
-    attn_map = add([mult_block_1, mult_block_2])
+    attn_map = multiply([mult_block_1, mult_block_2])
 
     attn_upsampled =  UpSampling2D(size=(2, 2))(attn_map)
 
@@ -307,7 +307,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 
 
     return attn_output_1
-"""
+
 
 """
 def proposed_attention_block_2d(ms_conv, res_block, filters):
@@ -368,7 +368,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     return attn_output_1
 """
 
-
+"""
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 3 <|smash-8|> 
@@ -436,7 +436,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 
     return attn_output_1
 
-
+"""
 
 
 """
@@ -549,7 +549,7 @@ def rec_res_block(input_layer, filters, batch_normalization=False, kernel_size=[
 
 
 
-def DRRMSAN_multiscale_attention_bayes_022_attn_3(height, width, n_channels, alpha_1, alpha_2, alpha_3, alpha_4):
+def DRRMSAN_multiscale_attention_bayes_022_attn_31(height, width, n_channels, alpha_1, alpha_2, alpha_3, alpha_4):
     '''
     DRRMSAN Multiscale Attention Model
 
