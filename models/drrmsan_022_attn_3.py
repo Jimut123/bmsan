@@ -269,7 +269,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     return attn_output_1
 """
 
-
+"""
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 3 <|smash-2|> 
@@ -307,7 +307,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 
 
     return attn_output_1
-
+"""
 
 """
 def proposed_attention_block_2d(ms_conv, res_block, filters):
@@ -435,11 +435,11 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([attn_upsampled, res_block])
 
     return attn_output_1
-
 """
 
 
-"""
+
+
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 3 <|smash-4|> 
@@ -452,7 +452,6 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     Returns:
         [keras layer] -- [output layer]
     '''
-
 
     up_1 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(ms_conv))
     up_2 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_1))
@@ -484,11 +483,11 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_upsampled =  UpSampling2D(size=(2, 2))(attn_map)
 
     attn_output_1 = multiply([attn_upsampled, res_block])
-
-
+    
     return attn_output_1
 
-"""
+
+
 def ResPath(filters, length, inp):
     '''
     ResPath
