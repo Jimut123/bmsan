@@ -309,7 +309,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     return attn_output_1
 """
 
-"""
+
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 3 <|smash-6|> 
@@ -366,9 +366,9 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([attn_upsampled, res_block])
 
     return attn_output_1
+
+
 """
-
-
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 3 <|smash-8|> 
@@ -435,7 +435,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([attn_upsampled, res_block])
 
     return attn_output_1
-
+"""
 
 
 
