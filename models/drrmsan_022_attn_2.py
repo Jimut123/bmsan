@@ -262,7 +262,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 """
 
 
-
+"""
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 2.1 <|dream-004|>
@@ -295,9 +295,42 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     
     return attn_output_1
 
+"""
 
+def proposed_attention_block_2d(ms_conv, res_block, filters):
+    '''
+    Proposed Attention block - Version 2.1 <|dream-006|>
 
+    Arguments:
+        ms_conv {keras layer} -- layer coming from the multi resolution convolution
+        res_block {keras layer} -- layer coming from the residual block
+        filters {int} -- number of channels in image
 
+    Returns:
+        [keras layer] -- [output layer]
+    '''
+
+    up_1 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(ms_conv))
+    up_2 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_1))
+    up_3 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_2))
+    up_4 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_3))
+    up_5 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_4))
+    up_6 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_5))
+
+    down_1 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_1)
+    down_2 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_2)
+    down_3 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_3)
+    down_4 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_4)
+    down_5 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_5)
+    down_6 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_6)
+    
+    mult_block = Activation('sigmoid')(add([down_1, down_2, down_3, down_4, down_5, down_6]))
+
+    up_attn = ZeroPadding2D(padding=(1,1))(UpSampling2D(size=(2, 2))(mult_block))
+
+    attn_output_1 = multiply([up_attn, res_block])
+    
+    return attn_output_1
 
 
 """
