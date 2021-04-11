@@ -230,7 +230,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     return attn_output_1
 """
 
-
+"""
 # Attention - 2
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
@@ -263,9 +263,9 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([up_attn, res_block])
     
     return attn_output_1
-
-
 """
+
+
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block
@@ -319,7 +319,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(ZeroPadding2D(padding=(5,5))(UpSampling2D(size=(2, 2))(attn_outputs_mult)))
     
     return attn_output_1
-"""
+
 
 def ResPath(filters, length, inp):
     '''
