@@ -179,10 +179,13 @@ def attention_up_and_concate(down_layer, layer, filters):
     #concate = my_concat([down_layer, layer])
     return layer
 
+
+
 """
+# Attention - 3
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
-    Proposed Attention block - Version 2 <|dream|> - 
+    Proposed Attention block - Version 3 <|smash-4|> 
 
     Arguments:
         ms_conv {keras layer} -- layer coming from the multi resolution convolution
@@ -195,74 +198,40 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
 
     up_1 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(ms_conv))
     up_2 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_1))
+    up_3 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_2))
+    up_4 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_3))
 
-    down_1 = MaxPooling2D(pool_size=(4, 4), strides=(2, 2))(up_1)
-    down_2 = MaxPooling2D(pool_size=(4, 4), strides=(2, 2))(up_2)
+    up_11 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_1)
+    up_22 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_2)
+    up_33 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_3)
+    up_44 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_4)
 
-    mult_block = Activation('sigmoid')(multiply([down_1, down_2]))
+    down_1 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(res_block))
+    down_2 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(down_1))
+    down_3 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(down_2))
+    down_4 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(down_3))
 
-    up_attn = ZeroPadding2D(padding=(1,1))(UpSampling2D(size=(2, 2))(mult_block))
+    down_11 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_1)
+    down_22 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_2)
+    down_33 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_3)
+    down_44 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_4)
 
-    attn_output_1 = multiply([up_attn, res_block])
-    
+    mult_block_1 = multiply([up_11, down_11])
+    mult_block_2 = multiply([up_22, down_22])
+    mult_block_3 = multiply([up_33, down_33])
+    mult_block_4 = multiply([up_44, down_44])
+
+    attn_map = Activation('sigmoid')(add([mult_block_1, mult_block_2, mult_block_3, mult_block_4]))
+
+    attn_upsampled =  UpSampling2D(size=(2, 2))(attn_map)
+
+    attn_output_1 = multiply([attn_upsampled, res_block])
+
     return attn_output_1
 """
 
 """
-def proposed_attention_block_2d(ms_conv, res_block, filters):
-    '''
-    Proposed Attention block - Version 2 <|dream-No-maxpool|> - 
-
-    Arguments:
-        ms_conv {keras layer} -- layer coming from the multi resolution convolution
-        res_block {keras layer} -- layer coming from the residual block
-        filters {int} -- number of channels in image
-
-    Returns:
-        [keras layer] -- [output layer]
-    '''
-
-    up_1 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(ms_conv))
-    up_2 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_1))
-
-    mult_block = Activation('sigmoid')(multiply([up_1, up_2]))
-
-    attn_output_1 = multiply([mult_block, res_block])
-    
-    return attn_output_1
-"""
-
-"""
-def proposed_attention_block_2d(ms_conv, res_block, filters):
-    '''
-    Proposed Attention block - Version 2 <|dream-2,2-maxpool|> - 
-
-    Arguments:
-        ms_conv {keras layer} -- layer coming from the multi resolution convolution
-        res_block {keras layer} -- layer coming from the residual block
-        filters {int} -- number of channels in image
-
-    Returns:
-        [keras layer] -- [output layer]
-    '''
-
-    up_1 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(ms_conv))
-    up_2 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_1))
-
-    down_1 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_1)
-    down_2 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_2)
-
-    mult_block = Activation('sigmoid')(multiply([down_1, down_2]))
-
-    up_attn = UpSampling2D(size=(2, 2))(mult_block)
-
-    attn_output_1 = multiply([up_attn, res_block])
-    
-    return attn_output_1
-"""
-
-
-"""
+# Attention - 2
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
     Proposed Attention block - Version 2.1 <|dream-004|>
@@ -294,13 +263,12 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([up_attn, res_block])
     
     return attn_output_1
-
 """
 
-"""
+
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
-    Proposed Attention block - Version 2.1 <|dream-006|>
+    Proposed Attention block
 
     Arguments:
         ms_conv {keras layer} -- layer coming from the multi resolution convolution
@@ -311,137 +279,46 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
         [keras layer] -- [output layer]
     '''
 
-    up_1 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(ms_conv))
-    up_2 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_1))
-    up_3 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_2))
-    up_4 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_3))
-    up_5 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_4))
-    up_6 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_5))
+    theta_x = Conv2D(filters, [2,  2], strides=[1, 1], padding='same')(ms_conv)
+    joint_conv_2x2 = Conv2D(filters, (2, 2), strides=(1, 1), padding='same')(theta_x)
+    conv_3x3 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(joint_conv_2x2))
+    conv_5x5 = Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(joint_conv_2x2)
+    conv_5x5 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(conv_5x5))
+    conv_7x7 = Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(joint_conv_2x2)
+    conv_7x7 = Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(conv_7x7)
+    conv_7x7 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(conv_7x7))
+    add_3x3_5x5 = add([conv_3x3, conv_5x5])
+    mult_3x3_5x5 = multiply([conv_3x3, conv_5x5]) #multiply([conv_3x3, conv_5x5])#Subtract()([conv_3x3, conv_5x5])
+    add_3x3_5x5_7x7 = Activation('relu')(add([add_3x3_5x5, conv_7x7]))
+    mul_3x3_5x5_7x7 = Activation('relu')(multiply([mult_3x3_5x5, conv_7x7]))#multiply([mult_3x3_5x5, conv_7x7]))) # Subtract()([mult_3x3_5x5, conv_7x7])
+    add_1x1_upper = Activation('relu')(Conv2D(filters, [2,  2], strides=[1, 1], padding='same')(add_3x3_5x5_7x7))
+    mult_1x1_lower = Activation('relu')(Conv2D(filters, [2,  2], strides=[1, 1], padding='same')(mul_3x3_5x5_7x7))
+    resampler_down_upper = MaxPooling2D(pool_size=(12, 12), strides=(2, 2))(add_1x1_upper) #AveragePooling2D
+    resampler_down_lower = MaxPooling2D(pool_size=(12, 12), strides=(2, 2))(mult_1x1_lower)
+    output_ms_conv_res_block = multiply([resampler_down_upper, resampler_down_lower])
 
-    down_1 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_1)
-    down_2 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_2)
-    down_3 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_3)
-    down_4 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_4)
-    down_5 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_5)
-    down_6 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_6)
+    theta_x_rb = Conv2D(filters, [2,  2], strides=[1, 1], padding='same')(res_block)
+    joint_conv_2x2_rb = Conv2D(filters, (2, 2), strides=(1, 1), padding='same')(theta_x_rb)
+    conv_3x3_rb = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(joint_conv_2x2_rb))
+    conv_5x5_rb = Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(joint_conv_2x2_rb)
+    conv_5x5_rb = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(conv_5x5_rb))
+    conv_7x7_rb = Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(joint_conv_2x2_rb)
+    conv_7x7_rb = Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(conv_7x7_rb)
+    conv_7x7_rb = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(conv_7x7_rb))
+    add_3x3_5x5_rb = add([conv_3x3_rb, conv_5x5_rb])
+    mult_3x3_5x5_rb = multiply([conv_3x3_rb, conv_5x5_rb])#multiply([conv_3x3_rb, conv_5x5_rb]) #Subtract()([conv_3x3_rb, conv_5x5_rb])
+    add_3x3_5x5_7x7_rb = Activation('relu')(add([add_3x3_5x5_rb, conv_7x7_rb]))
+    mul_3x3_5x5_7x7_rb = Activation('relu')(multiply([mult_3x3_5x5_rb, conv_7x7_rb]))#multiply([mult_3x3_5x5_rb, conv_7x7_rb]))) # Subtract()([mult_3x3_5x5_rb, conv_7x7_rb])
+    add_1x1_upper_rb = Activation('relu')(Conv2D(filters, [2,  2], strides=[1, 1], padding='same')(add_3x3_5x5_7x7_rb))
+    mult_1x1_lower_rb = Activation('relu')(Conv2D(filters, [2, 2], strides=[1, 1], padding='same')(mul_3x3_5x5_7x7_rb))
+    resampler_down_upper_rb = MaxPooling2D(pool_size=(12, 12), strides=(2, 2))(add_1x1_upper_rb)
+    resampler_down_lower_rb = MaxPooling2D(pool_size=(12, 12), strides=(2, 2))(mult_1x1_lower_rb)
+    output_ms_conv_res_block_rb = multiply([resampler_down_upper_rb, resampler_down_lower_rb])
     
-    mult_block = Activation('sigmoid')(add([down_1, down_2, down_3, down_4, down_5, down_6]))
-
-    up_attn = ZeroPadding2D(padding=(1,1))(UpSampling2D(size=(2, 2))(mult_block))
-
-    attn_output_1 = multiply([up_attn, res_block])
-    
-    return attn_output_1
-"""
-
-"""
-def proposed_attention_block_2d(ms_conv, res_block, filters):
-    '''
-    Proposed Attention block - Version 2 <|dream|>
-
-    Arguments:
-        ms_conv {keras layer} -- layer coming from the multi resolution convolution
-        res_block {keras layer} -- layer coming from the residual block
-        filters {int} -- number of channels in image
-
-    Returns:
-        [keras layer] -- [output layer]
-    '''
-
-    up_1 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(ms_conv))
-    up_2 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_1))
-    up_3 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_2))
-    
-
-    down_1 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_1)
-    down_2 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_2)
-    down_3 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_3)
-    
-    
-
-    mult_block = Activation('sigmoid')(multiply([down_1, down_2, down_3]))
-
-    up_attn = ZeroPadding2D(padding=(1,1))(UpSampling2D(size=(2, 2))(mult_block))
-
-    attn_output_1 = multiply([up_attn, res_block])
+    attn_outputs_mult = Activation('sigmoid')(multiply([output_ms_conv_res_block, output_ms_conv_res_block_rb]))
+    attn_output_1 = Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(ZeroPadding2D(padding=(5,5))(UpSampling2D(size=(2, 2))(attn_outputs_mult)))
     
     return attn_output_1
-
-"""
-
-
-"""
-def proposed_attention_block_2d(ms_conv, res_block, filters):
-    '''
-    Proposed Attention block - Version 2 <|dream|> - (Best till Now  92.57 Dice SL)
-
-    Arguments:
-        ms_conv {keras layer} -- layer coming from the multi resolution convolution
-        res_block {keras layer} -- layer coming from the residual block
-        filters {int} -- number of channels in image
-
-    Returns:
-        [keras layer] -- [output layer]
-    '''
-
-    up_1 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(ms_conv))
-    up_2 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_1))
-
-    down_1 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_1)
-    down_2 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_2)
-
-    mult_block = Activation('sigmoid')(multiply([down_1, down_2]))
-
-    up_attn = ZeroPadding2D(padding=(1,1))(UpSampling2D(size=(2, 2))(mult_block))
-
-    attn_output_1 = multiply([up_attn, res_block])
-    
-    return attn_output_1
-"""
-
-
-"""
-def proposed_attention_block_2d(ms_conv, res_block, filters):
-    '''
-    Proposed Attention block - Version 2.1 <|dream-008|>
-
-    Arguments:
-        ms_conv {keras layer} -- layer coming from the multi resolution convolution
-        res_block {keras layer} -- layer coming from the residual block
-        filters {int} -- number of channels in image
-
-    Returns:
-        [keras layer] -- [output layer]
-    '''
-
-    up_1 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(ms_conv))
-    up_2 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_1))
-    up_3 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_2))
-    up_4 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_3))
-    up_5 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_4))
-    up_6 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_5))
-    up_7 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_6))
-    up_8 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_7))
-
-    down_1 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_1)
-    down_2 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_2)
-    down_3 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_3)
-    down_4 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_4)
-    down_5 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_5)
-    down_6 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_6)
-    down_7 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_7)
-    down_8 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_8)
-
-    mult_block = Activation('sigmoid')(add([down_1, down_2, down_3, down_4, down_5, down_6, down_7, down_8]))
-
-    up_attn = UpSampling2D(size=(2, 2))(mult_block)
-
-    attn_output_1 = multiply([up_attn, res_block])
-    
-    return attn_output_1
-"""
-
-
 
 def ResPath(filters, length, inp):
     '''
@@ -503,7 +380,7 @@ def rec_res_block(input_layer, filters, batch_normalization=False, kernel_size=[
 
 
 
-def DRRMSAN_multiscale_attention_bayes_022_attn_2(height, width, n_channels, alpha_1, alpha_2, alpha_3, alpha_4):
+def DRRMSAN_ablation_wo_minpool(height, width, n_channels, alpha_1, alpha_2, alpha_3, alpha_4):
     '''
     DRRMSAN Multiscale Attention Model
 
@@ -526,19 +403,19 @@ def DRRMSAN_multiscale_attention_bayes_022_attn_2(height, width, n_channels, alp
 
     inp_1_2I = AveragePooling2D(pool_size=(2, 2))(inputs)
     inp_1_2I_mxpool = MaxPooling2D(pool_size=(2, 2))(inputs)
-    inp_1_2I_minpool = MinPooling2D(inputs, pool_size=(2,2), strides=(1,1))
+    # inp_1_2I_minpool = MinPooling2D(inputs, pool_size=(2,2), strides=(1,1))
 
 
     # 1/4 rth the original scale
     inp_1_4I = AveragePooling2D(pool_size=(2, 2))(inp_1_2I)
     inp_1_4I_mxpool = MaxPooling2D(pool_size=(2, 2))(inp_1_2I_mxpool)
-    inp_1_4I_minpool = MinPooling2D(inp_1_2I_minpool, pool_size=(2,2), strides=(1,1))
+    # inp_1_4I_minpool = MinPooling2D(inp_1_2I_minpool, pool_size=(2,2), strides=(1,1))
     #inp_1_4I_minpool = MaxPooling2D(pool_size=(2, 2))(inp_1_2I_mxpool)
 
     # 1/8 th the original scale
     inp_1_8I = AveragePooling2D(pool_size=(2, 2))(inp_1_4I)
     inp_1_8I_mxpool = MaxPooling2D(pool_size=(2, 2))(inp_1_4I_mxpool)
-    inp_1_8I_minpool = MinPooling2D(inp_1_4I_minpool, pool_size=(2,2), strides=(1,1))
+    # inp_1_8I_minpool = MinPooling2D(inp_1_4I_minpool, pool_size=(2,2), strides=(1,1))
     
     # just pass through some conv and add
     # for adding to multi res block 2, 32 filters
@@ -551,33 +428,33 @@ def DRRMSAN_multiscale_attention_bayes_022_attn_2(height, width, n_channels, alp
     total_1_2I = 51
     per_mx_pool_1_2I = int(0.05 * total_1_2I)
     per_avg_pool_1_2I = int(0.05 * total_1_2I)
-    per_min_pool_1_2I = int(0.40 * total_1_2I)
-    per_down_1_2I = int(total_1_2I - (per_mx_pool_1_2I + per_avg_pool_1_2I + per_min_pool_1_2I))
+    # per_min_pool_1_2I = int(0.40 * total_1_2I)
+    per_down_1_2I = int(total_1_2I - (per_mx_pool_1_2I + per_avg_pool_1_2I)) #+ per_min_pool_1_2I))
 
     mrb2_1_2I_avgpool = Conv2D(per_avg_pool_1_2I, (3, 3), strides=(1,1), padding='same', name='side_left_1_avgpool')(inp_1_2I) 
     mrb2_1_2I_mxpool = Conv2D(per_mx_pool_1_2I, (3, 3), strides=(1,1), padding='same', name='side_left_1_mxpool')(inp_1_2I_mxpool)
-    mrb2_1_2I_minpool = Conv2D(per_min_pool_1_2I, (3, 3), strides=(1,1), padding='same', name='side_left_1_minpool')(inp_1_2I_minpool)
+    # mrb2_1_2I_minpool = Conv2D(per_min_pool_1_2I, (3, 3), strides=(1,1), padding='same', name='side_left_1_minpool')(inp_1_2I_minpool)
 
     total_1_4I = 105
     per_mx_pool_1_4I = int(0.05 * total_1_4I)
     per_avg_pool_1_4I = int(0.05 * total_1_4I)
-    per_min_pool_1_4I = int(0.40 * total_1_4I)
+    # per_min_pool_1_4I = int(0.40 * total_1_4I)
     # 52% to the down layer
-    per_down_1_4I = int(total_1_4I - (per_mx_pool_1_4I + per_avg_pool_1_4I + per_min_pool_1_4I))
+    per_down_1_4I = int(total_1_4I - (per_mx_pool_1_4I + per_avg_pool_1_4I ))#+ per_min_pool_1_4I))
 
     mrb3_1_4I_avgpool = Conv2D(per_avg_pool_1_4I, (3, 3), strides=(1,1), padding='same', name='side_left_2_avgpool')(inp_1_4I) 
     mrb3_1_4I_mxpool = Conv2D(per_mx_pool_1_4I, (3, 3), strides=(1,1), padding='same', name='side_left_2_mxpool')(inp_1_4I_mxpool) 
-    mrb3_1_4I_minpool = Conv2D(per_min_pool_1_4I, (3, 3), strides=(1,1), padding='same', name='side_left_2_minpool')(inp_1_4I_minpool) 
+    # mrb3_1_4I_minpool = Conv2D(per_min_pool_1_4I, (3, 3), strides=(1,1), padding='same', name='side_left_2_minpool')(inp_1_4I_minpool) 
 
     total_1_8I = 212
     per_mx_pool_1_8I = int(0.05 * total_1_8I)
     per_avg_pool_1_8I = int(0.05 * total_1_8I)
-    per_min_pool_1_8I = int(0.40 * total_1_8I)
-    per_down_1_8I = int(total_1_8I - (per_mx_pool_1_8I + per_avg_pool_1_8I + per_min_pool_1_8I))
+    # per_min_pool_1_8I = int(0.40 * total_1_8I)
+    per_down_1_8I = int(total_1_8I - (per_mx_pool_1_8I + per_avg_pool_1_8I )) #+ per_min_pool_1_8I))
 
     mrb4_1_8I_avgpool = Conv2D(per_avg_pool_1_8I, (3, 3), strides=(1,1), padding='same', name='side_left_3_avgpool')(inp_1_8I)
     mrb4_1_8I_mxpool = Conv2D(per_mx_pool_1_8I, (3, 3), strides=(1,1), padding='same', name='side_left_3_mxpool')(inp_1_8I_mxpool)
-    mrb4_1_8I_minpool = Conv2D(per_min_pool_1_8I, (3, 3), strides=(1,1), padding='same', name='side_left_3_minpool')(inp_1_8I_minpool)
+    # mrb4_1_8I_minpool = Conv2D(per_min_pool_1_8I, (3, 3), strides=(1,1), padding='same', name='side_left_3_minpool')(inp_1_8I_minpool)
 
 
     #==================================================================
@@ -587,7 +464,7 @@ def DRRMSAN_multiscale_attention_bayes_022_attn_2(height, width, n_channels, alp
     pool1 = MaxPooling2D(pool_size=(2, 2))(mresblock1)
     #===================
     pool1 = Conv2D(per_down_1_2I, (3, 3), strides=(1,1), padding='same')(pool1)
-    left_block_1 = concatenate([pool1, mrb2_1_2I_avgpool, mrb2_1_2I_mxpool, mrb2_1_2I_minpool])
+    left_block_1 = concatenate([pool1, mrb2_1_2I_avgpool, mrb2_1_2I_mxpool ]) #, mrb2_1_2I_minpool])
     #left_block_1 = rec_res_block(left_block_1, total_1_2I)
     #pool1 = multiply([pool1, mrb2_1_2I])
     #pool1 = proposed_attention_block_2d(pool1, mresblock1,filters=51)
@@ -600,7 +477,7 @@ def DRRMSAN_multiscale_attention_bayes_022_attn_2(height, width, n_channels, alp
     pool2 = MaxPooling2D(pool_size=(2, 2))(mresblock2)
     #===================
     pool2 = Conv2D(per_down_1_4I, (3, 3), strides=(1,1), padding='same')(pool2)
-    left_block_2 = concatenate([pool2, mrb3_1_4I_avgpool, mrb3_1_4I_mxpool, mrb3_1_4I_minpool])
+    left_block_2 = concatenate([pool2, mrb3_1_4I_avgpool, mrb3_1_4I_mxpool]) #, mrb3_1_4I_minpool])
     #left_block_2 = rec_res_block(left_block_2, total_1_4I)
     #pool2 = multiply([pool2, mrb3_1_4I])
     #pool2 = proposed_attention_block_2d(pool2, mresblock2,filters=105)
@@ -612,7 +489,7 @@ def DRRMSAN_multiscale_attention_bayes_022_attn_2(height, width, n_channels, alp
     pool3 = MaxPooling2D(pool_size=(2, 2))(mresblock3)
     #===================
     pool3 = Conv2D(per_down_1_8I, (3, 3), strides=(1,1), padding='same')(pool3)
-    left_block_3 = concatenate([pool3, mrb4_1_8I_avgpool, mrb4_1_8I_mxpool, mrb4_1_8I_minpool])
+    left_block_3 = concatenate([pool3, mrb4_1_8I_avgpool, mrb4_1_8I_mxpool]) #, mrb4_1_8I_minpool])
     #left_block_3 = rec_res_block(left_block_3, total_1_8I)
     #pool3 = multiply([pool3, mrb4_1_8I])
     #pool3 = proposed_attention_block_2d(pool3, mresblock3,filters=212)
