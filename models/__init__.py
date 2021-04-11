@@ -23,3 +23,4 @@ from .drrmsan_ablation import DRRMSAN_ablation_wo_minpool
 from .drrmsan_ablation_wo_attn import DRRMSAN_multiscale_wo_attn
 from .drrmsan_ablation_wo_attn_wo_ms import DRRMSAN_multiscale_wo_attn_wo_ms
 from .drrmsan_ablation_wo_attn_wo_ms_wo_lo import DRRMSAN_multiscale_wo_attn_wo_ms_wo_lo
+from .drrmsan_ablation_wo_ms_wo_lo import DRRMSAN_multiscale_wo_ms_wo_lo
