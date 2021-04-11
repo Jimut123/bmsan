@@ -182,6 +182,54 @@ def attention_up_and_concate(down_layer, layer, filters):
 
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
+    Proposed Attention block - Version 3 <|smash-4|> 
+
+    Arguments:
+        ms_conv {keras layer} -- layer coming from the multi resolution convolution
+        res_block {keras layer} -- layer coming from the residual block
+        filters {int} -- number of channels in image
+
+    Returns:
+        [keras layer] -- [output layer]
+    '''
+
+    up_1 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(ms_conv))
+    up_2 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_1))
+    up_3 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_2))
+    up_4 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_3))
+
+    up_11 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_1)
+    up_22 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_2)
+    up_33 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_3)
+    up_44 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_4)
+
+    down_1 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(res_block))
+    down_2 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(down_1))
+    down_3 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(down_2))
+    down_4 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(down_3))
+
+    down_11 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_1)
+    down_22 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_2)
+    down_33 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_3)
+    down_44 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(down_4)
+
+    mult_block_1 = multiply([up_11, down_11])
+    mult_block_2 = multiply([up_22, down_22])
+    mult_block_3 = multiply([up_33, down_33])
+    mult_block_4 = multiply([up_44, down_44])
+
+    attn_map = Activation('sigmoid')(add([mult_block_1, mult_block_2, mult_block_3, mult_block_4]))
+
+    attn_upsampled =  UpSampling2D(size=(2, 2))(attn_map)
+
+    attn_output_1 = multiply([attn_upsampled, ms_conv])
+
+    return attn_output_1
+
+
+"""
+def proposed_attention_block_2d(ms_conv, res_block, filters):
+    '''
     Proposed Attention block - Version 3 <|smash-5|> 
 
     Arguments:
@@ -192,7 +240,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     Returns:
         [keras layer] -- [output layer]
     '''
-    
+
     up_1 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(ms_conv))
     up_2 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_1))
     up_3 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_2))
@@ -230,7 +278,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([attn_upsampled, res_block])
 
     return attn_output_1
-
+"""
 
 """
 def proposed_attention_block_2d(ms_conv, res_block, filters):
