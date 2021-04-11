@@ -181,7 +181,7 @@ def attention_up_and_concate(down_layer, layer, filters):
 
 
 
-
+"""
 # Attention - 3
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
@@ -228,9 +228,9 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([attn_upsampled, res_block])
 
     return attn_output_1
-
-
 """
+
+
 # Attention - 2
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
@@ -263,7 +263,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([up_attn, res_block])
     
     return attn_output_1
-"""
+
 
 """
 def proposed_attention_block_2d(ms_conv, res_block, filters):
@@ -395,80 +395,18 @@ def DRRMSAN_multiscale_wo_ms_wo_lo(height, width, n_channels, alpha_1, alpha_2, 
     '''
     print("DRRMSAN Bayes")
 
-
     inputs = Input((height, width, n_channels))
 
-    # use average pool, maxpool and minpool to create different volumes of
-    # multiscaling, minpool is used here as a sort of regularizer noise in the feature
-    # space.  1/2 th the original scale first.
-
-    # inp_1_2I = AveragePooling2D(pool_size=(2, 2))(inputs)
-    # inp_1_2I_mxpool = MaxPooling2D(pool_size=(2, 2))(inputs)
-    # inp_1_2I_minpool = MinPooling2D(inputs, pool_size=(2,2), strides=(1,1))
-
-
-    # 1/4 rth the original scale
-    # inp_1_4I = AveragePooling2D(pool_size=(2, 2))(inp_1_2I)
-    # inp_1_4I_mxpool = MaxPooling2D(pool_size=(2, 2))(inp_1_2I_mxpool)
-    # inp_1_4I_minpool = MinPooling2D(inp_1_2I_minpool, pool_size=(2,2), strides=(1,1))
-    #inp_1_4I_minpool = MaxPooling2D(pool_size=(2, 2))(inp_1_2I_mxpool)
-
-    # 1/8 th the original scale
-    # inp_1_8I = AveragePooling2D(pool_size=(2, 2))(inp_1_4I)
-    # inp_1_8I_mxpool = MaxPooling2D(pool_size=(2, 2))(inp_1_4I_mxpool)
-    # inp_1_8I_minpool = MinPooling2D(inp_1_4I_minpool, pool_size=(2,2), strides=(1,1))
-    
-    # just pass through some conv and add
-    # for adding to multi res block 2, 32 filters
-    # use 50 - 50 
-    # Conv2D(filters, (3, 3), strides=(1,1), padding='same'
-    
-    # using different ratios for the volumes, can be improved by using
-    # Bayesian Optimization
-
     total_1_2I = 51
-    # per_mx_pool_1_2I = int(0.05 * total_1_2I)
-    # per_avg_pool_1_2I = int(0.05 * total_1_2I)
-    # per_min_pool_1_2I = int(0.40 * total_1_2I)
-    # per_down_1_2I = int(total_1_2I - (per_mx_pool_1_2I + per_avg_pool_1_2I + per_min_pool_1_2I))
-
-    # mrb2_1_2I_avgpool = Conv2D(per_avg_pool_1_2I, (3, 3), strides=(1,1), padding='same', name='side_left_1_avgpool')(inp_1_2I) 
-    # mrb2_1_2I_mxpool = Conv2D(per_mx_pool_1_2I, (3, 3), strides=(1,1), padding='same', name='side_left_1_mxpool')(inp_1_2I_mxpool)
-    # mrb2_1_2I_minpool = Conv2D(per_min_pool_1_2I, (3, 3), strides=(1,1), padding='same', name='side_left_1_minpool')(inp_1_2I_minpool)
-
     total_1_4I = 105
-    # per_mx_pool_1_4I = int(0.05 * total_1_4I)
-    # per_avg_pool_1_4I = int(0.05 * total_1_4I)
-    # per_min_pool_1_4I = int(0.40 * total_1_4I)
-    # # 52% to the down layer
-    # per_down_1_4I = int(total_1_4I - (per_mx_pool_1_4I + per_avg_pool_1_4I + per_min_pool_1_4I))
-
-    # mrb3_1_4I_avgpool = Conv2D(per_avg_pool_1_4I, (3, 3), strides=(1,1), padding='same', name='side_left_2_avgpool')(inp_1_4I) 
-    # mrb3_1_4I_mxpool = Conv2D(per_mx_pool_1_4I, (3, 3), strides=(1,1), padding='same', name='side_left_2_mxpool')(inp_1_4I_mxpool) 
-    # mrb3_1_4I_minpool = Conv2D(per_min_pool_1_4I, (3, 3), strides=(1,1), padding='same', name='side_left_2_minpool')(inp_1_4I_minpool) 
-
     total_1_8I = 212
-    # per_mx_pool_1_8I = int(0.05 * total_1_8I)
-    # per_avg_pool_1_8I = int(0.05 * total_1_8I)
-    # per_min_pool_1_8I = int(0.40 * total_1_8I)
-    # per_down_1_8I = int(total_1_8I - (per_mx_pool_1_8I + per_avg_pool_1_8I + per_min_pool_1_8I))
-
-    # mrb4_1_8I_avgpool = Conv2D(per_avg_pool_1_8I, (3, 3), strides=(1,1), padding='same', name='side_left_3_avgpool')(inp_1_8I)
-    # mrb4_1_8I_mxpool = Conv2D(per_mx_pool_1_8I, (3, 3), strides=(1,1), padding='same', name='side_left_3_mxpool')(inp_1_8I_mxpool)
-    # mrb4_1_8I_minpool = Conv2D(per_min_pool_1_8I, (3, 3), strides=(1,1), padding='same', name='side_left_3_minpool')(inp_1_8I_minpool)
-
 
     #==================================================================
 
     mresblock1 = MultiResBlock(32, inputs)
-    #mresblock1 = rec_res_block(mresblock1, 51)
     pool1 = MaxPooling2D(pool_size=(2, 2))(mresblock1)
     #===================
     pool1 = Conv2D(total_1_2I, (3, 3), strides=(1,1), padding='same')(pool1)
-    # left_block_1 = concatenate([pool1, mrb2_1_2I_avgpool, mrb2_1_2I_mxpool, mrb2_1_2I_minpool])
-    #left_block_1 = rec_res_block(left_block_1, total_1_2I)
-    #pool1 = multiply([pool1, mrb2_1_2I])
-    #pool1 = proposed_attention_block_2d(pool1, mresblock1,filters=51)
     #===================
     mresblock1 = ResPath(32, 4, mresblock1)
 
@@ -478,81 +416,54 @@ def DRRMSAN_multiscale_wo_ms_wo_lo(height, width, n_channels, alpha_1, alpha_2, 
     pool2 = MaxPooling2D(pool_size=(2, 2))(mresblock2)
     #===================
     pool2 = Conv2D(total_1_4I, (3, 3), strides=(1,1), padding='same')(pool2)
-    # left_block_2 = concatenate([pool2, mrb3_1_4I_avgpool, mrb3_1_4I_mxpool, mrb3_1_4I_minpool])
-    #left_block_2 = rec_res_block(left_block_2, total_1_4I)
-    #pool2 = multiply([pool2, mrb3_1_4I])
-    #pool2 = proposed_attention_block_2d(pool2, mresblock2,filters=105)
     #===================
     mresblock2 = ResPath(32*2, 3, mresblock2)
 
     mresblock3 = MultiResBlock(32*4, pool2)
-    #mresblock3 = rec_res_block(mresblock3, 212)
+    
     pool3 = MaxPooling2D(pool_size=(2, 2))(mresblock3)
     #===================
     pool3 = Conv2D(total_1_8I, (3, 3), strides=(1,1), padding='same')(pool3)
-    # left_block_3 = concatenate([pool3, mrb4_1_8I_avgpool, mrb4_1_8I_mxpool, mrb4_1_8I_minpool])
-    #left_block_3 = rec_res_block(left_block_3, total_1_8I)
-    #pool3 = multiply([pool3, mrb4_1_8I])
-    #pool3 = proposed_attention_block_2d(pool3, mresblock3,filters=212)
     #===================
     mresblock3 = ResPath(32*4, 2, mresblock3)
 
     mresblock4 = MultiResBlock(32*8, pool3)
-    #mresblock4 = rec_res_block(mresblock4, 426)
+    
     pool4 = MaxPooling2D(pool_size=(2, 2))(mresblock4)
     mresblock4 = ResPath(32*8, 1, mresblock4)
 
 
     mresblock5 = MultiResBlock(32*16, pool4)
-    #mresblock5 = rec_res_block(mresblock5, 853)
-
-    #up6_add =  add([Conv2DTranspose(32*8, (2, 2), strides=(2, 2), padding='same')(mresblock5), mresblock4])
-    #up6_dra = attention_up_and_concate(Conv2DTranspose(32*8, (2, 2), strides=(2, 2), padding='same', name='up6_dra')(mresblock5), mresblock4,filters=32*8)
     up6 = proposed_attention_block_2d(Conv2DTranspose(32*8, (2, 2), strides=(2, 2), padding='same', name='up6')(mresblock5), mresblock4,filters=256)
     up6 = concatenate([up6, mresblock4])
 
-    #up6 = concatenate([Conv2DTranspose(32*8, (2, 2), strides=(2, 2), padding='same', name='up6')(mresblock5), mresblock4])
-    
-    #concatenate([Conv2DTranspose(32*8, (2, 2), strides=(2, 2), padding='same')(mresblock5), mresblock4], axis=3)
     mresblock6 = MultiResBlock(32*8, up6)
-    #mresblock6 = rec_res_block(mresblock6, 426)
+    
     conv_6_up = Conv2D(212, (3, 3), padding='same', activation='relu', name='conv_6_up')(mresblock6)
-    #conv_6_up = rec_res_block(mresblock6, 426)
-    
 
-    #up7_add = add([Conv2DTranspose(32*4, (2, 2), strides=(2, 2), padding='same')(mresblock6), mresblock3])
-    #up7_dra = attention_up_and_concate(Conv2DTranspose(32*4, (2, 2), strides=(2, 2), padding='same', name='up7_dra')(mresblock6), mresblock3, filters = 32*4)
-    
+
     up7 = proposed_attention_block_2d(Conv2DTranspose(32*4, (2, 2), strides=(2, 2), padding='same', name='up7')(mresblock6), mresblock3, filters = 32*4)
     up7 = concatenate([up7, mresblock3])
 
     mresblock7 = MultiResBlock(32*4, up7)
-    #mresblock7 = rec_res_block(mresblock7, 212)
-    conv_7_up = Conv2D(105, (3, 3), padding='same', activation='relu', name='conv_7_up')(mresblock7)
-    #conv_7_up = rec_res_block(mresblock7, 212)
     
-
-    #up8_add = add([Conv2DTranspose(32*2, (2, 2), strides=(2, 2), padding='same')(mresblock7), mresblock2])
-    #up8_dra = attention_up_and_concate(Conv2DTranspose(32*2, (2, 2), strides=(2, 2), padding='same', name='up8_dra')(mresblock7), mresblock2, filters = 32*2)
+    conv_7_up = Conv2D(105, (3, 3), padding='same', activation='relu', name='conv_7_up')(mresblock7)
+    
     
     up8 = proposed_attention_block_2d(Conv2DTranspose(32*2, (2, 2), strides=(2, 2), padding='same', name='up8')(mresblock7), mresblock2, filters = 32*2)
     up8 = concatenate([up8, mresblock2])#,
-    
-    mresblock8 = MultiResBlock(32*2, up8)
-    #mresblock8 = rec_res_block(mresblock8, 105)
-    conv_8_up = Conv2D(51, (3, 3), padding='same', activation='relu', name='conv_8_up')(mresblock8)
-    #conv_8_up = rec_res_block(conv_8_up, 51)
 
-    #up9_add = add([Conv2DTranspose(32, (2, 2), strides=(2, 2), padding='same')(mresblock8), mresblock1])
-    #up9_dra = attention_up_and_concate(Conv2DTranspose(32, (2, 2), strides=(2, 2), padding='same', name='up9_dra')(mresblock8), mresblock1, filters = 32)
+    mresblock8 = MultiResBlock(32*2, up8)
+    
+    conv_8_up = Conv2D(51, (3, 3), padding='same', activation='relu', name='conv_8_up')(mresblock8)
     
     up9 = proposed_attention_block_2d(Conv2DTranspose(32, (2, 2), strides=(2, 2), padding='same', name='up9')(mresblock8), mresblock1, filters = 32)
     up9 = concatenate([up9, mresblock1])#
 
     mresblock9 = MultiResBlock(32, up9)
-    #mresblock9 = rec_res_block(mresblock9, 51)
+    
     conv_9_up = Conv2D(32, (3, 3), padding='same', activation='relu', name='conv_8_up')(mresblock9)
-    #conv_9_up = rec_res_block(conv_9_up, 32)
+    
 
 
     side6 = UpSampling2D(size=(8, 8))(conv_6_up)
@@ -564,16 +475,12 @@ def DRRMSAN_multiscale_wo_ms_wo_lo(height, width, n_channels, alpha_1, alpha_2, 
     out6 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_6')(side6) 
     out7 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_7')(side7) 
     out8 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='side_8')(side8) 
-
     out9 = conv2d_bn(mresblock9, 1, 3, 3, activation='sigmoid', padding='same')
 
-    # weighted averaging all the output masks obtained at different scales
-    # alpha_1 = least scale, alpha_4 = same scale as I
-
-    #out10 = Conv2D(1, (3, 3), activation='sigmoid', padding='same', kernel_initializer = 'he_normal', kernel_regularizer=l2(1e-4), name='out_10')(add([alpha_1 * out6, alpha_2 * out7, alpha_3 * out8, alpha_4 * out9]))
+    
     out10 = add([alpha_1 * out6, alpha_2 * out7, alpha_3 * out8, alpha_4 * out9])
 
-    #conv10 = conv2d_bn(out10, 1, 1, 1, activation='sigmoid')
+    
 
     model = Model(inputs=[inputs], outputs=[out10])
 
