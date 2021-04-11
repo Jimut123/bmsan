@@ -21,3 +21,4 @@ from .drrmsan_022_attn_3 import DRRMSAN_multiscale_attention_bayes_022_attn_3
 from .drrmsan_022_attn_31 import DRRMSAN_multiscale_attention_bayes_022_attn_31
 from .drrmsan_ablation import DRRMSAN_ablation_wo_minpool
 from .drrmsan_ablation_wo_attn import DRRMSAN_multiscale_wo_attn
+from .drrmsan_ablation_wo_attn_wo_ms import DRRMSAN_multiscale_wo_attn_wo_ms
