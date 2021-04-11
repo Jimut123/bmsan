@@ -426,7 +426,7 @@ def DRRMSAN_multiscale_wo_attn_wo_ms(height, width, n_channels, alpha_1, alpha_2
     # using different ratios for the volumes, can be improved by using
     # Bayesian Optimization
 
-    # total_1_2I = 51
+    total_1_2I = 51
     # per_mx_pool_1_2I = int(0.05 * total_1_2I)
     # per_avg_pool_1_2I = int(0.05 * total_1_2I)
     # per_min_pool_1_2I = int(0.40 * total_1_2I)
@@ -436,7 +436,7 @@ def DRRMSAN_multiscale_wo_attn_wo_ms(height, width, n_channels, alpha_1, alpha_2
     # mrb2_1_2I_mxpool = Conv2D(per_mx_pool_1_2I, (3, 3), strides=(1,1), padding='same', name='side_left_1_mxpool')(inp_1_2I_mxpool)
     # mrb2_1_2I_minpool = Conv2D(per_min_pool_1_2I, (3, 3), strides=(1,1), padding='same', name='side_left_1_minpool')(inp_1_2I_minpool)
 
-    # total_1_4I = 105
+    total_1_4I = 105
     # per_mx_pool_1_4I = int(0.05 * total_1_4I)
     # per_avg_pool_1_4I = int(0.05 * total_1_4I)
     # per_min_pool_1_4I = int(0.40 * total_1_4I)
@@ -447,7 +447,7 @@ def DRRMSAN_multiscale_wo_attn_wo_ms(height, width, n_channels, alpha_1, alpha_2
     # mrb3_1_4I_mxpool = Conv2D(per_mx_pool_1_4I, (3, 3), strides=(1,1), padding='same', name='side_left_2_mxpool')(inp_1_4I_mxpool) 
     # mrb3_1_4I_minpool = Conv2D(per_min_pool_1_4I, (3, 3), strides=(1,1), padding='same', name='side_left_2_minpool')(inp_1_4I_minpool) 
 
-    # total_1_8I = 212
+    total_1_8I = 212
     # per_mx_pool_1_8I = int(0.05 * total_1_8I)
     # per_avg_pool_1_8I = int(0.05 * total_1_8I)
     # per_min_pool_1_8I = int(0.40 * total_1_8I)
