@@ -282,14 +282,14 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     up_4 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(up_3))
     
 
-    down_1 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_1)
-    down_2 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_2)
-    down_3 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_3)
-    down_4 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(up_4)
+    down_1 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_1)
+    down_2 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_2)
+    down_3 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_3)
+    down_4 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(up_4)
     
     mult_block = Activation('sigmoid')(add([down_1, down_2, down_3, down_4]))
 
-    up_attn = UpSampling2D(size=(2, 2))(mult_block)
+    up_attn = ZeroPadding2D(padding=(1,1))(UpSampling2D(size=(2, 2))(mult_block))
 
     attn_output_1 = multiply([up_attn, res_block])
     
