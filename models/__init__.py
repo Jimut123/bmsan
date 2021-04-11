@@ -19,3 +19,4 @@ from .drrmsan_022_conc_concat import DRRMSAN_multiscale_attention_bayes_022_conc
 from .drrmsan_022_attn_2 import DRRMSAN_multiscale_attention_bayes_022_attn_2
 from .drrmsan_022_attn_3 import DRRMSAN_multiscale_attention_bayes_022_attn_3
 from .drrmsan_022_attn_31 import DRRMSAN_multiscale_attention_bayes_022_attn_31
+from .drrmsan_ablation import DRRMSAN_ablation_wo_minpool
