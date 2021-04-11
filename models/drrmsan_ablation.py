@@ -230,6 +230,7 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     return attn_output_1
 """
 
+"""
 # Attention - 2
 def proposed_attention_block_2d(ms_conv, res_block, filters):
     '''
@@ -262,7 +263,62 @@ def proposed_attention_block_2d(ms_conv, res_block, filters):
     attn_output_1 = multiply([up_attn, res_block])
     
     return attn_output_1
+"""
 
+
+def proposed_attention_block_2d(ms_conv, res_block, filters):
+    '''
+    Proposed Attention block
+
+    Arguments:
+        ms_conv {keras layer} -- layer coming from the multi resolution convolution
+        res_block {keras layer} -- layer coming from the residual block
+        filters {int} -- number of channels in image
+
+    Returns:
+        [keras layer] -- [output layer]
+    '''
+
+    theta_x = Conv2D(filters, [2,  2], strides=[1, 1], padding='same')(ms_conv)
+    joint_conv_2x2 = Conv2D(filters, (2, 2), strides=(1, 1), padding='same')(theta_x)
+    conv_3x3 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(joint_conv_2x2))
+    conv_5x5 = Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(joint_conv_2x2)
+    conv_5x5 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(conv_5x5))
+    conv_7x7 = Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(joint_conv_2x2)
+    conv_7x7 = Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(conv_7x7)
+    conv_7x7 = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(conv_7x7))
+    add_3x3_5x5 = add([conv_3x3, conv_5x5])
+    mult_3x3_5x5 = multiply([conv_3x3, conv_5x5]) #multiply([conv_3x3, conv_5x5])#Subtract()([conv_3x3, conv_5x5])
+    add_3x3_5x5_7x7 = Activation('relu')(add([add_3x3_5x5, conv_7x7]))
+    mul_3x3_5x5_7x7 = Activation('relu')(multiply([mult_3x3_5x5, conv_7x7]))#multiply([mult_3x3_5x5, conv_7x7]))) # Subtract()([mult_3x3_5x5, conv_7x7])
+    add_1x1_upper = Activation('relu')(Conv2D(filters, [2,  2], strides=[1, 1], padding='same')(add_3x3_5x5_7x7))
+    mult_1x1_lower = Activation('relu')(Conv2D(filters, [2,  2], strides=[1, 1], padding='same')(mul_3x3_5x5_7x7))
+    resampler_down_upper = MaxPooling2D(pool_size=(12, 12), strides=(2, 2))(add_1x1_upper) #AveragePooling2D
+    resampler_down_lower = MaxPooling2D(pool_size=(12, 12), strides=(2, 2))(mult_1x1_lower)
+    output_ms_conv_res_block = multiply([resampler_down_upper, resampler_down_lower])
+
+    theta_x_rb = Conv2D(filters, [2,  2], strides=[1, 1], padding='same')(res_block)
+    joint_conv_2x2_rb = Conv2D(filters, (2, 2), strides=(1, 1), padding='same')(theta_x_rb)
+    conv_3x3_rb = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(joint_conv_2x2_rb))
+    conv_5x5_rb = Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(joint_conv_2x2_rb)
+    conv_5x5_rb = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(conv_5x5_rb))
+    conv_7x7_rb = Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(joint_conv_2x2_rb)
+    conv_7x7_rb = Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(conv_7x7_rb)
+    conv_7x7_rb = Activation('relu')(Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(conv_7x7_rb))
+    add_3x3_5x5_rb = add([conv_3x3_rb, conv_5x5_rb])
+    mult_3x3_5x5_rb = multiply([conv_3x3_rb, conv_5x5_rb])#multiply([conv_3x3_rb, conv_5x5_rb]) #Subtract()([conv_3x3_rb, conv_5x5_rb])
+    add_3x3_5x5_7x7_rb = Activation('relu')(add([add_3x3_5x5_rb, conv_7x7_rb]))
+    mul_3x3_5x5_7x7_rb = Activation('relu')(multiply([mult_3x3_5x5_rb, conv_7x7_rb]))#multiply([mult_3x3_5x5_rb, conv_7x7_rb]))) # Subtract()([mult_3x3_5x5_rb, conv_7x7_rb])
+    add_1x1_upper_rb = Activation('relu')(Conv2D(filters, [2,  2], strides=[1, 1], padding='same')(add_3x3_5x5_7x7_rb))
+    mult_1x1_lower_rb = Activation('relu')(Conv2D(filters, [2, 2], strides=[1, 1], padding='same')(mul_3x3_5x5_7x7_rb))
+    resampler_down_upper_rb = MaxPooling2D(pool_size=(12, 12), strides=(2, 2))(add_1x1_upper_rb)
+    resampler_down_lower_rb = MaxPooling2D(pool_size=(12, 12), strides=(2, 2))(mult_1x1_lower_rb)
+    output_ms_conv_res_block_rb = multiply([resampler_down_upper_rb, resampler_down_lower_rb])
+    
+    attn_outputs_mult = Activation('sigmoid')(multiply([output_ms_conv_res_block, output_ms_conv_res_block_rb]))
+    attn_output_1 = Conv2D(filters, (3, 3), strides=(1, 1), padding='same')(ZeroPadding2D(padding=(5,5))(UpSampling2D(size=(2, 2))(attn_outputs_mult)))
+    
+    return attn_output_1
 
 def ResPath(filters, length, inp):
     '''
