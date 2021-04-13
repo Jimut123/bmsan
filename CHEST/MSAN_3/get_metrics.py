@@ -1,3 +1,7 @@
+import numpy as np
+import math
+
+
 with open('Output.txt') as f:
     lines = [line.rstrip() for line in f]
 jacard = []
@@ -13,29 +17,54 @@ print(jacard)
 print(dice)
 print(prec)
 
-max_jaccard = max(jacard); min_jaccard = min(jacard)
-mean_jaccard = sum(jacard)/5.0
-max_jaccard_diff = max_jaccard - mean_jaccard 
-min_jaccard_diff = mean_jaccard - min_jaccard 
+N = 0
+dice_sum = 0
+for item in dice:
+    if np.isnan(item) == False:
+        dice_sum += item
+        N += 1
+mean_dice = float(dice_sum/N)
+sum_sig = 0
+for item in dice:
+    if np.isnan(item) == False:
+        sum_sig += (item - mean_dice)*(item - mean_dice)
+sum_sig /= N
+sd_dice = math.sqrt(sum_sig)
 
-max_dice = max(dice); min_dice = min(dice)
-mean_dice = sum(dice)/5.0
-max_dice_diff = max_dice - mean_dice 
-min_dice_diff = mean_dice - min_dice 
 
-max_prec = max(prec); min_prec = min(prec)
-mean_prec = sum(prec)/5.0
-max_prec_diff = max_prec - mean_prec 
-min_prec_diff = mean_prec - min_prec 
 
-print("Min jaccard = {} Max jaccard = {}".format(min_jaccard,max_jaccard))
-print("Min dice = {} Max dice = {}".format(min_dice,max_dice))
-print("Min prec = {} Max prec = {}".format(min_prec,max_prec))
-print("Mean Jacard = {} Max Jaccard Diff = {} Min Jaccard Diff = {} ".format(mean_jaccard, max_jaccard_diff, min_jaccard_diff))
-print("Mean Dice = {} Max Dice Diff = {} Min Dice Diff = {} ".format(mean_dice, max_dice_diff, min_dice_diff))
-print("Mean Precision = {} Max Precision Diff = {} Min Precision Diff = {} ".format(mean_prec, max_prec_diff, min_prec_diff))
-print()
-print()
-print("Dice = {} +/- {} ".format(mean_dice, max(max_dice_diff, min_dice_diff)))
-print("Jacard = {} +/- {} ".format(mean_jaccard, max(max_jaccard_diff, min_jaccard_diff)))
-print("Precision = {} +/- {} ".format(mean_prec, max(max_prec_diff, min_prec_diff)))
+N = 0
+jacard_sum = 0
+for item in jacard:
+    if np.isnan(item) == False:
+        jacard_sum += item
+        N += 1
+mean_jacard = float(jacard_sum/N)
+sum_sig_jac = 0
+for item in jacard:
+    if np.isnan(item) == False:
+        sum_sig_jac += (item - mean_jacard)*(item - mean_jacard)
+sum_sig_jac /= N
+sd_jacard = math.sqrt(sum_sig_jac)
+
+
+
+N = 0
+prec_sum = 0
+for item in prec:
+    if np.isnan(item) == False:
+        prec_sum += item
+        N += 1
+mean_prec = float(prec_sum/N)
+sum_sig_prec = 0
+for item in prec:
+    if np.isnan(item) == False:
+        sum_sig_prec += (item - mean_prec)*(item - mean_prec)
+sum_sig_prec /= N
+sd_precision = math.sqrt(sum_sig_prec)
+
+print("Dice = {} +/- {} ".format(mean_dice*100, sd_dice*100))
+print("Jacard = {} +/- {} ".format(mean_jacard*100, sd_jacard*100))
+print("Precision = {} +/- {} ".format(mean_prec*100, sd_precision*100))
+
+
