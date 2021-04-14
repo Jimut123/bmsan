@@ -67,4 +67,3 @@ print("Dice = {} +/- {} ".format(mean_dice*100, sd_dice*100))
 print("Jacard = {} +/- {} ".format(mean_jacard*100, sd_jacard*100))
 print("Precision = {} +/- {} ".format(mean_prec*100, sd_precision*100))
 
-
