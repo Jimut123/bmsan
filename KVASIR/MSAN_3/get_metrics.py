@@ -31,7 +31,7 @@ for item in dice:
 sum_sig /= N
 sd_dice = math.sqrt(sum_sig)
 
-
+print("Dice = {} +/- {} ".format(mean_dice*100, sd_dice*100))
 
 N = 0
 jacard_sum = 0
@@ -47,7 +47,7 @@ for item in jacard:
 sum_sig_jac /= N
 sd_jacard = math.sqrt(sum_sig_jac)
 
-
+print("Jacard = {} +/- {} ".format(mean_jacard*100, sd_jacard*100))
 
 N = 0
 prec_sum = 0
@@ -63,8 +63,6 @@ for item in prec:
 sum_sig_prec /= N
 sd_precision = math.sqrt(sum_sig_prec)
 
-print("Dice = {} +/- {} ".format(mean_dice*100, sd_dice*100))
-print("Jacard = {} +/- {} ".format(mean_jacard*100, sd_jacard*100))
+
+
 print("Precision = {} +/- {} ".format(mean_prec*100, sd_precision*100))
-
-
