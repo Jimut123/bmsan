@@ -3,6 +3,7 @@
 #def get_dice_from_alphas(x):
 dice = 0
 jaccard = 0
+
 def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     """
     from numba import cuda
@@ -34,6 +35,8 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     import tensorflow as tf
     import matplotlib.pyplot as plt
     from sklearn.model_selection import train_test_split
+    from keras.optimizers import Adam
+
 
     from tensorflow.keras.layers import Conv2D, Activation, BatchNormalization
     from tensorflow.keras.layers import UpSampling2D, Input, Concatenate
@@ -173,7 +176,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     train_data = tf_dataset(x_train, y_train, batch=BATCH)
     valid_data = tf_dataset(x_val, y_val, batch=BATCH)
 
-    opt = tf.keras.optimizers.Nadam(LR)
+    opt = Adam(learning_rate=1e-5)
     metrics = [dice_coef, jacard, Recall(), Precision() ,'accuracy']
     model.compile(loss=dice_loss, optimizer=opt, metrics=metrics)
 
