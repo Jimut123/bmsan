@@ -34,7 +34,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     import tensorflow as tf
     import matplotlib.pyplot as plt
     from sklearn.model_selection import train_test_split
-
+    from keras.optimizers import Adam
     from tensorflow.keras.layers import Conv2D, Activation, BatchNormalization
     from tensorflow.keras.layers import UpSampling2D, Input, Concatenate
     from tensorflow.keras.models import Model , load_model
@@ -44,7 +44,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     from tensorflow.keras import backend as K
     import sys
     sys.path.insert(0, '../../')
-    from models import DRRMSAN_multiscale_attention_bayes_022_conc
+    from models import DRRMSAN_multiscale_attention_bayes_022_attn_3
     
     from tensorflow.compat.v1 import ConfigProto
     from tensorflow.compat.v1 import InteractiveSession
@@ -158,7 +158,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
         return a
     
     
-    model = DRRMSAN_multiscale_attention_bayes_022_conc(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
+    model = DRRMSAN_multiscale_attention_bayes_022_attn_3(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
     #model.summary()
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
 
@@ -186,7 +186,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     train_data = tf_dataset(x_train, y_train, batch=BATCH)
     valid_data = tf_dataset(x_val, y_val, batch=BATCH)
 
-    opt = tf.keras.optimizers.Nadam(LR)
+    opt = Adam(learning_rate=1e-5)
     metrics = [dice_coef, jacard, Recall(), Precision() ,'accuracy']
     model.compile(loss=dice_loss, optimizer=opt, metrics=metrics)
 
@@ -356,7 +356,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
             #saveModel(model)
 
         print("00"*50)
-        f = open("./bayesian_opt.txt", "a+")
+        f = open("./bayesian_opt_msan_3.txt", "a+")
         dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " " + str(jaccard) + " " + str(dice*jaccard) + " \n"
         f.write(dump_str)
         f.close()
