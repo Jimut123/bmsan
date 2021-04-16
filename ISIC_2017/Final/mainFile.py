@@ -35,7 +35,7 @@ from glob import glob
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-
+from keras.optimizers import Adam
 from tensorflow.keras.layers import Conv2D, Activation, BatchNormalization
 from tensorflow.keras.layers import UpSampling2D, Input, Concatenate
 from tensorflow.keras.models import Model , load_model
@@ -298,7 +298,7 @@ def f(x):
     # dice_coef = drrmsan_multilosses.get_dice_from_alphas(float(alpha_1[0]), float(alpha_2[0]), float(alpha_3[0]), float(alpha_4[0]))
     # dice_coef =  float(alpha_1)+ float(alpha_2)+ float(alpha_3)+ float(alpha_4)
 
-    opt = tf.keras.optimizers.Nadam(LR)
+    opt = Adam(learning_rate=1e-5)
     metrics = [dice_coef, jacard, Recall(), Precision() ,'accuracy']
     model.compile(loss=dice_loss, optimizer=opt, metrics=metrics)
 
