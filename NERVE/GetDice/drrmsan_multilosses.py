@@ -44,7 +44,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     from tensorflow.keras import backend as K
     import sys
     sys.path.insert(0, '../../')
-    from models import DRRMSAN_multiscale_attention_bayes_022_attn_1
+    from models import DRRMSAN_multiscale_attention_bayes_022_conc
     
     from tensorflow.compat.v1 import ConfigProto
     from tensorflow.compat.v1 import InteractiveSession
@@ -160,7 +160,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
         return a
     
     
-    model = DRRMSAN_multiscale_attention_bayes_022_attn_1(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
+    model = DRRMSAN_multiscale_attention_bayes_022_conc(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
     #model.summary()
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
 
