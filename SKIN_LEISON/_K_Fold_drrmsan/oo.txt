@@ -1,0 +1,5 @@
+Fold = 1 Jacard : 0.0 Dice Coef : 0.0 Avg. Precision : nan  
+Fold = 2 Jacard : 0.0 Dice Coef : 0.0 Avg. Precision : nan  
+Fold = 3 Jacard : 0.0 Dice Coef : 0.0 Avg. Precision : nan  
+Fold = 4 Jacard : 0.0 Dice Coef : 0.0 Avg. Precision : nan  
+Fold = 5 Jacard : 0.0 Dice Coef : 0.0 Avg. Precision : nan  
