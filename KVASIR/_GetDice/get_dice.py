@@ -11,9 +11,9 @@ with open('alpha_datas.pickle', 'rb') as handle:
 
 count = 1
 for item in data:
-    # if count <= 10:
-    #     count += 1
-    #     continue
+    if count <= 5:
+        count += 1
+        continue
     alpha_1 = float("%0.2f" % (item[0][0]))
     alpha_2 = float("%0.2f" % (item[0][1]))
     alpha_3 = float("%0.2f" % (item[0][2]))
