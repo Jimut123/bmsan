@@ -1,0 +1,10 @@
+#Output.txt
+#history_lungs_drrmsan.csv
+#history_lungs_drrmsan.json
+logs/
+lungs_drrmsan_150e.h5
+lungs_drrmsan_with_weight_150e.h5
+model_checkpoint/
+models/
+results/
+
