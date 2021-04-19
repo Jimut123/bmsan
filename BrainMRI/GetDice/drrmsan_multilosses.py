@@ -1,7 +1,8 @@
-
-
 #def get_dice_from_alphas(x):
+
 dice = 0
+jaccard = 0
+
 def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     """
     from numba import cuda
@@ -34,7 +35,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     import matplotlib.pyplot as plt
     from sklearn.model_selection import train_test_split
     from sklearn.metrics import average_precision_score, recall_score
-
+    from keras.optimizers import Adam
     from tensorflow.keras.layers import Conv2D, Activation, BatchNormalization
     from tensorflow.keras.layers import UpSampling2D, Input, Concatenate
     from tensorflow.keras.models import Model , load_model
@@ -44,7 +45,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     from tensorflow.keras import backend as K
     import sys
     sys.path.insert(0, '../../')
-    from models import DRRMSAN_multiscale_attention_bayes
+    from models import DRRMSAN_multiscale_attention_bayes_022_attn_2
     
     from tensorflow.compat.v1 import ConfigProto
     from tensorflow.compat.v1 import InteractiveSession
@@ -65,7 +66,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     ## Hyperparameters
 
     #IMG_SIZE = 256
-    EPOCHS = 150
+    EPOCHS = 1
     BATCH = 2
     LR = 1e-5
 
@@ -163,7 +164,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
         return a
     
     
-    model = DRRMSAN_multiscale_attention_bayes(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
+    model = DRRMSAN_multiscale_attention_bayes_022_attn_2(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
     #model.summary()
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
 
@@ -287,7 +288,8 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
         yp = np.round(yp,0)
         # get the actual 4rth output
         yp = yp[4]
-        
+
+        global dice, jaccard
 
         for i in range(10):
             try:
@@ -305,16 +307,15 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
                 intersection = yp[i].ravel() * Y_test[i].ravel()
                 union = yp[i].ravel() + Y_test[i].ravel() - intersection
 
-                jacard = (np.sum(intersection)/np.sum(union))
-                plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard))
+                jaccard = (np.sum(intersection)/np.sum(union))
+                plt.suptitle('jaccard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jaccard))
 
                 plt.savefig('results/'+str(i)+'.png',format='png')
                 plt.close()
             except:
                 pass
         
-        global dice 
-        jacard = 0
+        jaccard = 0
         dice = 0
         avg_precision = 0
         recall_score = 0
@@ -332,46 +333,46 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
                 avg_precision += average_precision_score(yp_2, y2)
                 # recall_score += recall_score(yp_2, y2)
 
-                jacard += (np.sum(intersection)/np.sum(union))
+                jaccard += (np.sum(intersection)/np.sum(union))
 
                 dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
 
 
-        jacard /= count
+        jaccard /= count
         dice /= count
         avg_precision /= count
         # recall_score /= len(Y_test)
 
 
-        print('Jacard Index : '+str(jacard))
+        print('jaccard Index : '+str(jaccard))
         print('Dice Coefficient : '+str(dice))
         with open("Output.txt", "a") as text_file:
-            text_file.write("Jacard : {} Dice Coef : {} Avg. Precision : {}  \n".format( 
-            str(jacard), str(dice), str(avg_precision)))
+            text_file.write("jaccard : {} Dice Coef : {} Avg. Precision : {}  \n".format( 
+            str(jaccard), str(dice), str(avg_precision)))
         
-        jaccard_index_list.append(jacard)
+        jaccard_index_list.append(jaccard)
         dice_coeff_list.append(dice)
         fp = open('models/log_drrmsan_brain_mri.txt','a')
-        fp.write(str(jacard)+'\n')
+        fp.write(str(jaccard)+'\n')
         fp.close()
 
         fp = open('models/best_drrmsan_brain_mri.txt','r')
         best = fp.read()
         fp.close()
 
-        if(jacard>float(best)):
+        if(jaccard>float(best)):
             print('***********************************************')
-            print('Jacard Index improved from '+str(best)+' to '+str(jacard))
+            print('jaccard Index improved from '+str(best)+' to '+str(jaccard))
             print('***********************************************')
             fp = open('models/best_UNet_brain_mri.txt','w')
-            fp.write(str(jacard))
+            fp.write(str(jaccard))
             fp.close()
 
             #saveModel(model)
 
         print("00"*50)
-        f = open("./store_alphas_dice.txt", "a+")
-        dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " \n"
+        f = open("./bayesian_opt_msan_2.txt", "a+")
+        dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " " + str(jaccard) + " " + str(dice*jaccard) + " \n"
         f.write(dump_str)
         f.close()
         print("Dice Value Used = ", -float(dice))
@@ -440,8 +441,11 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     #        val = array[item]['9']
     #        print("Dice Value got = ",val)
     # return the -ve of dice value
-    global dice
-    return -float(dice)
+    print(type(dice), type(jaccard))
+    res = float(dice*jaccard)
+    print("Dice = {} Jaccard = {} Res = {}".format(dice,jaccard,-res))
+    return -float(res)
+
 
 
 
