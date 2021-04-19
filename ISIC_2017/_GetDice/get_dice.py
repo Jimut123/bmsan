@@ -8,7 +8,7 @@ import pickle5 as pickle
 
 with open('alpha_datas.pickle', 'rb') as handle:
     data = pickle.load(handle)
-
+print(data)
 count = 1
 for item in data:
     # if count <= 17:
