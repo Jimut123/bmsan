@@ -192,7 +192,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     train_data = tf_dataset(x_train, y_train, batch=BATCH)
     valid_data = tf_dataset(x_val, y_val, batch=BATCH)
 
-    opt = tf.keras.optimizers.Nadam(LR)
+    opt = Adam(learning_rate=1e-5)
     metrics = [dice_coef, jacard, Recall(), Precision() ,'accuracy']
     model.compile(loss=dice_loss, optimizer=opt, metrics=metrics)
 
