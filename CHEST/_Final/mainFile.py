@@ -45,7 +45,7 @@ from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras import backend as K
 import sys
 sys.path.insert(0, '../../')
-from models import DRRMSAN_multiscale_attention_bayes_022
+from models import DRRMSAN_multiscale_attention_bayes_022_conc
 
 
 from datetime import datetime
@@ -71,7 +71,7 @@ tf.random.set_seed(42)
 ## Hyperparameters
 
 #IMG_SIZE = 256
-EPOCHS = 10
+EPOCHS = 1
 BATCH = 2
 LR = 1e-5
 
@@ -153,7 +153,7 @@ def dice_coef(y_true, y_pred):
 def dice_loss(y_true, y_pred):
     return 1.0 - dice_coef(y_true, y_pred)
 
-def jacard(y_true, y_pred):
+def jaccard(y_true, y_pred):
 
     y_true_f = K.flatten(y_true)
     y_pred_f = K.flatten(y_pred)
@@ -237,14 +237,15 @@ def evaluateModel(model, X_test, Y_test, batchSize):
         #saveModel(model)
     
     print("00"*50)
-    f = open("./bayesian_opt_logs.txt", "a+")
-    dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " \n"
+    f = open("./_bayesian_opt_logs.txt", "a+")
+    dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " " + str(jacard) + " " + str(dice*jacard) +" \n"
     f.write(dump_str)
     f.close()
     print("Dice Value Used = ", -float(dice))
+    print("Jacard Value Used = ", -float(jacard))
     # del model
     print("Model deleted and dice value returned!!")
-    return dice
+    return dice, jacard
 
 
 
@@ -270,7 +271,7 @@ def f(x):
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
     print("Total => ",alpha_1+alpha_2+alpha_3+alpha_4)
     
-    model = DRRMSAN_multiscale_attention_bayes_022(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
+    model = DRRMSAN_multiscale_attention_bayes_022_conc(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
     #model.summary()
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
 
@@ -283,7 +284,7 @@ def f(x):
 
 
     opt = Adam(learning_rate=1e-5)
-    metrics = [dice_coef, jacard, Recall(), Precision() ,'accuracy']
+    metrics = [dice_coef, jaccard, Recall(), Precision() ,'accuracy']
     model.compile(loss=dice_loss, optimizer=opt, metrics=metrics)
 
 
@@ -350,7 +351,7 @@ def f(x):
     model.save("chest_drrmsan_with_weight_150e.h5")
 
     # Run this module only while loading the pre-trained model.
-    model = load_model('chest_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jacard':jacard})
+    model = load_model('chest_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jaccard':jaccard})
     #model.summary()
 
     from tqdm import tqdm
@@ -393,14 +394,15 @@ def f(x):
     fp.write('-1.0')
     fp.close()
 
-    dice = evaluateModel(model, X_test, Y_test, BATCH)
+    dice, jacard = evaluateModel(model, X_test, Y_test, BATCH)
     # del model, history, X_test, train_data, valid_data, Y_test
 
     # print("Model deleted!!")
     
 
-    print(dice)
-    return -float(dice)
+    print("Dice = ",dice)
+    print("Jacard = ",jacard)
+    return -float(dice*jacard)
 
 
 
@@ -428,8 +430,8 @@ domain = [{'name': 'alpha_1', 'type': 'continuous', 'domain': (0,1), 'dimensiona
           {'name': 'alpha_3', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1},
           {'name': 'alpha_4', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1}]
 
-constraints = [{'name': 'constr_1', 'constraint': '0.9999 - x[:,0] - x[:,1] - x[:,2] - x[:,3]'},
-               {'name': 'constr_1', 'constraint': '-1.00001 + x[:,0] + x[:,1] + x[:,2] + x[:,3]'}]
+constraints = [{'name': 'constr_1', 'constraint': '0.9998 - x[:,0] - x[:,1] - x[:,2] - x[:,3]'},
+               {'name': 'constr_1', 'constraint': '-1.00000 + x[:,0] + x[:,1] + x[:,2] + x[:,3]'}]
 
 
 def load_entire_file_into_memory_and_then_convert(filename):
@@ -457,7 +459,7 @@ print(Y)
 Y = np.expand_dims(Y, axis=1)
 Y
 
-maxiter = 20
+maxiter = 1
 
 kernel = GPy.kern.Matern52(input_dim=4, ARD=True, variance=1, lengthscale=[1,1,1,1]);
 

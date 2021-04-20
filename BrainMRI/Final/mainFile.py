@@ -431,7 +431,7 @@ def f(x):
     fp.write('-1.0')
     fp.close()
 
-    dice = evaluateModel(model, X_test, Y_test, BATCH)
+    dice, jacard = evaluateModel(model, X_test, Y_test, BATCH)
     # del model, history, X_test, train_data, valid_data, Y_test
 
     # print("Model deleted!!")
