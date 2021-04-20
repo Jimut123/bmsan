@@ -9,6 +9,8 @@ import pickle5 as pickle
 with open('alpha_datas.pickle', 'rb') as handle:
     data = pickle.load(handle)
 
+print(data)
+
 for item in data:
     alpha_1 = float("%0.2f" % (item[0][0]))
     alpha_2 = float("%0.2f" % (item[0][1]))
