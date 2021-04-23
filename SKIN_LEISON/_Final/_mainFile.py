@@ -71,7 +71,7 @@ tf.random.set_seed(42)
 ## Hyperparameters
 
 #IMG_SIZE = 256
-EPOCHS = 100
+EPOCHS = 2
 BATCH = 2
 LR = 1e-5
 
@@ -443,8 +443,8 @@ domain = [{'name': 'alpha_1', 'type': 'continuous', 'domain': (0,1), 'dimensiona
           {'name': 'alpha_3', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1},
           {'name': 'alpha_4', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1}]
 
-constraints = [{'name': 'constr_1', 'constraint':  '0.99999998 - x[:,0] - x[:,1] - x[:,2] - x[:,3]'},
-               {'name': 'constr_1', 'constraint': '-0.99999999 + x[:,0] + x[:,1] + x[:,2] + x[:,3]'}]
+constraints = [{'name': 'constr_1', 'constraint':  '0.98 - x[:,0] - x[:,1] - x[:,2] - x[:,3]'},
+               {'name': 'constr_1', 'constraint': '-0.99 + x[:,0] + x[:,1] + x[:,2] + x[:,3]'}]
 
 
 
@@ -473,7 +473,7 @@ print(Y)
 Y = np.expand_dims(Y, axis=1)
 Y
 
-maxiter = 40
+maxiter = 10
 
 kernel = GPy.kern.Matern52(input_dim=4, ARD=True, variance=1, lengthscale=[1,1,1,1]);
 
@@ -489,7 +489,7 @@ print("Minimum value of the objective: "+str(myBopt_4d.fx_opt))
 print("="*20)
 #myBopt_4d.plot_acquisition()
 
-f = open("./bayesian_opt.txt", "a+")
+f = open("./bayesian_opt_msan_2.txt", "a+")
 dump_str = "Value of (x,y) that minimises the objective:"+str(myBopt_4d.x_opt)+"\n"
 f.write(dump_str)
 dump_str = "Minimum value of the objective: "+str(myBopt_4d.fx_opt)+"\n"
