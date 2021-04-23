@@ -71,7 +71,7 @@ tf.random.set_seed(42)
 ## Hyperparameters
 
 #IMG_SIZE = 256
-EPOCHS = 1
+EPOCHS = 100
 BATCH = 2
 LR = 1e-5
 
@@ -361,15 +361,19 @@ def f(x):
 
     for img_fl, img_msk in tqdm(zip(x_test, y_test)):
         img = cv2.imread('{}'.format(img_fl), cv2.IMREAD_COLOR)
-        X_test.append(img)
+        resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
+        X_test.append(resized_img)
         #img_msk = "../trainy/Y_img_"+str(img_fl.split('.')[2]).split('_')[-1]+".bmp"
         msk = cv2.imread('{}'.format(img_msk), cv2.IMREAD_GRAYSCALE)
-        Y_test.append(msk)#resized_msk)
+        resized_mask = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
+        Y_test.append(resized_mask)#resized_msk)
 
 
 
     X_test = np.array(X_test)
     Y_test = np.array(Y_test)
+
+    print("Y test shape = ",Y_test.shape)
 
     Y_test = Y_test.reshape((Y_test.shape[0],Y_test.shape[1],Y_test.shape[2],1))
 
@@ -430,8 +434,8 @@ domain = [{'name': 'alpha_1', 'type': 'continuous', 'domain': (0,1), 'dimensiona
           {'name': 'alpha_3', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1},
           {'name': 'alpha_4', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1}]
 
-constraints = [{'name': 'constr_1', 'constraint':  '0.99999998 - x[:,0] - x[:,1] - x[:,2] - x[:,3]'},
-               {'name': 'constr_1', 'constraint': '-0.99999999 + x[:,0] + x[:,1] + x[:,2] + x[:,3]'}]
+constraints = [{'name': 'constr_1', 'constraint':  '0.98 - x[:,0] - x[:,1] - x[:,2] - x[:,3]'},
+               {'name': 'constr_1', 'constraint': '-0.99 + x[:,0] + x[:,1] + x[:,2] + x[:,3]'}]
 
 
 def load_entire_file_into_memory_and_then_convert(filename):
@@ -459,7 +463,7 @@ print(Y)
 Y = np.expand_dims(Y, axis=1)
 Y
 
-maxiter = 10
+maxiter = 40
 
 kernel = GPy.kern.Matern52(input_dim=4, ARD=True, variance=1, lengthscale=[1,1,1,1]);
 
