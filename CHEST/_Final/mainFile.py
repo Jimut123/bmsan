@@ -365,7 +365,7 @@ def f(x):
         X_test.append(resized_img)
         #img_msk = "../trainy/Y_img_"+str(img_fl.split('.')[2]).split('_')[-1]+".bmp"
         msk = cv2.imread('{}'.format(img_msk), cv2.IMREAD_GRAYSCALE)
-        resized_mask = cv2.resize(mask,(256, 256), interpolation = cv2.INTER_CUBIC)
+        resized_mask = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
         Y_test.append(resized_mask)#resized_msk)
 
 
