@@ -361,15 +361,19 @@ def f(x):
 
     for img_fl, img_msk in tqdm(zip(x_test, y_test)):
         img = cv2.imread('{}'.format(img_fl), cv2.IMREAD_COLOR)
-        X_test.append(img)
+        resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
+        X_test.append(resized_img)
         #img_msk = "../trainy/Y_img_"+str(img_fl.split('.')[2]).split('_')[-1]+".bmp"
         msk = cv2.imread('{}'.format(img_msk), cv2.IMREAD_GRAYSCALE)
-        Y_test.append(msk)#resized_msk)
+        resized_mask = cv2.resize(mask,(256, 256), interpolation = cv2.INTER_CUBIC)
+        Y_test.append(resized_mask)#resized_msk)
 
 
 
     X_test = np.array(X_test)
     Y_test = np.array(Y_test)
+
+    print("Y test shape = ",Y_test.shape)
 
     Y_test = Y_test.reshape((Y_test.shape[0],Y_test.shape[1],Y_test.shape[2],1))
 
