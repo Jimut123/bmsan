@@ -14,7 +14,7 @@ print(data)
 count = 1
 
 for item in data:
-    if count <= 27:
+    if count <= 32:
        count += 1
        continue
     alpha_1 = float("%0.2f" % (item[0][0]))
