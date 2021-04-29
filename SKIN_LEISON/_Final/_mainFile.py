@@ -457,11 +457,14 @@ def load_entire_file_into_memory_and_then_convert(filename):
 dump = load_entire_file_into_memory_and_then_convert('store_alphas_dice.txt')
 print(dump)
 
+print(dump[:-1])
 X = []
 Y = []
 for item in dump[:-1]:
     all_items = item.split(' ')
-    X.append([float(i) for i in all_items[:4]]) 
+    #print("**** ",all_items[-2])
+    print(len(all_items))
+    X.append([float(i) for i in all_items[:4]])
     Y.append(float(all_items[-2]))
 
 X = np.array(X)
@@ -473,7 +476,7 @@ print(Y)
 Y = np.expand_dims(Y, axis=1)
 Y
 
-maxiter = 40
+maxiter = 15
 
 kernel = GPy.kern.Matern52(input_dim=4, ARD=True, variance=1, lengthscale=[1,1,1,1]);
 
