@@ -1,0 +1,2 @@
+Value of (x,y) that minimises the objective:[0.11044286 0.15933679 0.39593596 0.32428431]
+Minimum value of the objective: -0.9015312507605484
