@@ -38,7 +38,7 @@ from sklearn.metrics import average_precision_score, recall_score
 
 import sys
 sys.path.insert(0, '../../')
-from models import DRRMSAN_multiscale_attention_bayes_022_conc
+from models import DRRMSAN_multiscale_attention_bayes_022_attn_3
 
 
 
@@ -139,9 +139,6 @@ for train_index, test_index in kf.split(X):
         fp = open('models/modelP_drrmsan_kvasir.json','w')
         fp.write(model_json)
         model.save_weights('models/modelW_drrmsan_kvasir.h5')
-
-
-    jaccard_index_list = []
     dice_coeff_list = []
 
     def evaluateModel(model, X_test, Y_test, batchSize):
@@ -267,11 +264,12 @@ for train_index, test_index in kf.split(X):
 
         return model
     # img_w, img_h, n_label, data_format='channels_first'
-    alpha_1 = 0.25
-    alpha_2 = 0.25
-    alpha_3 = 0.25
-    alpha_4 = 0.25
-    model = DRRMSAN_multiscale_attention_bayes_022_conc(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
+    #    
+    alpha_1 = 0.41
+    alpha_2 = 0.28
+    alpha_3 = 0.21
+    alpha_4 = 0.1
+    model = DRRMSAN_multiscale_attention_bayes_022_attn_3(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
     
 
 
@@ -286,5 +284,5 @@ for train_index, test_index in kf.split(X):
     fp.write('-1.0')
     fp.close()
 
-    trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
+    trainStep(model, X_train, Y_train, X_test, Y_test, epochs=100, batchSize=2)
 
