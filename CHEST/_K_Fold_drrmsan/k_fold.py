@@ -260,11 +260,11 @@ for train_index, test_index in kf.split(X):
         evaluateModel(model,X_test, Y_test,batchSize)
 
         return model
-    # img_w, img_h, n_label, data_format='channels_first'
-    alpha_1 = 0.25
-    alpha_2 = 0.25
-    alpha_3 = 0.25
-    alpha_4 = 0.25
+    # img_w, img_h, n_label, data_format='channels_first'  
+    alpha_1 = 0.11044285971934294
+    alpha_2 = 0.1593367873073898
+    alpha_3 = 0.3959359587754982
+    alpha_4 = 0.32428431305665983
     model = DRRMSAN_multiscale_attention_bayes_022_conc(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
     
 
