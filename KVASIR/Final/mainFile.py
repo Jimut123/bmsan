@@ -127,14 +127,14 @@ def load_data(path, split=0.2):
 def read_img(path):
     path = path.decode()
     tmp = cv2.imread(path, cv2.IMREAD_COLOR)
-    tmp = cv2.resize(tmp, (256, 192))
+    tmp = cv2.resize(tmp, (256, 256))
     tmp = tmp/255.0
     return tmp
 
 def read_mask(path):
     path = path.decode()
     tmp = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-    tmp = cv2.resize(tmp, (256, 192))
+    tmp = cv2.resize(tmp, (256, 256))
     tmp = tmp/255.0
     tmp = np.expand_dims(tmp, axis=-1)
     return tmp
@@ -146,8 +146,8 @@ def tf_parse(a, b):
         return a, b
 
     a, b = tf.numpy_function(_parse, [a, b], [tf.float64, tf.float64])
-    a.set_shape([192, 256, 3])
-    b.set_shape([192, 256, 1])
+    a.set_shape([256, 256, 3])
+    b.set_shape([256, 256, 1])
     return a, b
 
 def tf_dataset(a, b, batch=32):
@@ -288,7 +288,7 @@ def f(x):
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
     print("Total => ",alpha_1+alpha_2+alpha_3+alpha_4)
     
-    model = DRRMSAN_multiscale_attention_bayes_022_attn_3(height=192, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
+    model = DRRMSAN_multiscale_attention_bayes_022_attn_3(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
     #model.summary()
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
 
