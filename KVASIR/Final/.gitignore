@@ -1,2 +1,8 @@
+#history_kvasir_drrmsan.csv
+#history_kvasir_drrmsan.json
+kvasir_drrmsan_150e.h5
+kvasir_drrmsan_with_weight_150e.h5
+models/
+results/
 logs
 model_checkpoint
