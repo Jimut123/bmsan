@@ -72,7 +72,7 @@ tf.random.set_seed(42)
 ## Hyperparameters
 
 #IMG_SIZE = 256
-EPOCHS = 1
+EPOCHS = 100
 BATCH = 2
 LR = 1e-5
 
@@ -127,14 +127,14 @@ def load_data(path, split=0.2):
 def read_img(path):
     path = path.decode()
     tmp = cv2.imread(path, cv2.IMREAD_COLOR)
-    tmp = cv2.resize(tmp, (256, 192))
+    tmp = cv2.resize(tmp, (256, 256))
     tmp = tmp/255.0
     return tmp
 
 def read_mask(path):
     path = path.decode()
     tmp = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-    tmp = cv2.resize(tmp, (256, 192))
+    tmp = cv2.resize(tmp, (256, 256))
     tmp = tmp/255.0
     tmp = np.expand_dims(tmp, axis=-1)
     return tmp
@@ -146,8 +146,8 @@ def tf_parse(a, b):
         return a, b
 
     a, b = tf.numpy_function(_parse, [a, b], [tf.float64, tf.float64])
-    a.set_shape([192, 256, 3])
-    b.set_shape([192, 256, 1])
+    a.set_shape([256, 256, 3])
+    b.set_shape([256, 256, 1])
     return a, b
 
 def tf_dataset(a, b, batch=32):
@@ -288,7 +288,7 @@ def f(x):
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
     print("Total => ",alpha_1+alpha_2+alpha_3+alpha_4)
     
-    model = DRRMSAN_multiscale_attention_bayes_022_attn_3(height=192, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
+    model = DRRMSAN_multiscale_attention_bayes_022_attn_3(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
     #model.summary()
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
 
@@ -378,10 +378,13 @@ def f(x):
 
     for img_fl, img_msk in tqdm(zip(x_test, y_test)):
         img = cv2.imread('{}'.format(img_fl), cv2.IMREAD_COLOR)
-        X_test.append(img)
+        resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
+        X_test.append(resized_img)
         #img_msk = "../trainy/Y_img_"+str(img_fl.split('.')[2]).split('_')[-1]+".bmp"
         msk = cv2.imread('{}'.format(img_msk), cv2.IMREAD_GRAYSCALE)
-        Y_test.append(msk)#resized_msk)
+        resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
+        resized_mask = np.expand_dims(resized_msk, axis=2)
+        Y_test.append(resized_mask)#resized_msk)
 
 
 
@@ -477,7 +480,7 @@ print(Y)
 Y = np.expand_dims(Y, axis=1)
 Y
 
-maxiter = 1
+maxiter = 40
 
 kernel = GPy.kern.Matern52(input_dim=4, ARD=True, variance=1, lengthscale=[1,1,1,1]);
 
@@ -499,3 +502,4 @@ f.write(dump_str)
 dump_str = "Minimum value of the objective: "+str(myBopt_4d.fx_opt)+"\n"
 f.write(dump_str)
 f.close()
+
