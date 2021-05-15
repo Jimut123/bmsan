@@ -40,7 +40,8 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     from tensorflow.keras.models import Model , load_model
     from tensorflow.keras.applications import MobileNetV2
     from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
-    from tensorflow.keras.metrics import Recall, Precision 
+    from tensorflow.keras.metrics import Recall, Precision
+    from sklearn.metrics import average_precision_score, recall_score
     from tensorflow.keras import backend as K
     import sys
     sys.path.insert(0, '../../')
