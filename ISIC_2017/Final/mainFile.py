@@ -390,13 +390,15 @@ def f(x):
         X_test.append(img)
         #img_msk = "../trainy/Y_img_"+str(img_fl.split('.')[2]).split('_')[-1]+".bmp"
         msk = cv2.imread('{}'.format(img_msk), cv2.IMREAD_GRAYSCALE)
+        print(msk.shape)
         Y_test.append(msk)#resized_msk)
 
 
 
     X_test = np.array(X_test)
     Y_test = np.array(Y_test)
-
+    #print(Y_test)
+    print(Y_test.shape)
     Y_test = Y_test.reshape((Y_test.shape[0],Y_test.shape[1],Y_test.shape[2],1))
 
     X_test = X_test / 255
