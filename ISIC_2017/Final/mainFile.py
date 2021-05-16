@@ -80,7 +80,7 @@ alpha_1 = 0.0; alpha_2 = 0.0; alpha_3 = 0.0; alpha_4 = 0.0;
 
 ########################################################
 
- def load_data(path, split=0.2):
+def load_data(path, split=0.2):
 
     """
     from glob import glob
