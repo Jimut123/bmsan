@@ -80,21 +80,20 @@ alpha_1 = 0.0; alpha_2 = 0.0; alpha_3 = 0.0; alpha_4 = 0.0;
 
 ########################################################
 
-def load_data(path, split=0.2):
+ def load_data(path, split=0.2):
+
+    """
+    from glob import glob
+    images_list = sorted(glob(os.path.join(path, "trainx/*.bmp")))
+    masks_list = sorted(glob(os.path.join(path, "trainy/*.bmp")))
+    """
 
     import sys
     import glob
-    from tqdm import tqdm
-    #insert :: sys.path.insert(0, '../../')
-    
-    ############################## insert:: add ../ before two
-
-    images_list = []
-    masks_list = []
+    #sys.path.insert(0, '../../')
 
     img_files = sorted(glob.glob('../ISIC-2017_Training_Data/ISIC_*.jpg'))
     msk_files = sorted(glob.glob('../ISIC-2017_Training_Data/*_superpixels.png'))
-
 
     img_files.sort()
     msk_files.sort()
@@ -102,16 +101,17 @@ def load_data(path, split=0.2):
     print("B==>",len(img_files))
     print(len(msk_files))
 
-
-    X = []
-    Y = []
+    images_list = []
+    masks_list = []
 
     for img_fl in tqdm(img_files):
+
         images_list.append(img_fl)
         im_name = str(str(img_fl.split('.')[2]).split('/')[2]).split('_')[1]
         mask_name = '../ISIC-2017_Training_Data/ISIC_'+im_name+'_superpixels.png'
         masks_list.append(mask_name)
     
+
     tot_size = len(images_list)
     test_size = int(split * tot_size)
     val_size = int(split * (tot_size - test_size))
@@ -121,7 +121,7 @@ def load_data(path, split=0.2):
 
     x_train, x_test = train_test_split(x_train, test_size=test_size, random_state=42)
     y_train, y_test = train_test_split(y_train, test_size=test_size, random_state=42)
-
+    print(x_train[0],"--", y_train[0])
     return (x_train, y_train), (x_val, y_val), (x_test, y_test)
 
 def read_img(path):
