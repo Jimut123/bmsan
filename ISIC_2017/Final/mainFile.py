@@ -62,7 +62,7 @@ config.gpu_options.allow_growth = True
 #session_config.gpu_options.per_process_gpu_memory_fraction = 0.3
 #config = tf.estimator.RunConfig(model_dir=FLAGS.model_dir, session_config=session_config)
 
-
+from tqdm import tqdm
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
@@ -80,7 +80,9 @@ alpha_1 = 0.0; alpha_2 = 0.0; alpha_3 = 0.0; alpha_4 = 0.0;
 
 ########################################################
 
- def load_data(path, split=0.2):
+
+def load_data(path, split=0.2):
+
 
     """
     from glob import glob
@@ -390,6 +392,7 @@ def f(x):
         X_test.append(img)
         #img_msk = "../trainy/Y_img_"+str(img_fl.split('.')[2]).split('_')[-1]+".bmp"
         msk = cv2.imread('{}'.format(img_msk), cv2.IMREAD_GRAYSCALE)
+        print(msk.shape)
         Y_test.append(msk)#resized_msk)
 
 
