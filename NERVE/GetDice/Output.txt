@@ -1,1 +1,1 @@
-jaccard : nan Dice Coef : nan 
+jaccard : 0.2621608504022994 Dice Coef : 0.3361007834396536 

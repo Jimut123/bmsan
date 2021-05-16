@@ -40,7 +40,8 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
     from tensorflow.keras.models import Model , load_model
     from tensorflow.keras.applications import MobileNetV2
     from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
-    from tensorflow.keras.metrics import Recall, Precision 
+    from tensorflow.keras.metrics import Recall, Precision
+    from sklearn.metrics import average_precision_score, recall_score
     from tensorflow.keras import backend as K
     import sys
     sys.path.insert(0, '../../')
@@ -287,47 +288,64 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
 
         global dice, jaccard
         
-
         for i in range(10):
 
-            plt.figure(figsize=(20,10))
-            plt.subplot(1,3,1)
-            plt.imshow(X_test[i])
-            plt.title('Input')
-            plt.subplot(1,3,2)
-            plt.imshow(Y_test[i].reshape(Y_test[i].shape[0],Y_test[i].shape[1]))
-            plt.title('Ground Truth')
-            plt.subplot(1,3,3)
-            plt.imshow(yp[i].reshape(yp[i].shape[0],yp[i].shape[1]))
-            plt.title('Prediction')
+            try:
 
-            intersection = yp[i].ravel() * Y_test[i].ravel()
-            union = yp[i].ravel() + Y_test[i].ravel() - intersection
+                plt.figure(figsize=(20,10))
+                plt.subplot(1,3,1)
+                plt.imshow(X_test[i])
+                plt.title('Input')
+                plt.subplot(1,3,2)
+                plt.imshow(Y_test[i].reshape(Y_test[i].shape[0],Y_test[i].shape[1]))
+                plt.title('Ground Truth')
+                plt.subplot(1,3,3)
+                plt.imshow(yp[i].reshape(yp[i].shape[0],yp[i].shape[1]))
+                plt.title('Prediction')
 
-            jaccard = (np.sum(intersection)/np.sum(union))
-            plt.suptitle('jaccard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jaccard))
+                intersection = yp[i].ravel() * Y_test[i].ravel()
+                union = yp[i].ravel() + Y_test[i].ravel() - intersection
 
-            plt.savefig('results/'+str(i)+'.png',format='png')
-            plt.close()
+                avg_precision = average_precision_score(yp[i].ravel(), Y_test[i].ravel())
+                dice = (2. * np.sum(intersection)) / (np.sum(yp[i].ravel()) + np.sum(Y_test[i].ravel()))
+
+                jaccard = (np.sum(intersection)/np.sum(union))
+                plt.suptitle('Jaccard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jaccard)
+                +" Dice : "+str(dice)+ " Precision : "+str(avg_precision))
+
+                plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
+                plt.close()
+            except:
+                pass
 
 
         jaccard = 0
         dice = 0
+        avg_precision = 0
+        recall_score = 0
+        count = 0
+
         for i in range(len(Y_test)):
+
             yp_2 = yp[i].ravel()
-            y2 = Y_test[i].ravel()
+            if np.sum(yp_2) > 0:
 
-            intersection = yp_2 * y2
-            union = yp_2 + y2 - intersection
+                count += 1
+                y2 = Y_test[i].ravel()
 
-            jaccard += (np.sum(intersection)/np.sum(union))
+                intersection = yp_2 * y2
+                union = yp_2 + y2 - intersection
+                avg_precision += average_precision_score(yp_2, y2)
+                # recall_score += recall_score(yp_2, y2)
 
-            dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
+                jaccard += (np.sum(intersection)/np.sum(union))
+
+                dice += (2. * np.sum(intersection) ) / (np.sum(yp_2) + np.sum(y2))
 
 
-        jaccard /= len(Y_test)
-        
-        dice /= len(Y_test)
+        jaccard /= count
+        dice /= count
+        avg_precision /= count
 
 
 
