@@ -1,5 +1,7 @@
 isic_drrmsan_150e.h5
 isic_drrmsan_with_weight_150e.h5
 logs/
+models
+results/
 model_checkpoint/
 

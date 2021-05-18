@@ -30,6 +30,7 @@ import pickle
 
 import os
 import numpy as np
+from tqdm import tqdm
 import cv2
 from glob import glob
 import tensorflow as tf
@@ -72,7 +73,7 @@ tf.random.set_seed(42)
 ## Hyperparameters
 
 #IMG_SIZE = 256
-EPOCHS = 1
+EPOCHS = 100
 BATCH = 2
 LR = 1e-5
 
@@ -82,19 +83,18 @@ alpha_1 = 0.0; alpha_2 = 0.0; alpha_3 = 0.0; alpha_4 = 0.0;
 
 def load_data(path, split=0.2):
 
+    """
+    from glob import glob
+    images_list = sorted(glob(os.path.join(path, "trainx/*.bmp")))
+    masks_list = sorted(glob(os.path.join(path, "trainy/*.bmp")))
+    """
+
     import sys
     import glob
-    from tqdm import tqdm
-    #insert :: sys.path.insert(0, '../../')
-    
-    ############################## insert:: add ../ before two
-
-    images_list = []
-    masks_list = []
+    #sys.path.insert(0, '../../')
 
     img_files = sorted(glob.glob('../ISIC-2017_Training_Data/ISIC_*.jpg'))
     msk_files = sorted(glob.glob('../ISIC-2017_Training_Data/*_superpixels.png'))
-
 
     img_files.sort()
     msk_files.sort()
@@ -102,16 +102,17 @@ def load_data(path, split=0.2):
     print("B==>",len(img_files))
     print(len(msk_files))
 
-
-    X = []
-    Y = []
+    images_list = []
+    masks_list = []
 
     for img_fl in tqdm(img_files):
+
         images_list.append(img_fl)
         im_name = str(str(img_fl.split('.')[2]).split('/')[2]).split('_')[1]
         mask_name = '../ISIC-2017_Training_Data/ISIC_'+im_name+'_superpixels.png'
         masks_list.append(mask_name)
     
+
     tot_size = len(images_list)
     test_size = int(split * tot_size)
     val_size = int(split * (tot_size - test_size))
@@ -121,7 +122,7 @@ def load_data(path, split=0.2):
 
     x_train, x_test = train_test_split(x_train, test_size=test_size, random_state=42)
     y_train, y_test = train_test_split(y_train, test_size=test_size, random_state=42)
-
+    print(x_train[0],"--", y_train[0])
     return (x_train, y_train), (x_val, y_val), (x_test, y_test)
 
 def read_img(path):
@@ -218,7 +219,7 @@ def evaluateModel(model, X_test, Y_test, batchSize):
         plt.suptitle('Jacard Index'+ str(np.sum(intersection)) +'/'+ str(np.sum(union)) +'='+str(jacard)
         +" Dice : "+str(dice)+ " Precision : "+str(avg_precision))
 
-        plt.savefig('results_{}/'.format(fold_no)+str(i)+'.png',format='png')
+        plt.savefig('results/'+str(i)+'.png',format='png')
         plt.close()
         
     jacard = 0
@@ -387,10 +388,13 @@ def f(x):
 
     for img_fl, img_msk in tqdm(zip(x_test, y_test)):
         img = cv2.imread('{}'.format(img_fl), cv2.IMREAD_COLOR)
-        X_test.append(img)
+        resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
+        X_test.append(resized_img)
         #img_msk = "../trainy/Y_img_"+str(img_fl.split('.')[2]).split('_')[-1]+".bmp"
         msk = cv2.imread('{}'.format(img_msk), cv2.IMREAD_GRAYSCALE)
-        Y_test.append(msk)#resized_msk)
+        resized_msk = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
+        resized_mask = np.expand_dims(resized_msk, axis=2)
+        Y_test.append(resized_mask)#resized_msk)
 
 
 
@@ -487,7 +491,7 @@ print(Y)
 Y = np.expand_dims(Y, axis=1)
 Y
 
-maxiter = 2
+maxiter = 40
 
 kernel = GPy.kern.Matern52(input_dim=4, ARD=True, variance=1, lengthscale=[1,1,1,1]);
 
@@ -509,3 +513,4 @@ f.write(dump_str)
 dump_str = "Minimum value of the objective: "+str(myBopt_4d.fx_opt)+"\n"
 f.write(dump_str)
 f.close()
+
