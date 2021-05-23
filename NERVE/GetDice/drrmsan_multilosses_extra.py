@@ -376,7 +376,7 @@ def get_dice_from_alphas(alpha_1, alpha_2, alpha_3, alpha_4):
             #saveModel(model)
 
         print("00"*50)
-        f = open("./bayesian_opt_msan_1.txt", "a+")
+        f = open("./bayesian_opt_msan_extra.txt", "a+")
         dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " " + str(jaccard) + " " + str(dice*jaccard) + " \n"
         f.write(dump_str)
         f.close()
