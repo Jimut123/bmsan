@@ -1,5 +1,5 @@
 import numpy as np, numpy.random
-import drrmsan_multilosses
+import drrmsan_multilosses_extra
 import pickle
 import pickle5 as pickle
 
