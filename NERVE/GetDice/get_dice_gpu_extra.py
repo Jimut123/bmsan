@@ -12,7 +12,6 @@ print(data)
 
 count = 1
 for item in data:
-    count += 1
     if count >= 60 and count <= 70:
         print("*"*40,count)
         alpha_1 = float("%0.2f" % (item[0][0]))
@@ -22,4 +21,5 @@ for item in data:
         print(alpha_1," ",alpha_2," ",alpha_3," ",alpha_4," = ",alpha_1+alpha_2+alpha_3+alpha_4)
         dice = drrmsan_multilosses_extra.get_dice_from_alphas(
             float(alpha_1), float(alpha_2), float(alpha_3), float(alpha_4))
+    count += 1
 
