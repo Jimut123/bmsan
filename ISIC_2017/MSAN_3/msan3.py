@@ -261,10 +261,11 @@ for train_index, test_index in kf.split(X):
 
         return model
     # img_w, img_h, n_label, data_format='channels_first'
-    alpha_1 = 0.25
-    alpha_2 = 0.25
-    alpha_3 = 0.25
-    alpha_4 = 0.25
+    # # 0. 0. 0. 0. 0.8903834573268463 0.8226071185093174 0.7324357702000008 
+    alpha_1 = 0.2870127362439262
+    alpha_2 = 0.02618883374122527
+    alpha_3 = 0.17340572374187457
+    alpha_4 = 0.5115626518077222
     model = DRRMSAN_multiscale_attention_bayes_022_attn_3(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
     
 
@@ -280,5 +281,5 @@ for train_index, test_index in kf.split(X):
     fp.write('-1.0')
     fp.close()
 
-    trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
+    trainStep(model, X_train, Y_train, X_test, Y_test, epochs=1, batchSize=2)
 
