@@ -11,7 +11,7 @@ with open('alpha_datas.pickle', 'rb') as handle:
 print(data)
 count = 1
 for item in data:
-    if count <= 74:
+    if count <= 75:
         count += 1
         continue
     print("*"*40,count)
