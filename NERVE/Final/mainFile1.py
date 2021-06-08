@@ -72,7 +72,7 @@ tf.random.set_seed(42)
 ## Hyperparameters
 
 #IMG_SIZE = 256
-EPOCHS = 10
+EPOCHS = 2
 BATCH = 2
 LR = 1e-5
 
@@ -251,7 +251,7 @@ def evaluateModel(model, X_test, Y_test, batchSize):
     print('Jacard Index : '+str(jacard))
     print('Dice Coefficient : '+str(dice))
 
-    with open("Output.txt", "w") as text_file:
+    with open("Output_1.txt", "w") as text_file:
         text_file.write("Jacard : {} Dice Coef : {} ".format(str(jacard), str(dice)))
     
     fp = open('models/log_drrmsan_nerve.txt','a')
@@ -273,7 +273,7 @@ def evaluateModel(model, X_test, Y_test, batchSize):
         #saveModel(model)
     
     print("00"*50)
-    f = open("./bayesian_opt.txt", "a+")
+    f = open("./bayesian_opt_logs_1.txt", "a+")
     dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " \n"
     f.write(dump_str)
     f.close()
@@ -509,7 +509,7 @@ print("Minimum value of the objective: "+str(myBopt_4d.fx_opt))
 print("="*20)
 #myBopt_4d.plot_acquisition()
 
-f = open("./bayesian_opt.txt", "a+")
+f = open("./bayesian_opt_1.txt", "a+")
 dump_str = "Value of (x,y) that minimises the objective:"+str(myBopt_4d.x_opt)+"\n"
 f.write(dump_str)
 dump_str = "Minimum value of the objective: "+str(myBopt_4d.fx_opt)+"\n"
