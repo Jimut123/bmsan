@@ -172,7 +172,7 @@ def dice_coef(y_true, y_pred):
 def dice_loss(y_true, y_pred):
     return 1.0 - dice_coef(y_true, y_pred)
 
-def jacard(y_true, y_pred):
+def jaccard(y_true, y_pred):
 
     y_true_f = K.flatten(y_true)
     y_pred_f = K.flatten(y_pred)
@@ -317,7 +317,7 @@ def f(x):
     # dice_coef = drrmsan_multilosses.get_dice_from_alphas(float(alpha_1[0]), float(alpha_2[0]), float(alpha_3[0]), float(alpha_4[0]))
     # dice_coef =  float(alpha_1)+ float(alpha_2)+ float(alpha_3)+ float(alpha_4)
     opt = Adam(learning_rate=1e-5)
-    metrics = [dice_coef, jacard, Recall(), Precision() ,'accuracy']
+    metrics = [dice_coef, jaccard, Recall(), Precision() ,'accuracy']
     model.compile(loss=dice_loss, optimizer=opt, metrics=metrics)
 
 
@@ -384,7 +384,7 @@ def f(x):
     model.save("nerve_drrmsan_with_weight_150e.h5")
 
     # Run this module only while loading the pre-trained model.
-    model = load_model('nerve_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jacard':jacard})
+    model = load_model('nerve_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jaccard':jaccard})
     #model.summary()
 
     from tqdm import tqdm
@@ -463,8 +463,8 @@ domain = [{'name': 'alpha_1', 'type': 'continuous', 'domain': (0,1), 'dimensiona
           {'name': 'alpha_3', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1},
           {'name': 'alpha_4', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1}]
 
-constraints = [{'name': 'constr_1', 'constraint':  '0.99999998 - x[:,0] - x[:,1] - x[:,2] - x[:,3]'},
-               {'name': 'constr_1', 'constraint': '-0.99999999 + x[:,0] + x[:,1] + x[:,2] + x[:,3]'}]
+constraints = [{'name': 'constr_1', 'constraint':  '0.998 - x[:,0] - x[:,1] - x[:,2] - x[:,3]'},
+               {'name': 'constr_1', 'constraint': '-0.999 + x[:,0] + x[:,1] + x[:,2] + x[:,3]'}]
 
 
 
@@ -493,7 +493,7 @@ print(Y)
 Y = np.expand_dims(Y, axis=1)
 Y
 
-maxiter = 10
+maxiter = 2
 
 kernel = GPy.kern.Matern52(input_dim=4, ARD=True, variance=1, lengthscale=[1,1,1,1]);
 
