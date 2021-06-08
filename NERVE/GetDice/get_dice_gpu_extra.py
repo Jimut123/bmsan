@@ -12,7 +12,7 @@ print(data)
 
 count = 1
 for item in data:
-    if count >= 60 and count <= 70:
+    if count >= 50 and count <= 60:
         print("*"*40,count)
         alpha_1 = float("%0.2f" % (item[0][0]))
         alpha_2 = float("%0.2f" % (item[0][1]))
