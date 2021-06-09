@@ -72,7 +72,7 @@ tf.random.set_seed(42)
 ## Hyperparameters
 
 #IMG_SIZE = 256
-EPOCHS = 100
+EPOCHS = 1
 BATCH = 2
 LR = 1e-5
 
@@ -273,14 +273,15 @@ def evaluateModel(model, X_test, Y_test, batchSize):
         #saveModel(model)
     
     print("00"*50)
-    f = open("./bayesian_opt_logs_1.txt", "a+")
-    dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " \n"
+    f = open("./_bayesian_opt_logs.txt", "a+")
+    dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " " + str(jacard) + " " + str(dice*jacard) +" \n"
     f.write(dump_str)
     f.close()
     print("Dice Value Used = ", -float(dice))
+    print("Jacard Value Used = ", -float(jacard))
     # del model
     print("Model deleted and dice value returned!!")
-    return dice
+    return dice, jacard
 
 
 
@@ -429,15 +430,15 @@ def f(x):
     fp.write('-1.0')
     fp.close()
 
-    dice = evaluateModel(model, X_test, Y_test, BATCH)
+    dice, jacard = evaluateModel(model, X_test, Y_test, BATCH)
     # del model, history, X_test, train_data, valid_data, Y_test
 
     # print("Model deleted!!")
     
 
-    print(dice)
-    return -float(dice)
-
+    print("Dice = ",dice)
+    print("Jacard = ",jacard)
+    return -float(dice*jacard)
 
 
 ########################################################
@@ -493,7 +494,7 @@ print(Y)
 Y = np.expand_dims(Y, axis=1)
 Y
 
-maxiter = 20
+maxiter = 1
 
 kernel = GPy.kern.Matern52(input_dim=4, ARD=True, variance=1, lengthscale=[1,1,1,1]);
 
