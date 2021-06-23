@@ -84,6 +84,9 @@ fold_no = 0
 
 for train_index, test_index in kf.split(X):
     fold_no += 1
+    print("fold"*50,fold_no)
+    if fold_no <= 1:
+        continue
     # print("TRAIN:", train_index, "TEST:", test_index)
     X_train, X_test = X[train_index], X[test_index]
     Y_train, Y_test = Y[train_index], Y[test_index]
@@ -296,5 +299,5 @@ for train_index, test_index in kf.split(X):
     fp.write('-1.0')
     fp.close()
 
-    trainStep(model, X_train, Y_train, X_test, Y_test, epochs=1, batchSize=2)
+    trainStep(model, X_train, Y_train, X_test, Y_test, epochs=150, batchSize=2)
 
