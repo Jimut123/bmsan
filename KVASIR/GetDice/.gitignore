@@ -1,7 +1,8 @@
-__pycache__/
-kvasir_drrmsan_150e.h5
-kvasir_drrmsan_with_weight_150e.h5
-logs/
-model_checkpoint/
-models/
+kvasir_drrmsan_150e.h5              
+logs              
+models      
+__pycache__
+kvasir_drrmsan_with_weight_150e.h5  
+model_checkpoint  
+results
 

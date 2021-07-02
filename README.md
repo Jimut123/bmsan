@@ -28,7 +28,7 @@ be shown here:
 
 ```
 -- BrainMRI
-  |  _K_Fold_drrmsan
+  |  K_Fold_drrmsan
   |  brain
   |  AttnR2UNet_kFold
   |  AttnUNet_kFold
@@ -43,7 +43,7 @@ The main folders should have their respective state-of-the-art comparison model 
 the relevant models and run the `.py` file respectively.
 
 For doing Bayesian Optimisation we have to first run the files present in the `GetDice` folder by selecting the best MSAN model.
-This will collect the dataset for the Bayesian Optimisation part and then we may run the files present in the Final folder to get the
+This will collect the dataset for the Bayesian Optimisation part and then we may run the files present in the ``Final`` folder to get the
 best possible weighted mask combination. We again use this weights for training segmentation on the best possible MSAN model.
 
 

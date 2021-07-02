@@ -8,10 +8,10 @@ import pickle5 as pickle
 
 with open('alpha_datas.pickle', 'rb') as handle:
     data = pickle.load(handle)
-
+print(data)
 count = 1
 for item in data:
-    if count <= 7:
+    if count <= 74:
         count += 1
         continue
     alpha_1 = float("%0.2f" % (item[0][0]))

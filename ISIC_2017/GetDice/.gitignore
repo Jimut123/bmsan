@@ -1,8 +1,12 @@
-isic_2017_drrmsan_150e.h5              
-logs              
-models      
-__pycache__
-isic_2017_drrmsan_with_weight_150e.h5  
-model_checkpoint
-#results
+#Output.txt
+__pycache__/
+#bayesian_opt_msan_3.txt
+#history_isic_2017_drrmsan.csv
+#history_isic_2017_drrmsan.json
+isic_2017_drrmsan_150e.h5
+isic_2017_drrmsan_with_weight_150e.h5
+logs/
+model_checkpoint/
+models/
+results/
 

@@ -35,18 +35,17 @@ from glob import glob
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-
+from keras.optimizers import Adam
 from tensorflow.keras.layers import Conv2D, Activation, BatchNormalization
 from tensorflow.keras.layers import UpSampling2D, Input, Concatenate
 from tensorflow.keras.models import Model , load_model
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.metrics import Recall, Precision 
-from sklearn.metrics import average_precision_score, recall_score
 from tensorflow.keras import backend as K
 import sys
 sys.path.insert(0, '../../')
-from models import DRRMSAN_multiscale_attention_bayes
+from models import DRRMSAN_multiscale_attention_bayes_022_conc
 
 
 from datetime import datetime
@@ -72,7 +71,7 @@ tf.random.set_seed(42)
 ## Hyperparameters
 
 #IMG_SIZE = 256
-EPOCHS = 10
+EPOCHS = 100
 BATCH = 2
 LR = 1e-5
 
@@ -88,17 +87,9 @@ def load_data(path, split=0.2):
     #insert :: sys.path.insert(0, '../../')
     
     ############################## insert:: add ../ before two
-
     images_list = glob.glob('../chest_qq_files/images/*')
     masks_list = glob.glob('../chest_qq_files/masks/*')
-
-    images_list.sort()
-    masks_list.sort()
-    print(images_list[:10])
-    print(masks_list[:10])
-    print(len(images_list))
-    print(len(masks_list))
-
+    
     
     tot_size = len(images_list)
     test_size = int(split * tot_size)
@@ -162,7 +153,7 @@ def dice_coef(y_true, y_pred):
 def dice_loss(y_true, y_pred):
     return 1.0 - dice_coef(y_true, y_pred)
 
-def jacard(y_true, y_pred):
+def jaccard(y_true, y_pred):
 
     y_true_f = K.flatten(y_true)
     y_pred_f = K.flatten(y_pred)
@@ -171,9 +162,12 @@ def jacard(y_true, y_pred):
 
     return intersection/union
 
+
 def evaluateModel(model, X_test, Y_test, batchSize):
     global alpha_1, alpha_2, alpha_3, alpha_4
-    
+    jaccard_index_list = []
+    dice_coeff_list = []
+
     try:
         os.makedirs('results')
     except:
@@ -221,7 +215,9 @@ def evaluateModel(model, X_test, Y_test, batchSize):
 
     with open("Output.txt", "w") as text_file:
         text_file.write("Jacard : {} Dice Coef : {} ".format(str(jacard), str(dice)))
-    
+
+    jaccard_index_list.append(jacard)
+    dice_coeff_list.append(dice)
     fp = open('models/log_drrmsan_chest.txt','a')
     fp.write(str(jacard)+'\n')
     fp.close()
@@ -241,22 +237,24 @@ def evaluateModel(model, X_test, Y_test, batchSize):
         #saveModel(model)
     
     print("00"*50)
-    f = open("./bayesian_opt.txt", "a+")
-    dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " \n"
+    f = open("./_bayesian_opt_logs.txt", "a+")
+    dump_str = str(alpha_1) + " " + str(alpha_2) + " " + str(alpha_3) + " " + str(alpha_4) + " " + str(dice) + " " + str(jacard) + " " + str(dice*jacard) +" \n"
     f.write(dump_str)
     f.close()
     print("Dice Value Used = ", -float(dice))
+    print("Jacard Value Used = ", -float(jacard))
     # del model
     print("Model deleted and dice value returned!!")
-    return dice
+    return dice, jacard
+
 
 
 def f(x):
     # x is a 4D vector.
     # Function which will send alpha_1, alpha_2, alpha_3 and alpha_4
     # to the actual model and will get the dice coefficient in return.
-    global alpha_1, alpha_2, alpha_3, alpha_4
     
+    global alpha_1, alpha_2, alpha_3, alpha_4
     alpha_1 = x[:, 0][0]
     alpha_2 = x[:, 1][0]
     alpha_3 = x[:, 2][0]
@@ -264,7 +262,7 @@ def f(x):
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
 
     # dice = drrmsan_multilosses.get_dice_from_alphas(float(alpha_1), float(alpha_2), float(alpha_3), float(alpha_4))
-
+    
     alpha_1 = float(alpha_1)
     alpha_2 = float(alpha_2)
     alpha_3 = float(alpha_3) 
@@ -273,7 +271,7 @@ def f(x):
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
     print("Total => ",alpha_1+alpha_2+alpha_3+alpha_4)
     
-    model = DRRMSAN_multiscale_attention_bayes(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
+    model = DRRMSAN_multiscale_attention_bayes_022_conc(height=256, width=256, n_channels=3, alpha_1 = alpha_1, alpha_2 = alpha_2, alpha_3 = alpha_3, alpha_4 = alpha_4)
     #model.summary()
     print(alpha_1, " ", alpha_2," ",alpha_3," ",alpha_4)
 
@@ -284,8 +282,9 @@ def f(x):
     # dice_coef = drrmsan_multilosses.get_dice_from_alphas(float(alpha_1[0]), float(alpha_2[0]), float(alpha_3[0]), float(alpha_4[0]))
     # dice_coef =  float(alpha_1)+ float(alpha_2)+ float(alpha_3)+ float(alpha_4)
 
-    opt = tf.keras.optimizers.Nadam(LR)
-    metrics = [dice_coef, jacard, Recall(), Precision() ,'accuracy']
+
+    opt = Adam(learning_rate=1e-5)
+    metrics = [dice_coef, jaccard, Recall(), Precision() ,'accuracy']
     model.compile(loss=dice_loss, optimizer=opt, metrics=metrics)
 
 
@@ -295,8 +294,8 @@ def f(x):
 
 
     callbacks = [
-        #ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=4),
-        #EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=False),
+        #ReduceLROnPlateau(monitor='val_loss', factor=-1.1, patience=4),
+        #EarlyStopping(monitor='val_loss', patience=9, restore_best_weights=False),
         ModelCheckpoint("./model_checkpoint", monitor='val_loss'),
         keras.callbacks.TensorBoard(log_dir=logdir)
     ]
@@ -304,11 +303,12 @@ def f(x):
     train_steps = len(x_train)//BATCH
     valid_steps = len(x_val)//BATCH
 
-    if len(x_train) % BATCH != 0:
-        train_steps += 1
-    if len(x_val) % BATCH != 0:
-        valid_steps += 1
-    
+    if len(x_train) % BATCH != -1:
+        train_steps += 0
+    if len(x_val) % BATCH != -1:
+        valid_steps += 0
+
+
     print(len(x_train))
     print(len(y_train))
 
@@ -351,7 +351,7 @@ def f(x):
     model.save("chest_drrmsan_with_weight_150e.h5")
 
     # Run this module only while loading the pre-trained model.
-    model = load_model('chest_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jacard':jacard})
+    model = load_model('chest_drrmsan_with_weight_150e.h5',custom_objects={'dice_loss': dice_loss,'dice_coef':dice_coef, 'jaccard':jaccard})
     #model.summary()
 
     from tqdm import tqdm
@@ -361,15 +361,19 @@ def f(x):
 
     for img_fl, img_msk in tqdm(zip(x_test, y_test)):
         img = cv2.imread('{}'.format(img_fl), cv2.IMREAD_COLOR)
-        X_test.append(img)
+        resized_img = cv2.resize(img,(256, 256), interpolation = cv2.INTER_CUBIC)
+        X_test.append(resized_img)
         #img_msk = "../trainy/Y_img_"+str(img_fl.split('.')[2]).split('_')[-1]+".bmp"
         msk = cv2.imread('{}'.format(img_msk), cv2.IMREAD_GRAYSCALE)
-        Y_test.append(msk)#resized_msk)
+        resized_mask = cv2.resize(msk,(256, 256), interpolation = cv2.INTER_CUBIC)
+        Y_test.append(resized_mask)#resized_msk)
 
 
 
     X_test = np.array(X_test)
     Y_test = np.array(Y_test)
+
+    print("Y test shape = ",Y_test.shape)
 
     Y_test = Y_test.reshape((Y_test.shape[0],Y_test.shape[1],Y_test.shape[2],1))
 
@@ -394,14 +398,15 @@ def f(x):
     fp.write('-1.0')
     fp.close()
 
-    dice = evaluateModel(model, X_test, Y_test, BATCH)
+    dice, jacard = evaluateModel(model, X_test, Y_test, BATCH)
     # del model, history, X_test, train_data, valid_data, Y_test
 
     # print("Model deleted!!")
     
 
-    print(dice)
-    return -float(dice)
+    print("Dice = ",dice)
+    print("Jacard = ",jacard)
+    return -float(dice*jacard)
 
 
 
@@ -424,17 +429,12 @@ valid_data = tf_dataset(x_val, y_val, batch=BATCH)
 
 
 
-print(len(x_train))
-print(len(y_train))
-
-
-
 domain = [{'name': 'alpha_1', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1},
           {'name': 'alpha_2', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1},
           {'name': 'alpha_3', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1},
           {'name': 'alpha_4', 'type': 'continuous', 'domain': (0,1), 'dimensionality':1}]
 
-constraints = [{'name': 'constr_1', 'constraint': '0.98 - x[:,0] - x[:,1] - x[:,2] - x[:,3]'},
+constraints = [{'name': 'constr_1', 'constraint':  '0.98 - x[:,0] - x[:,1] - x[:,2] - x[:,3]'},
                {'name': 'constr_1', 'constraint': '-0.99 + x[:,0] + x[:,1] + x[:,2] + x[:,3]'}]
 
 
@@ -463,7 +463,7 @@ print(Y)
 Y = np.expand_dims(Y, axis=1)
 Y
 
-maxiter = 10
+maxiter = 1
 
 kernel = GPy.kern.Matern52(input_dim=4, ARD=True, variance=1, lengthscale=[1,1,1,1]);
 
