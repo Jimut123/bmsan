@@ -1,41 +1,50 @@
-# DRRMSAN
+# BMSAN
+Improving Multi Scale Attention Networks: Bayesian Optimization for Segmenting medical imagery
 
-DRRMSAN: Deep Residual Regularized Multi-Scale Attention Networks for segmentation of medical images.
-
-[[Presentation](https://www.youtube.com/watch?v=My7L-ggFbKI)]
-
-## Abstract
-
-Medical sectors are generally presented with challenge of segmenting images with high accuracy. A novel Deep learning architecture is proposed which can segment images at multiple scales, leading to high dice coefficient in majority of challenging datasets, where regions of interest are of different shapes and sizes. Use of attention module within the architecture partly increases the capability of the model to focus on relevant regions. Calculating loss at different scales also helps in incremental reconstruction of segmentation mask. A comparison with other state of the art model shows this model performs better than most with a significantly low computation overhead. This demonstrates the efficiency and reliability of our approach to generate segmentation masks.
+## Dependencies
+For installing the required dependencies, please use the following packages as mentioned in [dependencies](nvdia_env.txt).
 
 
-## Our proposed model
-<center><img src="assets/DRRMSAN_Model.png"></center>
 
-## Our proposed attention gate
-<center><img src="assets/Attention_Gate_1.jpg"></center>
+## Running the code
 
-## Evaluation with other models
-<center><img src="assets/eval.png"></center>
+For running the code, we need to download the following datasets and keep them in proper folder.
 
-## Comparison of parameters
-<center><img src="assets/params.png"></center>
+#### Download the datasets
 
-## Comparison with other models
-<center><img src="assets/comparisons.png"></center>
+* [ISIC 2017](https://drive.google.com/u/3/uc?id=1-PAttyqJLImKMdz0gTLM3soiWWvi8PAD) (ISIC-2017_Training_Data.zip 5.4G)
+* [BRAIN MRI](https://drive.google.com/u/3/uc?id=1FO-LWzFiU__2jrYXOpHw53CeoaHVoZh9) (brain.zip 352M) 
+* [SKIN LESION](https://drive.google.com/u/2/uc?id=1oPVUwkc4R_JgPUYkvVwGtUj6pHQw1bue) (skin_lesion.zip 48M)
+* [LUNGS](https://drive.google.com/u/3/uc?id=1wkephfRzoFhrcRbz_7a97_muu8ecSJ9d) (lung.zip 1.0G)
+* [KVASIR-SEG](https://drive.google.com/u/3/uc?id=1VzOUEvIyhmOGQUBGzfI7M8GMW2NjIFeH) (Kvasir-SEG.zip 44M)
+* [CHEST](https://drive.google.com/u/2/uc?id=1OF4L6tHP-3cyVrK7NhWYnNTUWJBT4gDu) (chest_qq_files.zip 626M) 
+* [NERVE](https://drive.google.com/u/3/uc?id=1-EQ_Tiu2m38143y_j0QgYs5Fj5-f6hit) (nerve.zip 2.1G)
 
-## Download the datasets from here:
 
-* [ISIC 2017](https://drive.google.com/u/3/uc?id=1-PAttyqJLImKMdz0gTLM3soiWWvi8PAD)
-* [BRAIN MRI](https://drive.google.com/u/3/uc?id=1-YLWaVt4d1MA51Ljid4mznaDg5e1xafc)
-* [SKIN LESION](https://drive.google.com/u/0/uc?id=1-OdmzC3JvmUsZUMrNAKPnu8ZM7EeSK04)
-* [LUNGS](https://drive.google.com/u/3/uc?id=1wkephfRzoFhrcRbz_7a97_muu8ecSJ9d)
-* [KVASIR-SEG](https://drive.google.com/u/3/uc?id=1VzOUEvIyhmOGQUBGzfI7M8GMW2NjIFeH)
+After downloading the datasets, unzip them via ``unzip`` command (in linux) into the respective directories.
+For example if it is brain.zip (i.e., Brain MRI dataset) then we need to place it in the BrainMRI
+folder. Each of the respective folders should have their respective datasets. Example of a folder directory may
+be shown here:
 
-## Dependencies for GPU
+```
+-- BrainMRI
+  |  _K_Fold_drrmsan
+  |  brain
+  |  AttnR2UNet_kFold
+  |  AttnUNet_kFold
+  |  ModifiedUNET_kFold
+  |  MSAN_2
+  |  MSAN_3
+  | ...
+  |  R2UNet_kFold
+```
 
-[dependencies](nvdia_env.txt)
+The main folders should have their respective state-of-the-art comparison model and the proposed models. Please find
+the relevant models and run the `.py` file respectively.
 
+For doing Bayesian Optimisation we have to first run the files present in the `GetDice` folder by selecting the best MSAN model.
+This will collect the dataset for the Bayesian Optimisation part and then we may run the files present in the Final folder to get the
+best possible weighted mask combination. We again use this weights for training segmentation on the best possible MSAN model.
 
 
 ## Contribution
@@ -43,16 +52,10 @@ Medical sectors are generally presented with challenge of segmenting images with
 Please check [CONTRIBUTING.md](https://github.com/Jimut123/drrmsan/blob/main/CONTRIBUTING.md)
 
 
-## TODO
-
-- [ ] Bayesian optimisation 
-- [ ] Upsampling using GANs.
 
 ## Acknowledgements
 
-It is ritual that scholars express their gratitude to their supervisors.  This acknowledgement is very special to me to express my deepest sense of gratitude and pay respect to my supervisor, ***Dripta Mj***, School of Mathematical Sciences, for his constant encouragement, guidance, supervision, and support throughout the completion of my project. His close scrutiny, constructive criticism, and intellectual insight have immensely helped me in every stage of my work. I would like to thank him for patiently answering my often naive questions related to machine learning. I am also thankful to **Swathy Prabhu Mj** for arranging **Asus RTX 2080 Ti GPU (with 64 GB RAM)** to hasten the research. I would also thank **Tamal Mj** and **Dr. Jadab Kumar Pal** for their suggestions.
-
-The Authors would also like to thank [lixiaolei1982](https://github.com/lixiaolei1982/Keras-Implementation-of-U-Net-R2U-Net-Attention-U-Net-Attention-R2U-Net.-) and [nibtehaz](https://github.com/nibtehaz/MultiResUNet) for open sourcing their implementations. 
+The authors are thankful to **Swathy Prabhu Mj** for arranging Asus RTX 2080 Ti (12 GB) and Quadro GV100 (32 GB) GPUs with 64 GB RAM,  to hasten the research. The first author is thankful to **Br. Tamal Maharaj** and **Dr. Jadab Kumar Pal** for their suggestions. The Authors would also like to thank [lixiaolei1982](https://github.com/lixiaolei1982/Keras-Implementation-of-U-Net-R2U-Net-Attention-U-Net-Attention-R2U-Net.-) and [nibtehaz](https://github.com/nibtehaz/MultiResUNet) for their implementations of state-of-the art models. 
 
 
 # BibTeX and citations
