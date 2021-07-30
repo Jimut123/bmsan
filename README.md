@@ -1,5 +1,5 @@
 # BMSAN
-Improving Multi Scale Attention Networks: Bayesian Optimization for Segmenting medical imagery
+## Improving Multi Scale Attention Networks: Bayesian Optimization for Segmenting medical imagery
 
 ## Dependencies
 For installing the required dependencies, please use the following packages as mentioned in [dependencies](nvdia_env.txt).
@@ -55,7 +55,7 @@ Please check [CONTRIBUTING.md](https://github.com/Jimut123/drrmsan/blob/main/CON
 
 ## Acknowledgements
 
-The authors are thankful to **Swathy Prabhu Mj** for arranging Asus RTX 2080 Ti (12 GB) and Quadro GV100 (32 GB) GPUs with 64 GB RAM,  to hasten the research. The first author is thankful to **Br. Tamal Maharaj** and **Dr. Jadab Kumar Pal** for their suggestions. The Authors would also like to thank [lixiaolei1982](https://github.com/lixiaolei1982/Keras-Implementation-of-U-Net-R2U-Net-Attention-U-Net-Attention-R2U-Net.-) and [nibtehaz](https://github.com/nibtehaz/MultiResUNet) for their implementations of state-of-the art models. 
+The [authors](https://github.com/Jimut123/drrmsan/blob/main/AUTHORS.md) are thankful to **Swathy Prabhu Mj** for arranging Asus RTX 2080 Ti (12 GB) and Quadro GV100 (32 GB) GPUs with 64 GB RAM,  to hasten the research. The first author is thankful to **Br. Tamal Maharaj** and **Dr. Jadab Kumar Pal** for their suggestions. The Authors would also like to thank [lixiaolei1982](https://github.com/lixiaolei1982/Keras-Implementation-of-U-Net-R2U-Net-Attention-U-Net-Attention-R2U-Net.-) and [nibtehaz](https://github.com/nibtehaz/MultiResUNet) for their implementations of state-of-the art models. 
 
 
 # BibTeX and citations
