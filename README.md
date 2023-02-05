@@ -138,13 +138,12 @@ The [authors](https://github.com/Jimut123/drrmsan/blob/main/AUTHORS.md) are than
 # BibTeX and citations
 
 ```
-@misc{pal_2021_drrmsan,
-  author = {Jimut Bahan Pal and Dripta Mj},
-  title = {DRRMSAN: Deep Residual Regularized Multi-Scale Attention Networks for segmentation of medical images.},
-  year = {2019},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/Jimut123/drrmsan/}},
+@article{doi:10.1080/13682199.2023.2174657,
+  author = {Pal,Jimut Bahan and Mj,Dripta},
+  title = {Improving Multi Scale Attention Networks: Bayesian Optimization for Segmenting medical images},
+  journal = {The Imaging Science Journal},
+  year = {2023},
+  doi = {10.1080/13682199.2023.2174657},
 }
 ```
 ***
