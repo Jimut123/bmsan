@@ -1,10 +1,87 @@
 # BMSAN
 ## Improving Multi Scale Attention Networks: Bayesian Optimization for Segmenting medical imagery
 
+
+
+
+## Proposed Model
+
+<center>
+  <img src="https://github.com/Jimut123/bmsan/raw/main/docs/DRRMSAN_Model.png">
+</center>
+
+
+
+## Modified U-Net
+
+<center>
+  <img src="https://github.com/Jimut123/bmsan/raw/main/docs/Modified_UNet.png">
+</center>
+
+
+
+## Proposed Attention Module 1
+
+<center>
+  <img src="https://github.com/Jimut123/bmsan/raw/main/docs/Attention_Gate_1.png">
+</center>
+
+
+
+## Proposed Attention Module 2
+
+<center>
+  <img src="https://github.com/Jimut123/bmsan/raw/main/docs/Attention_Gate_2.png">
+</center>
+
+
+
+## Proposed Attention Module 3
+
+<center>
+  <img src="https://github.com/Jimut123/bmsan/raw/main/docs/Attention_Gate_3.png">
+</center>
+
+
+ ***
+## Results
+
+<center>
+  <img src="https://github.com/Jimut123/bmsan/raw/main/docs/table_1.png">
+</center>
+
+
+
+
+<center>
+  <img src="https://github.com/Jimut123/bmsan/raw/main/docs/table_3.png">
+</center>
+
+
+
+<center>
+  <img src="https://github.com/Jimut123/bmsan/raw/main/docs/table_4.png">
+</center>
+
+
+
+<center>
+  <img src="https://github.com/Jimut123/bmsan/raw/main/docs/table_5.png">
+</center>
+
+
+<center>
+  <img src="https://github.com/Jimut123/bmsan/raw/main/docs/table_2.png">
+</center>
+
+
+<center>
+  <img src="https://github.com/Jimut123/bmsan/raw/main/docs/fig_10.png">
+</center>
+
+
 ## Dependencies
 For installing the required dependencies, please use the following packages as mentioned in [dependencies](nvdia_env.txt).
-
-
 
 ## Running the code
 
