@@ -82,6 +82,7 @@
 
 ## Dependencies
 For installing the required dependencies, please use the following packages as mentioned in [dependencies](nvdia_env.txt).
+Note the code might not work on the current versions of the libraries, hence please follow the dependencies.
 
 ## Running the code
 
@@ -97,6 +98,7 @@ For running the code, we need to download the following datasets and keep them i
 * [CHEST](https://drive.google.com/u/2/uc?id=1OF4L6tHP-3cyVrK7NhWYnNTUWJBT4gDu) (chest_qq_files.zip 626M) 
 * [NERVE](https://drive.google.com/u/3/uc?id=1-EQ_Tiu2m38143y_j0QgYs5Fj5-f6hit) (nerve.zip 2.1G)
 
+Or use the figshare mirrors: [mirror1](https://figshare.com/articles/dataset/DATA_BMSAN_ISIC/21224762) and [mirror2](https://figshare.com/articles/dataset/DATA_BMSAN/21224756)
 
 After downloading the datasets, unzip them via ``unzip`` command (in linux) into the respective directories.
 For example if it is brain.zip (i.e., Brain MRI dataset) then we need to place it in the BrainMRI
