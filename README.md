@@ -90,15 +90,7 @@ For running the code, we need to download the following datasets and keep them i
 
 #### Download the datasets
 
-* [ISIC 2017](https://drive.google.com/u/3/uc?id=1-PAttyqJLImKMdz0gTLM3soiWWvi8PAD) (ISIC-2017_Training_Data.zip 5.4G)
-* [BRAIN MRI](https://drive.google.com/u/3/uc?id=1FO-LWzFiU__2jrYXOpHw53CeoaHVoZh9) (brain.zip 352M) 
-* [SKIN LESION](https://drive.google.com/u/2/uc?id=1oPVUwkc4R_JgPUYkvVwGtUj6pHQw1bue) (skin_lesion.zip 48M)
-* [LUNGS](https://drive.google.com/u/3/uc?id=1wkephfRzoFhrcRbz_7a97_muu8ecSJ9d) (lung.zip 1.0G)
-* [KVASIR-SEG](https://drive.google.com/u/3/uc?id=1VzOUEvIyhmOGQUBGzfI7M8GMW2NjIFeH) (Kvasir-SEG.zip 44M)
-* [CHEST](https://drive.google.com/u/2/uc?id=1OF4L6tHP-3cyVrK7NhWYnNTUWJBT4gDu) (chest_qq_files.zip 626M) 
-* [NERVE](https://drive.google.com/u/3/uc?id=1-EQ_Tiu2m38143y_j0QgYs5Fj5-f6hit) (nerve.zip 2.1G)
-
-Or use the figshare mirrors: [mirror1](https://figshare.com/articles/dataset/DATA_BMSAN_ISIC/21224762) and [mirror2](https://figshare.com/articles/dataset/DATA_BMSAN/21224756)
+Use the figshare mirrors: [mirror1](https://figshare.com/articles/dataset/DATA_BMSAN_ISIC/21224762) and [mirror2](https://figshare.com/articles/dataset/DATA_BMSAN/21224756)
 
 After downloading the datasets, unzip them via ``unzip`` command (in linux) into the respective directories.
 For example if it is brain.zip (i.e., Brain MRI dataset) then we need to place it in the BrainMRI
